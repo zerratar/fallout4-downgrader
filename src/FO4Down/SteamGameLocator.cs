@@ -32,21 +32,38 @@ namespace Fallout4Downgrader
             var games = new Dictionary<string, SteamGame>();
             foreach (var folder in libraryFolders)
             {
-                foreach (var apps in folder.Apps)
+                // Get by appmanifest_*.acf files
+                var acfFiles = System.IO.Directory.GetFiles(Path.Combine(folder.Path, "steamapps"), "appmanifest_*.acf", SearchOption.AllDirectories);
+                foreach (var apps in acfFiles)
                 {
-                    var manifestPath = Path.Combine(folder.Path, "steamapps", "appmanifest_" + apps + ".acf");
-                    if (System.IO.File.Exists(manifestPath))
-                    {
-                        var gameName = ExtractGameNameFromAcf(manifestPath);
+                    var gameName = ExtractGameNameFromAcf(apps);
+                    if (string.IsNullOrEmpty(gameName))
+                        continue;
 
-                        games[gameName] = new SteamGame
-                        {
-                            Name = gameName,
-                            Path = Path.Combine(folder.Path, "steamapps", "common", gameName),
-                            AppId = apps
-                        };
-                    }
+                    games[gameName] = new SteamGame
+                    {
+                        Name = gameName,
+                        Path = Path.Combine(folder.Path, "steamapps", "common", gameName),
+                        AppId = apps
+                    };
                 }
+
+                //// Get by known app ids
+                //foreach (var apps in folder.Apps)
+                //{
+                //    var manifest = Path.Combine(folder.Path, "steamapps", "appmanifest_" + apps + ".acf");
+                //    if (!File.Exists(manifest)) 
+                //        continue;
+                //    var gameName = ExtractGameNameFromAcf(manifest);
+                //    if (string.IsNullOrEmpty(gameName))
+                //        continue;
+                //    games[gameName] = new SteamGame
+                //    {
+                //        Name = gameName,
+                //        Path = Path.Combine(folder.Path, "steamapps", "common", gameName),
+                //        AppId = apps
+                //    };
+                //}
             }
             return games;
         }

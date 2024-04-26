@@ -9,14 +9,8 @@
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="QRCoder" Version="1.4.3" />
+    <PackageReference Include="SteamKit2" Version="3.0.0-Alpha.1" />
   </ItemGroup>
-
-  <ItemGroup>
-    <None Update="Steam\steamcmd.exe">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-
-  <Import Project="..\FO4Down.Shared\FO4Down.Shared.projitems" Label="Shared" />
 
 </Project>
