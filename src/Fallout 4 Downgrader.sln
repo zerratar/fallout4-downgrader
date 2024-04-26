@@ -1,0 +1,38 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34330.188
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FO4Down.NET8", "FO4Down.NET8\FO4Down.NET8.csproj", "{E83F7801-80E7-4789-87B9-F343F2361E03}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "FO4Down.Shared", "FO4Down.Shared\FO4Down.Shared.shproj", "{296E31B3-A40A-48E4-8AFD-80960CD9D799}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FO4Down.NETFramework461", "FO4Down\FO4Down.NETFramework461.csproj", "{FD244D6C-5930-4528-8A75-9D296CD9C457}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E83F7801-80E7-4789-87B9-F343F2361E03}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E83F7801-80E7-4789-87B9-F343F2361E03}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E83F7801-80E7-4789-87B9-F343F2361E03}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E83F7801-80E7-4789-87B9-F343F2361E03}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FD244D6C-5930-4528-8A75-9D296CD9C457}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FD244D6C-5930-4528-8A75-9D296CD9C457}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FD244D6C-5930-4528-8A75-9D296CD9C457}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FD244D6C-5930-4528-8A75-9D296CD9C457}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {83CE5A69-C7AA-4CCD-AC0A-D9C23BA80E32}
+	EndGlobalSection
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		FO4Down.Shared\FO4Down.Shared.projitems*{296e31b3-a40a-48e4-8afd-80960cd9d799}*SharedItemsImports = 13
+		FO4Down.Shared\FO4Down.Shared.projitems*{e83f7801-80e7-4789-87b9-f343f2361e03}*SharedItemsImports = 5
+		FO4Down.Shared\FO4Down.Shared.projitems*{fd244d6c-5930-4528-8a75-9d296cd9c457}*SharedItemsImports = 4
+	EndGlobalSection
+EndGlobal

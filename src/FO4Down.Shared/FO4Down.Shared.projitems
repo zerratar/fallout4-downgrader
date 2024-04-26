@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects Condition="'$(MSBuildVersion)' == '' Or '$(MSBuildVersion)' &lt; '16.0'">$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>296e31b3-a40a-48e4-8afd-80960cd9d799</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>FO4Down.Shared</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)SteamCMD.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)SteamGame.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)SteamGameLocator.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)SteamJson.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)SteamJsonParser.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)SteamLibFolder.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Tokenizer.cs" />
+  </ItemGroup>
+</Project>
