@@ -22,8 +22,9 @@ namespace Fallout4Downgrader
             while (index < tokens.Count)
             {
                 var token = tokens[index];
+                var node = Parse(token, tokens, ref index);
 
-                AddNode(Parse(token, tokens, ref index));
+                AddNode(node);
 
                 ++index;
             }
@@ -91,16 +92,16 @@ namespace Fallout4Downgrader
             ref int index)
         {
             var children = new List<Node>();
-
+            var firstToken = token;
             // skip whitespaces and newlines
-            while (token.Type != Tokenizer.TokenType.String 
-                && token.Type != Tokenizer.TokenType.CloseCurly 
+            while (token.Type != Tokenizer.TokenType.String
+                && token.Type != Tokenizer.TokenType.CloseCurly
                 && index + 1 < tokens.Count)
             {
                 token = tokens[++index];
             }
 
-            do
+            while (token.Type != Tokenizer.TokenType.CloseCurly)
             {
                 var child = Parse(token, tokens, ref index);
 
@@ -116,7 +117,7 @@ namespace Fallout4Downgrader
 
                 token = tokens[++index];
 
-            } while (token.Type != Tokenizer.TokenType.CloseCurly);
+            }
             // Parse()
             return new ObjectNode
             {

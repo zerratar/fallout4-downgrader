@@ -14,154 +14,227 @@ namespace Fallout4Downgrader
 
         static async Task Main(string[] args)
         {
-            Console.ResetColor();
-            Console.Title = "Fallout 4 Downgrader - Lets go back in time!";
-            Console.WriteLine("Fallout 4 Downgrader - v" + Assembly.GetExecutingAssembly().GetName().Version);
-            Console.WriteLine("Contact: zerratar@gmail.com");
-            Console.WriteLine("Source: https://www.github.com/zerratar/fallout4-downgrader");
-            Console.WriteLine("Using DepotDownloader for downloading depots.");
-            Console.WriteLine("Ref: https://github.com/SteamRE/DepotDownloader");
-            Console.WriteLine();
+            Params.Init(args);
+            var settings = new StartupArgs();
+            SetupConfig(settings);
 
-            var steamPath = SteamGameLocator.GetSteamInstallPath();
-            if (string.IsNullOrEmpty(steamPath))
+            if (args.Contains("-help") || args.Contains("-h") || args.Contains("/?") || args.Contains("-?"))
             {
-                Console.WriteLine("Steam is not installed!");
+                Console.WriteLine("Fallout 4 Downgrader - v" + Assembly.GetExecutingAssembly().GetName().Version);
+                Console.WriteLine("Usage: FO4Down.exe (optional: arguments)");
+                Console.WriteLine("  -user or -username <steam user>");
+                Console.WriteLine("  -pass or -password <steam pass>");
+                Console.WriteLine("  -qr\t\t\tLogin using QR code instead");
+                Console.WriteLine("  -all-languages\tDownload all languages");
+                Console.WriteLine("  -language <language>\tDownloads a specific language, default is english");
+                Console.WriteLine("  -keep-depot\t\tKeep the downloaded depot files after finish");
+                Console.WriteLine("  -help\t\t\tThis text");
                 Console.ReadKey();
                 return;
             }
-
-            //steamPath = "G:\\GitHub\\fallout4-downgrader\\publish\\Self-contained\\libraryfolders.vdf";
-
-            var libraryFolders = SteamGameLocator.GetLibraryFolders(steamPath);
-            var installedGames = SteamGameLocator.GetInstalledGames(libraryFolders);
-
-            Console.WriteLine("Steam is installed at " + steamPath);
-
-            Console.WriteLine();
-            Console.WriteLine("Library Folders:");
-            foreach (var lib in libraryFolders)
+            try
             {
-                Console.WriteLine("  * " + lib.Path);
-            }
+                Console.ResetColor();
+                Console.Title = "Fallout 4 Downgrader - Lets go back in time!";
+                Console.WriteLine("Fallout 4 Downgrader - v" + Assembly.GetExecutingAssembly().GetName().Version);
+                Console.WriteLine("Contact: zerratar@gmail.com");
+                Console.WriteLine("Source: https://www.github.com/zerratar/fallout4-downgrader");
+                Console.WriteLine("Using DepotDownloader for downloading depots.");
+                Console.WriteLine("Ref: https://github.com/SteamRE/DepotDownloader");
+                Console.WriteLine();
 
-            Console.WriteLine();
-            Console.WriteLine("Installed Games:");
-            foreach (var game in installedGames)
-            {
-                Console.WriteLine("  * " + game.Key);
-                Console.WriteLine("    - " + game.Value.Path);
-            }
+                var steamPath = SteamGameLocator.GetSteamInstallPath();
+                if (string.IsNullOrEmpty(steamPath))
+                {
+                    Console.WriteLine("Steam is not installed!");
+                    Console.ReadKey();
+                    return;
+                }
 
-            Console.WriteLine("------");
-            Console.WriteLine();
+                //steamPath = "G:\\GitHub\\fallout4-downgrader\\publish\\Self-contained\\libraryfolders.vdf";
+                var libraryFolders = SteamGameLocator.GetLibraryFolders(steamPath);
+                var installedGames = SteamGameLocator.GetInstalledGames(libraryFolders);
 
-            if (!installedGames.TryGetValue("Fallout 4", out var fo4))
-            {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Fallout 4 is not installed.");
-                Console.ReadKey();
-                return;
-            }
+                Console.WriteLine("Steam is installed at " + steamPath);
+                Console.WriteLine();
+                Console.WriteLine("Library Folders:");
+                foreach (var lib in libraryFolders)
+                {
+                    Console.WriteLine("  * " + lib.Path);
+                }
 
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine("Found Fallout 4 at " + fo4.Path);
-            Console.ResetColor();
+                Console.WriteLine();
+                Console.WriteLine("Installed Games:");
+                foreach (var game in installedGames)
+                {
+                    Console.WriteLine("  * " + game.Key);
+                    Console.WriteLine("    - " + game.Value.Path);
+                }
 
-            AccountSettingsStore.LoadFromFile("account.config");
-            Console.WriteLine("Please login using your credentials");
-            Console.Write("Username: ");
-            var username = Console.ReadLine();
+                Console.WriteLine("------");
+                Console.WriteLine();
 
-            Console.Write("Password: ");
-            var password = Console.ReadLine();
+                if (!installedGames.TryGetValue("Fallout 4", out var fo4))
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Fallout 4 is not installed.");
+                    Console.ReadKey();
+                    return;
+                }
 
-            if (!InitializeSteam(username, password))
-            {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Login to steam failed.");
-                Console.ReadKey();
-                return;
-            }
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine("Found Fallout 4 at " + fo4.Path);
+                Console.ResetColor();
 
-            /*
-                download_depot 377160 377161 7497069378349273908
-                download_depot 377160 377162 5847529232406005096
-                download_depot 377160 377163 5819088023757897745
-                download_depot 377160 377164 2178106366609958945
-                download_depot 377160 435880 1255562923187931216
-                download_depot 377160 435870 1691678129192680960
-                download_depot 377160 435871 5106118861901111234
-             */
+                AccountSettingsStore.LoadFromFile("account.config");
 
-            uint appId = 377160;
-            List<(uint, ulong)> depots = new List<(uint, ulong)>
+                string username = null;
+                string password = null;
+                if (!string.IsNullOrEmpty(settings.Username))
+                {
+                    username = settings.Username;
+                }
+
+                if (!string.IsNullOrEmpty(settings.Password))
+                {
+                    password = settings.Password;
+                }
+                for (; ; )
+                {
+                    if (!settings.UseQrCode)
+                    {
+                        var noUser = string.IsNullOrEmpty(username);
+                        var noPass = string.IsNullOrEmpty(password);
+
+                        if (noUser || noPass)
+                        {
+                            Console.WriteLine("Please login using your credentials");
+
+                            if (noUser)
+                            {
+                                Console.Write("Username: ");
+                                username = Console.ReadLine();
+                            }
+
+                            if (noPass)
+                            {
+                                Console.Write("Password: ");
+                                password = Console.ReadLine();
+                            }
+                        }
+
+                        if (!InitializeSteam(username, password))
+                        {
+                            username = null;
+                            password = null;
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine("Login to steam failed. Press ESC to cancel or any other key to try again.");
+                            var k = Console.ReadKey(true);
+                            if (k.Key == ConsoleKey.Escape)
+                            {
+                                return;
+                            }
+
+                            continue;
+                        }
+
+                        break;
+                    }
+                    else
+                    {
+                        if (!InitializeSteam(username, password))
+                        {
+                            Console.WriteLine("Login to steam failed. Restart the app and try again");
+                            Console.ReadKey();
+                            return;
+                        }
+
+                        break;
+                    }
+                }
+                /*
+                    download_depot 377160 377161 7497069378349273908
+                    download_depot 377160 377162 5847529232406005096
+                    download_depot 377160 377163 5819088023757897745
+                    download_depot 377160 377164 2178106366609958945
+                    download_depot 377160 435880 1255562923187931216
+                    download_depot 377160 435870 1691678129192680960
+                    download_depot 377160 435871 5106118861901111234
+                 */
+
+                uint appId = 377160;
+                List<(uint, ulong)> depots = new List<(uint, ulong)>
             {
                 (377161,7497069378349273908),
                 (377162,5847529232406005096),
                 (377163,5819088023757897745),
                 (377164,2178106366609958945),
-
                 (435880,1255562923187931216),
                 (435870,1691678129192680960),
                 (435871,5106118861901111234)
             };
 
-            ContentDownloader.Config.MaxDownloads = depots.Count;
+                ContentDownloader.Config.MaxDownloads = depots.Count;
 
-            try
-            {
-                await ContentDownloader.DownloadAppAsync(appId, depots, "public", "windows", "64", "english", false, false);
-            }
-            catch (Exception exc)
-            {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine(exc.ToString());
-                Console.ReadKey();
-                return;
-            }
+                try
+                {
+                    var language = settings.Language;
+                    if (!settings.DownloadAllLanguages && string.IsNullOrEmpty(settings.Language))
+                        language = "english";
+                    if (settings.DownloadAllLanguages)
+                        language = null;
 
-            // when download is complete, copy all the files into the fallout 4 folder
-            //Console.WriteLine("All depots download completed. Do you wish to delete the downloaded files after copying it to " + fo4.Path + "? [Y/N]");
+                    await ContentDownloader.DownloadAppAsync(appId, depots, "public", "windows", "64", settings.Language, false, false);
+                }
+                catch (Exception exc)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine(exc.ToString());
+                    Console.ReadKey();
+                    return;
+                }
 
-            Console.Title = GetTitle() + " - Copying Depot files";
+                // when download is complete, copy all the files into the fallout 4 folder
+                //Console.WriteLine("All depots download completed. Do you wish to delete the downloaded files after copying it to " + fo4.Path + "? [Y/N]");
 
-            var deleteAfterCopy = true;//Console.ReadKey().Key == ConsoleKey.Y;
-            var depotFolders = System.IO.Directory
-                .GetDirectories("depots")
-                .Where(x => !new DirectoryInfo(x).Name.StartsWith("."))
-                .ToArray();
+                Console.Title = GetTitle() + " - Copying Depot files";
 
-            foreach (var depotFolder in depotFolders)
-            {
-                // will contain subfolder
-                foreach (var folder in Directory.GetDirectories(depotFolder, "*"))
-                    CopyFiles(folder, fo4.Path);
+                var deleteAfterCopy = !settings.KeepDepotFiles;//Console.ReadKey().Key == ConsoleKey.Y;
+                var depotFolders = System.IO.Directory
+                    .GetDirectories("depots")
+                    .Where(x => !new DirectoryInfo(x).Name.StartsWith("."))
+                    .ToArray();
+
+                foreach (var depotFolder in depotFolders)
+                {
+                    // will contain subfolder
+                    foreach (var folder in Directory.GetDirectories(depotFolder, "*"))
+                        CopyFiles(folder, fo4.Path);
+
+                    if (deleteAfterCopy)
+                    {
+                        try
+                        {
+                            Directory.Delete(depotFolder, true);
+                        }
+                        catch { }
+                    }
+                }
 
                 if (deleteAfterCopy)
                 {
                     try
                     {
-                        Directory.Delete(depotFolder, true);
+                        Directory.Delete("depots", true);
                     }
                     catch { }
                 }
-            }
 
-            if (deleteAfterCopy)
-            {
-                try
-                {
-                    Directory.Delete("depots", true);
-                }
-                catch { }
-            }
+                Console.Title = GetTitle() + " - Deleting Next Gen patches";
 
-            Console.Title = GetTitle() + " - Deleting Next Gen patches";
-
-            var dataFolder = System.IO.Path.Combine(fo4.Path, "Data");
-            // finally delete following files from the fallout 4 folder:
-            var filesToDelete = new List<string>
+                var dataFolder = System.IO.Path.Combine(fo4.Path, "Data");
+                // finally delete following files from the fallout 4 folder:
+                var filesToDelete = new List<string>
             {
                 "ccBGSFO4044-HellfirePowerArmor - Main.ba2",
                 "ccBGSFO4044-HellfirePowerArmor - Textures.ba2",
@@ -192,22 +265,42 @@ namespace Fallout4Downgrader
                 "ccSBJFO4003-Grenade.esl",
             };
 
-            //Console.WriteLine("Next step will delete " + filesToDelete.Count + " files. Press any key to continue or CTRL+C to cancel.");
-            //Console.ReadKey();
+                //Console.WriteLine("Next step will delete " + filesToDelete.Count + " files. Press any key to continue or CTRL+C to cancel.");
+                //Console.ReadKey();
 
-            Console.WriteLine("Deleting Next-Gen Content Files...");
-            foreach (var file in filesToDelete)
-            {
-                var filePath = System.IO.Path.Combine(dataFolder, file);
-                if (System.IO.File.Exists(filePath))
+                Console.WriteLine("Deleting Next-Gen Content Files...");
+                foreach (var file in filesToDelete)
                 {
-                    Console.WriteLine("Deleting " + file);
-                    System.IO.File.Delete(filePath);
+                    var filePath = System.IO.Path.Combine(dataFolder, file);
+                    if (System.IO.File.Exists(filePath))
+                    {
+                        Console.WriteLine("Deleting " + file);
+                        System.IO.File.Delete(filePath);
+                    }
                 }
-            }
 
-            Console.Title = GetTitle() + " - Finished";
-            Console.WriteLine("Downgrade complete! Application will exit");
+                Console.Title = GetTitle() + " - Finished";
+                Console.WriteLine("Downgrade complete! Application will exit");
+            }
+            catch (Exception exc)
+            {
+                Console.WriteLine($"An error occurred when running the application.");
+                Console.WriteLine("Please report the following error to Zerratar on discord or nexusmods");
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine(exc);
+                Console.ResetColor();
+                Console.WriteLine();
+                Console.WriteLine("A copy of this error has also been saved to error.txt, you can press any button to exit.");
+                File.WriteAllText("error.txt", exc.ToString());
+                Console.ReadKey();
+            }
+        }
+
+        private static void SetupConfig(StartupArgs startupArgs)
+        {
+            var c = ContentDownloader.Config;
+            c.UseQrCode = startupArgs.UseQrCode;
+            c.DownloadAllLanguages = startupArgs.DownloadAllLanguages;
         }
 
         static bool InitializeSteam(string username, string password)
@@ -267,12 +360,34 @@ namespace Fallout4Downgrader
                     Directory.CreateDirectory(dir);
                 }
 
-
                 File.Copy(file, newPath, true);
                 copyCount++;
             }
-
         }
     }
 
+    public class StartupArgs
+    {
+        public bool UseQrCode { get; set; }
+        public string Username { get; set; }
+        public string Password { get; set; }
+        public string Language { get; set; }
+        public bool DownloadAllLanguages { get; set; }
+        public bool KeepDepotFiles { get; set; }
+
+        public StartupArgs()
+        {
+            UseQrCode = Params.HasParameter("-qr");
+            KeepDepotFiles = Params.HasParameter("-keep-depot");
+            Username = Params.Get<string>("-username") ?? Params.Get<string>("-user");
+            Password = Params.Get<string>("-password") ?? Params.Get<string>("-pass");
+            DownloadAllLanguages = Params.HasParameter("-all-languages");
+            Language = Params.Get<string>("-language");
+
+            //            var username = GetParameter<string>(args, "-username") ?? GetParameter<string>(args, "-user");
+            //            var password = GetParameter<string>(args, "-password") ?? GetParameter<string>(args, "-pass");
+            //            ContentDownloader.Config.RememberPassword = HasParameter(args, "-remember-password");
+            //            ContentDownloader.Config.UseQrCode = HasParameter(args, "-qr");
+        }
+    }
 }
