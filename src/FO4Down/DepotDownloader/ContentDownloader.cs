@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
+using Fallout4Downgrader;
 using SteamKit2;
 using SteamKit2.CDN;
 
@@ -1125,6 +1126,8 @@ namespace DepotDownloader
                     lock (depotDownloadCounter)
                     {
                         depotDownloadCounter.SizeDownloaded += file.TotalSize;
+                        var percent = (depotDownloadCounter.SizeDownloaded / (float)depotDownloadCounter.CompleteDownloadSize) * 100.0f;
+                        Console.Title = Program.GetTitle() + " - " + $" {percent:00.00}% - " + depotDownloadCounter.SizeDownloaded + " / " + depotDownloadCounter.CompleteDownloadSize + " bytes";
                         Console.WriteLine("{0,6:#00.00}% {1}", (depotDownloadCounter.SizeDownloaded / (float)depotDownloadCounter.CompleteDownloadSize) * 100.0f, fileFinalPath);
                     }
 
@@ -1137,7 +1140,7 @@ namespace DepotDownloader
                     depotDownloadCounter.SizeDownloaded += sizeOnDisk;
                 }
             }
-
+                
             var fileIsExecutable = file.Flags.HasFlag(EDepotFileFlag.Executable);
             if (fileIsExecutable && (!fileDidExist || oldManifestFile == null || !oldManifestFile.Flags.HasFlag(EDepotFileFlag.Executable)))
             {

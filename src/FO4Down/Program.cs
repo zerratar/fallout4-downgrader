@@ -1,11 +1,17 @@
 ﻿using DepotDownloader;
 using SteamKit2.GC.Artifact.Internal;
+using SteamKit2.Internal;
 using System.Reflection;
 
 namespace Fallout4Downgrader
 {
     internal class Program
     {
+        public static string GetTitle()
+        {
+            return "Fallout 4 Downgrader";
+        }
+
         static async Task Main(string[] args)
         {
             Console.ResetColor();
@@ -25,7 +31,6 @@ namespace Fallout4Downgrader
                 return;
             }
 
-            AccountSettingsStore.LoadFromFile("account.config");
             var libraryFolders = SteamGameLocator.GetLibraryFolders(steamPath);
             var installedGames = SteamGameLocator.GetInstalledGames(libraryFolders);
 
@@ -37,7 +42,7 @@ namespace Fallout4Downgrader
                 return;
             }
 
-            var tokens = AccountSettingsStore.Instance.LoginTokens;
+            AccountSettingsStore.LoadFromFile("account.config");
             Console.WriteLine("Please login using your credentials");
             Console.Write("Username: ");
             var username = Console.ReadLine();
@@ -80,7 +85,6 @@ namespace Fallout4Downgrader
 
             try
             {
-
                 await ContentDownloader.DownloadAppAsync(appId, depots, "public", "windows", "64", "english", false, false);
             }
             catch (Exception exc)
@@ -90,11 +94,13 @@ namespace Fallout4Downgrader
                 Console.ReadKey();
                 return;
             }
+
             // when download is complete, copy all the files into the fallout 4 folder
-            Console.WriteLine("All depots download completed. Do you wish to delete the downloaded files after copying it to " + fo4.Path + "? [Y/N]");
+            //Console.WriteLine("All depots download completed. Do you wish to delete the downloaded files after copying it to " + fo4.Path + "? [Y/N]");
 
-            var deleteAfterCopy = Console.ReadKey().Key == ConsoleKey.Y;
+            Console.Title = GetTitle() + " - Copying Depot files";
 
+            var deleteAfterCopy = true;//Console.ReadKey().Key == ConsoleKey.Y;
             var depotFolders = System.IO.Directory
                 .GetDirectories("depots")
                 .Where(x => !new DirectoryInfo(x).Name.StartsWith("."))
@@ -104,8 +110,28 @@ namespace Fallout4Downgrader
             {
                 // will contain subfolder
                 foreach (var folder in Directory.GetDirectories(depotFolder, "*"))
-                    CopyFiles(folder, fo4.Path, deleteAfterCopy);
+                    CopyFiles(folder, fo4.Path);
+
+                if (deleteAfterCopy)
+                {
+                    try
+                    {
+                        Directory.Delete(depotFolder, true);
+                    }
+                    catch { }
+                }
             }
+
+            if (deleteAfterCopy)
+            {
+                try
+                {
+                    Directory.Delete("depots", true);
+                }
+                catch { }
+            }
+
+            Console.Title = GetTitle() + " - Deleting Next Gen patches";
 
             var dataFolder = System.IO.Path.Combine(fo4.Path, "Data");
             // finally delete following files from the fallout 4 folder:
@@ -140,8 +166,8 @@ namespace Fallout4Downgrader
                 "ccSBJFO4003-Grenade.esl",
             };
 
-            Console.WriteLine("Next step will delete " + filesToDelete.Count + " files. Press any key to continue or CTRL+C to cancel.");
-            Console.ReadKey();
+            //Console.WriteLine("Next step will delete " + filesToDelete.Count + " files. Press any key to continue or CTRL+C to cancel.");
+            //Console.ReadKey();
 
             Console.WriteLine("Deleting Next-Gen Content Files...");
             foreach (var file in filesToDelete)
@@ -154,8 +180,8 @@ namespace Fallout4Downgrader
                 }
             }
 
-            Console.WriteLine("Downgrade complete! Press any key to exit.");
-            Console.ReadKey();
+            Console.Title = GetTitle() + " - Finished";
+            Console.WriteLine("Downgrade complete! Application will exit");
         }
 
         static bool InitializeSteam(string username, string password)
@@ -189,7 +215,7 @@ namespace Fallout4Downgrader
             return ContentDownloader.InitializeSteam3(username, password);
         }
 
-        private static void CopyFiles(string srcDirectory, string dstDirectory, bool isMove)
+        private static void CopyFiles(string srcDirectory, string dstDirectory)
         {
             int copyCount = 0;
             var fileCount = 0;
@@ -215,14 +241,8 @@ namespace Fallout4Downgrader
                     Directory.CreateDirectory(dir);
                 }
 
-                if (isMove)
-                {
-                    File.Move(file, newPath, true);
-                }
-                else
-                {
-                    File.Copy(file, newPath, true);
-                }
+
+                File.Copy(file, newPath, true);
                 copyCount++;
             }
 
