@@ -1,7 +1,10 @@
 ﻿using DepotDownloader;
 using SteamKit2.GC.Artifact.Internal;
 using SteamKit2.Internal;
+using System.Diagnostics.Metrics;
 using System.Reflection;
+using static SteamKit2.GC.Artifact.Internal.CServerLobbyData_DraftCards;
+using static SteamKit2.Internal.PublishedFileDetails;
 
 namespace Fallout4Downgrader
 {
@@ -162,36 +165,46 @@ namespace Fallout4Downgrader
                     download_depot 377160 435871 5106118861901111234
                  */
 
-                uint appId = 377160;
                 List<(uint, ulong)> depots = new List<(uint, ulong)>
-            {
-                (377161,7497069378349273908),
-                (377162,5847529232406005096),
-                (377163,5819088023757897745),
-                (377164,2178106366609958945),
-                (435880,1255562923187931216),
-                (435870,1691678129192680960),
-                (435871,5106118861901111234)
-            };
+                {
+                    (377161,7497069378349273908),
+                    (377162,5847529232406005096),
+                    (377163,5819088023757897745),
+                    (377164,2178106366609958945),
+                    (435880,1255562923187931216),
+                    (435870,1691678129192680960),
+                    (435871,5106118861901111234)
+                };
+
 
                 ContentDownloader.Config.MaxDownloads = depots.Count;
 
-                try
-                {
-                    var language = settings.Language;
-                    if (!settings.DownloadAllLanguages && string.IsNullOrEmpty(settings.Language))
-                        language = "english";
-                    if (settings.DownloadAllLanguages)
-                        language = null;
+                var language = settings.Language;
+                if (!settings.DownloadAllLanguages && string.IsNullOrEmpty(settings.Language))
+                    language = "english";
+                if (settings.DownloadAllLanguages)
+                    language = null;
 
-                    await ContentDownloader.DownloadAppAsync(appId, depots, "public", "windows", "64", settings.Language, false, false);
-                }
-                catch (Exception exc)
+
+                uint f4AppId = 377160;
+                uint ckAppId = 1946160;
+
+                await ContentDownloader.DownloadAppAsync(f4AppId, depots, "public", "windows", "64", settings.Language, false, false);
+
+                // check if creation kit is available, if so, download and replace those as well.
+
+                var downloadCreationKit = Directory.Exists(Path.Combine(fo4.Path, "Tools"))
+                    || Directory.Exists(Path.Combine(fo4.Path, "Papyrus Compiler"))
+                    || settings.DownloadCreationKit;
+
+                if (downloadCreationKit)
                 {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine(exc.ToString());
-                    Console.ReadKey();
-                    return;
+                    depots.Clear();
+                    depots.AddRange([
+                        (1946161, 6928748513006443409),
+                        (1946162, 3951536123944501689),
+                    ]);
+                    await ContentDownloader.DownloadAppAsync(ckAppId, depots, "public", "windows", "64", settings.Language, false, false);
                 }
 
                 // when download is complete, copy all the files into the fallout 4 folder
@@ -235,35 +248,35 @@ namespace Fallout4Downgrader
                 var dataFolder = System.IO.Path.Combine(fo4.Path, "Data");
                 // finally delete following files from the fallout 4 folder:
                 var filesToDelete = new List<string>
-            {
-                "ccBGSFO4044-HellfirePowerArmor - Main.ba2",
-                "ccBGSFO4044-HellfirePowerArmor - Textures.ba2",
-                "ccBGSFO4044-HellfirePowerArmor.esl",
-                "ccBGSFO4046-TesCan - Main.ba2",
-                "ccBGSFO4046-TesCan - Textures.ba2",
-                "ccBGSFO4046-TesCan.esl",
-                "ccBGSFO4096-AS_Enclave - Main.ba2",
-                "ccBGSFO4096-AS_Enclave - Textures.ba2",
-                "ccBGSFO4096-AS_Enclave.esl",
-                "ccBGSFO4110-WS_Enclave - Main.ba2",
-                "ccBGSFO4110-WS_Enclave - Textures.ba2",
-                "ccBGSFO4110-WS_Enclave.esl",
-                "ccBGSFO4115-X02 - Main.ba2",
-                "ccBGSFO4115-X02 - Textures.ba2",
-                "ccBGSFO4115-X02.esl",
-                "ccBGSFO4116-HeavyFlamer - Main.ba2",
-                "ccBGSFO4116-HeavyFlamer - Textures.ba2",
-                "ccBGSFO4116-HeavyFlamer.esl",
-                "ccFSVFO4007-Halloween - Main.ba2",
-                "ccFSVFO4007-Halloween - Textures.ba2",
-                "ccFSVFO4007-Halloween.esl",
-                "ccOTMFO4001-Remnants - Main.ba2",
-                "ccOTMFO4001-Remnants - Textures.ba2",
-                "ccOTMFO4001-Remnants.esl",
-                "ccSBJFO4003-Grenade - Main.ba2",
-                "ccSBJFO4003-Grenade - Textures.ba2",
-                "ccSBJFO4003-Grenade.esl",
-            };
+                {
+                    "ccBGSFO4044-HellfirePowerArmor - Main.ba2",
+                    "ccBGSFO4044-HellfirePowerArmor - Textures.ba2",
+                    "ccBGSFO4044-HellfirePowerArmor.esl",
+                    "ccBGSFO4046-TesCan - Main.ba2",
+                    "ccBGSFO4046-TesCan - Textures.ba2",
+                    "ccBGSFO4046-TesCan.esl",
+                    "ccBGSFO4096-AS_Enclave - Main.ba2",
+                    "ccBGSFO4096-AS_Enclave - Textures.ba2",
+                    "ccBGSFO4096-AS_Enclave.esl",
+                    "ccBGSFO4110-WS_Enclave - Main.ba2",
+                    "ccBGSFO4110-WS_Enclave - Textures.ba2",
+                    "ccBGSFO4110-WS_Enclave.esl",
+                    "ccBGSFO4115-X02 - Main.ba2",
+                    "ccBGSFO4115-X02 - Textures.ba2",
+                    "ccBGSFO4115-X02.esl",
+                    "ccBGSFO4116-HeavyFlamer - Main.ba2",
+                    "ccBGSFO4116-HeavyFlamer - Textures.ba2",
+                    "ccBGSFO4116-HeavyFlamer.esl",
+                    "ccFSVFO4007-Halloween - Main.ba2",
+                    "ccFSVFO4007-Halloween - Textures.ba2",
+                    "ccFSVFO4007-Halloween.esl",
+                    "ccOTMFO4001-Remnants - Main.ba2",
+                    "ccOTMFO4001-Remnants - Textures.ba2",
+                    "ccOTMFO4001-Remnants.esl",
+                    "ccSBJFO4003-Grenade - Main.ba2",
+                    "ccSBJFO4003-Grenade - Textures.ba2",
+                    "ccSBJFO4003-Grenade.esl",
+                };
 
                 //Console.WriteLine("Next step will delete " + filesToDelete.Count + " files. Press any key to continue or CTRL+C to cancel.");
                 //Console.ReadKey();
@@ -374,11 +387,12 @@ namespace Fallout4Downgrader
         public string Language { get; set; }
         public bool DownloadAllLanguages { get; set; }
         public bool KeepDepotFiles { get; set; }
-
+        public bool DownloadCreationKit { get; set; }
         public StartupArgs()
         {
             UseQrCode = Params.HasParameter("-qr");
             KeepDepotFiles = Params.HasParameter("-keep-depot");
+            DownloadCreationKit = Params.HasParameter("-creation-kit") || Params.HasParameter("-ck");
             Username = Params.Get<string>("-username") ?? Params.Get<string>("-user");
             Password = Params.Get<string>("-password") ?? Params.Get<string>("-pass");
             DownloadAllLanguages = Params.HasParameter("-all-languages");
