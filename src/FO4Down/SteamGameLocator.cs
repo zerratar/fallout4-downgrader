@@ -33,7 +33,11 @@ namespace Fallout4Downgrader
             foreach (var folder in libraryFolders)
             {
                 // Get by appmanifest_*.acf files
-                var acfFiles = System.IO.Directory.GetFiles(Path.Combine(folder.Path, "steamapps"), "appmanifest_*.acf", SearchOption.AllDirectories);
+                var path = Path.Combine(folder.Path, "steamapps");
+                if (!Directory.Exists(path))
+                    continue;
+
+                var acfFiles = System.IO.Directory.GetFiles(path, "appmanifest_*.acf", SearchOption.AllDirectories);
                 foreach (var apps in acfFiles)
                 {
                     var gameName = ExtractGameNameFromAcf(apps);

@@ -16,7 +16,7 @@ namespace Fallout4Downgrader
         {
             Console.ResetColor();
             Console.Title = "Fallout 4 Downgrader - Lets go back in time!";
-            Console.WriteLine("Fallout 4 Downgrader - v" + Assembly.GetCallingAssembly().GetName().Version);
+            Console.WriteLine("Fallout 4 Downgrader - v" + Assembly.GetExecutingAssembly().GetName().Version);
             Console.WriteLine("Contact: zerratar@gmail.com");
             Console.WriteLine("Source: https://www.github.com/zerratar/fallout4-downgrader");
             Console.WriteLine("Using DepotDownloader for downloading depots.");
@@ -31,8 +31,30 @@ namespace Fallout4Downgrader
                 return;
             }
 
+            //steamPath = "G:\\GitHub\\fallout4-downgrader\\publish\\Self-contained\\libraryfolders.vdf";
+
             var libraryFolders = SteamGameLocator.GetLibraryFolders(steamPath);
             var installedGames = SteamGameLocator.GetInstalledGames(libraryFolders);
+
+            Console.WriteLine("Steam is installed at " + steamPath);
+
+            Console.WriteLine();
+            Console.WriteLine("Library Folders:");
+            foreach (var lib in libraryFolders)
+            {
+                Console.WriteLine("  * " + lib.Path);
+            }
+
+            Console.WriteLine();
+            Console.WriteLine("Installed Games:");
+            foreach (var game in installedGames)
+            {
+                Console.WriteLine("  * " + game.Key);
+                Console.WriteLine("    - " + game.Value.Path);
+            }
+
+            Console.WriteLine("------");
+            Console.WriteLine();
 
             if (!installedGames.TryGetValue("Fallout 4", out var fo4))
             {
@@ -41,6 +63,10 @@ namespace Fallout4Downgrader
                 Console.ReadKey();
                 return;
             }
+
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine("Found Fallout 4 at " + fo4.Path);
+            Console.ResetColor();
 
             AccountSettingsStore.LoadFromFile("account.config");
             Console.WriteLine("Please login using your credentials");

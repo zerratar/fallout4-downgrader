@@ -93,7 +93,9 @@ namespace Fallout4Downgrader
             var children = new List<Node>();
 
             // skip whitespaces and newlines
-            while (token.Type != Tokenizer.TokenType.String)
+            while (token.Type != Tokenizer.TokenType.String 
+                && token.Type != Tokenizer.TokenType.CloseCurly 
+                && index + 1 < tokens.Count)
             {
                 token = tokens[++index];
             }
