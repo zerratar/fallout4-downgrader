@@ -6,7 +6,29 @@
         void Debug(string message, params object[] args);
         void Warning(string message, params object[] args);
         void Error(string message, params object[] args);
+    }
 
+    public enum LogSeverity
+    {
+        Debug,
+        Information,
+        Warning,
+        Error
+    }
+
+    public class DelegateLogger : ILogger
+    {
+        private Action<LogSeverity, string, object[]> onLog;
+
+        public DelegateLogger(Action<LogSeverity, string, object[]> onLog)
+        {
+            this.onLog = onLog;
+        }
+
+        public void Debug(string message, params object[] args) => onLog(LogSeverity.Debug, message, args);
+        public void Error(string message, params object[] args) => onLog(LogSeverity.Error, message, args);
+        public void Info(string message, params object[] args) => onLog(LogSeverity.Information, message, args);
+        public void Warning(string message, params object[] args) => onLog(LogSeverity.Warning, message, args);
     }
 
     public class ConsoleLogger : ILogger
@@ -18,17 +40,17 @@
 
         public void Error(string message, params object[] args)
         {
-            WriteColoredLine((ConsoleColor.Red, "[ERR] " + message));
+            WriteColoredLine((ConsoleColor.Red, "[ERR] " + message), args);
         }
 
         public void Info(string message, params object[] args)
         {
-            WriteColoredLine((ConsoleColor.White, "[INFO] " + message));
+            WriteColoredLine((ConsoleColor.White, "[INFO] " + message), args);
         }
 
         public void Warning(string message, params object[] args)
         {
-            WriteColoredLine((ConsoleColor.Yellow, "[WRN] " + message));
+            WriteColoredLine((ConsoleColor.Yellow, "[WRN] " + message), args);
         }
 
         private void WriteColored((ConsoleColor, string) input, params object[] args)

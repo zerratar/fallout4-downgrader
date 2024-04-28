@@ -9,7 +9,7 @@ using ProtoBuf;
 namespace FO4Down.Steam.DepotDownloader
 {
     [ProtoContract]
-    class AccountSettingsStore
+    public class AccountSettingsStore
     {
         // Member 1 was a Dictionary<string, byte[]> for SentryData.
 
@@ -33,7 +33,7 @@ namespace FO4Down.Steam.DepotDownloader
             GuardData = [];
         }
 
-        static bool Loaded
+        public static bool Loaded
         {
             get { return Instance != null; }
         }

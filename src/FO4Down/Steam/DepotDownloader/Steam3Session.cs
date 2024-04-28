@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using FO4Down.Core;
 using QRCoder;
 using SteamKit2;
 using SteamKit2.Authentication;
@@ -37,7 +38,7 @@ namespace FO4Down.Steam.DepotDownloader
 
         private readonly CallbackManager callbacks;
 
-        private readonly bool authenticatedUser;
+        private bool authenticatedUser;
         private bool bConnected;
         private bool bConnecting;
         private bool bAborted;
@@ -52,13 +53,18 @@ namespace FO4Down.Steam.DepotDownloader
         // input
         private readonly SteamUser.LogOnDetails logonDetails;
         private readonly DownloadConfig dlConfig;
+        private readonly StepContext ctx;
+        private readonly ILogger logger;
         static readonly TimeSpan STEAM3_TIMEOUT = TimeSpan.FromSeconds(30);
 
-        public Steam3Session(SteamUser.LogOnDetails details, DownloadConfig dlConfig)
+        public Steam3Session(SteamUser.LogOnDetails details, DownloadConfig dlConfig, StepContext ctx)
         {
             logonDetails = details;
             this.dlConfig = dlConfig;
-            authenticatedUser = details.Username != null || dlConfig.UseQrCode;
+            this.ctx = ctx;
+            this.logger = dlConfig.Logger;
+
+            authenticatedUser = logonDetails.Username != null || dlConfig.UseQrCode;
 
             var clientConfiguration = SteamConfiguration.Create(config =>
                 config
@@ -81,7 +87,7 @@ namespace FO4Down.Steam.DepotDownloader
             callbacks.Subscribe<SteamUser.LoggedOnCallback>(LogOnCallback);
             callbacks.Subscribe<SteamApps.LicenseListCallback>(LicenseListCallback);
 
-            Console.Write("Connecting to Steam3...");
+            logger.Info("Connecting to Steam3...");
             Connect();
         }
 
@@ -132,7 +138,7 @@ namespace FO4Down.Steam.DepotDownloader
                 completed = true;
                 if (appTokens.AppTokensDenied.Contains(appId))
                 {
-                    Console.WriteLine("Insufficient privileges to get access token for app {0}", appId);
+                    logger.Error("Insufficient privileges to get access token for app {0}", appId);
                 }
 
                 foreach (var token_dict in appTokens.AppTokens)
@@ -155,7 +161,7 @@ namespace FO4Down.Steam.DepotDownloader
                 {
                     var app = app_value.Value;
 
-                    Console.WriteLine("Got AppInfo for {0}", app.ID);
+                    logger.Info("Got AppInfo for {0}", app.ID);
                     AppInfo[app.ID] = app;
                 }
 
@@ -250,7 +256,7 @@ namespace FO4Down.Steam.DepotDownloader
             Action<SteamApps.DepotKeyCallback> cbMethod = depotKey =>
             {
                 completed = true;
-                Console.WriteLine("Got depot key for {0} result: {1}", depotKey.DepotID, depotKey.Result);
+                logger.Info("Got depot key for {0} result: {1}", depotKey.DepotID, depotKey.Result);
 
                 if (depotKey.Result != EResult.OK)
                 {
@@ -275,7 +281,7 @@ namespace FO4Down.Steam.DepotDownloader
 
             var requestCode = await steamContent.GetManifestRequestCode(depotId, appId, manifestId, branch);
 
-            Console.WriteLine("Got manifest request code for {0} {1} result: {2}",
+            logger.Info("Got manifest request code for {0} {1} result: {2}",
                 depotId, manifestId,
                 requestCode);
 
@@ -289,7 +295,7 @@ namespace FO4Down.Steam.DepotDownloader
             {
                 completed = true;
 
-                Console.WriteLine("Retrieved {0} beta keys with result: {1}", appPassword.BetaPasswords.Count, appPassword.Result);
+                logger.Info("Retrieved {0} beta keys with result: {1}", appPassword.BetaPasswords.Count, appPassword.Result);
 
                 foreach (var entry in appPassword.BetaPasswords)
                 {
@@ -424,14 +430,14 @@ namespace FO4Down.Steam.DepotDownloader
 
             if (diff > STEAM3_TIMEOUT && !bConnected)
             {
-                Console.WriteLine("Timeout connecting to Steam3.");
+                logger.Info("Timeout connecting to Steam3.");
                 Abort();
             }
         }
 
         private async void ConnectedCallback(SteamClient.ConnectedCallback connected)
         {
-            Console.WriteLine(" Done!");
+            logger.Info("Connection established.");
             bConnecting = false;
             bConnected = true;
 
@@ -440,16 +446,18 @@ namespace FO4Down.Steam.DepotDownloader
             connectTime = DateTime.Now;
             connectionBackoff = 0;
 
+            authenticatedUser = logonDetails.Username != null || dlConfig.UseQrCode;
+
             if (!authenticatedUser)
             {
-                Console.Write("Logging anonymously into Steam3...");
+                logger.Info("Logging anonymously into Steam3...");
                 steamUser.LogOnAnonymous();
             }
             else
             {
                 if (logonDetails.Username != null)
                 {
-                    Console.WriteLine("Logging '{0}' into Steam3...", logonDetails.Username);
+                    logger.Info("Logging '{0}' into Steam3...", logonDetails.Username);
                 }
 
                 if (authSession is null)
@@ -465,8 +473,8 @@ namespace FO4Down.Steam.DepotDownloader
                                 Password = logonDetails.Password,
                                 IsPersistentSession = dlConfig.RememberPassword,
                                 GuardData = guarddata,
-                                Authenticator = new UserConsoleAuthenticator(),
-                            });
+                                Authenticator = ctx.UserAuthenticator,
+                            }) ;
                         }
                         catch (TaskCanceledException)
                         {
@@ -474,21 +482,21 @@ namespace FO4Down.Steam.DepotDownloader
                         }
                         catch (Exception ex)
                         {
-                            Console.Error.WriteLine("Failed to authenticate with Steam: " + ex.Message);
+                            logger.Error("Failed to authenticate with Steam: " + ex.Message);
                             Abort(false);
                             return;
                         }
                     }
                     else if (logonDetails.AccessToken is null && dlConfig.UseQrCode)
                     {
-                        Console.WriteLine("Logging in with QR code...");
+                        logger.Info("Logging in with QR code...");
 
                         try
                         {
                             var session = await steamClient.Authentication.BeginAuthSessionViaQRAsync(new AuthSessionDetails
                             {
                                 IsPersistentSession = dlConfig.RememberPassword,
-                                Authenticator = new UserConsoleAuthenticator(),
+                                Authenticator = ctx.UserAuthenticator,
                             });
 
                             authSession = session;
@@ -496,8 +504,7 @@ namespace FO4Down.Steam.DepotDownloader
                             // Steam will periodically refresh the challenge url, so we need a new QR code.
                             session.ChallengeURLChanged = () =>
                             {
-                                Console.WriteLine();
-                                Console.WriteLine("The QR code has changed:");
+                                logger.Info("The QR code has changed:");
 
                                 DisplayQrCode(session.ChallengeURL);
                             };
@@ -511,7 +518,7 @@ namespace FO4Down.Steam.DepotDownloader
                         }
                         catch (Exception ex)
                         {
-                            Console.Error.WriteLine("Failed to authenticate with Steam: " + ex.Message);
+                            logger.Error("Failed to authenticate with Steam: " + ex.Message);
                             Abort(false);
                             return;
                         }
@@ -545,7 +552,7 @@ namespace FO4Down.Steam.DepotDownloader
                     }
                     catch (Exception ex)
                     {
-                        Console.Error.WriteLine("Failed to authenticate with Steam: " + ex.Message);
+                        logger.Error("Failed to authenticate with Steam: " + ex.Message);
                         Abort(false);
                         return;
                     }
@@ -566,25 +573,25 @@ namespace FO4Down.Steam.DepotDownloader
             // When recovering the connection, we want to reconnect even if the remote disconnects us
             if (!bIsConnectionRecovery && (disconnected.UserInitiated || bExpectingDisconnectRemote))
             {
-                Console.WriteLine("Disconnected from Steam");
+                logger.Info("Disconnected from Steam");
 
                 // Any operations outstanding need to be aborted
                 bAborted = true;
             }
             else if (connectionBackoff >= 10)
             {
-                Console.WriteLine("Could not connect to Steam after 10 tries");
+                logger.Info("Could not connect to Steam after 10 tries");
                 Abort(false);
             }
             else if (!bAborted)
             {
                 if (bConnecting)
                 {
-                    Console.WriteLine("Connection to Steam failed. Trying again");
+                    logger.Info("Connection to Steam failed. Trying again");
                 }
                 else
                 {
-                    Console.WriteLine("Lost connection to Steam. Reconnecting");
+                    logger.Info("Lost connection to Steam. Reconnecting");
                 }
 
                 Thread.Sleep(1000 * ++connectionBackoff);
@@ -613,15 +620,16 @@ namespace FO4Down.Steam.DepotDownloader
 
                 if (!isAccessToken)
                 {
-                    Console.WriteLine("This account is protected by Steam Guard.");
+                    logger.Info("This account is protected by Steam Guard.");
                 }
 
                 if (is2FA)
                 {
                     do
                     {
-                        Console.Write("Please enter your 2 factor auth code from your authenticator app: ");
-                        logonDetails.TwoFactorCode = Console.ReadLine();
+
+                        logger.Info("Please enter your 2 factor auth code from your authenticator app: ");
+                        logonDetails.TwoFactorCode = ctx.RequestTwoFactorCode();// Console.ReadLine();
                     } while (string.Empty == logonDetails.TwoFactorCode);
                 }
                 else if (isAccessToken)
@@ -630,7 +638,7 @@ namespace FO4Down.Steam.DepotDownloader
                     AccountSettingsStore.Save();
 
                     // TODO: Handle gracefully by falling back to password prompt?
-                    Console.WriteLine($"Access token was rejected ({loggedOn.Result}).");
+                    logger.Error($"Access token was rejected ({loggedOn.Result}).");
                     Abort(false);
                     return;
                 }
@@ -638,12 +646,12 @@ namespace FO4Down.Steam.DepotDownloader
                 {
                     do
                     {
-                        Console.Write("Please enter the authentication code sent to your email address: ");
-                        logonDetails.AuthCode = Console.ReadLine();
+                        logger.Info("Please enter the authentication code sent to your email address: ");
+                        logonDetails.AuthCode = ctx.RequestEmailAuthCode();
                     } while (string.Empty == logonDetails.AuthCode);
                 }
 
-                Console.Write("Retrying Steam3 connection...");
+                logger.Info("Retrying Steam3 connection...");
                 Connect();
 
                 return;
@@ -651,7 +659,7 @@ namespace FO4Down.Steam.DepotDownloader
 
             if (loggedOn.Result == EResult.TryAnotherCM)
             {
-                Console.Write("Retrying Steam3 connection (TryAnotherCM)...");
+                logger.Info("Retrying Steam3 connection (TryAnotherCM)...");
 
                 Reconnect();
 
@@ -660,7 +668,7 @@ namespace FO4Down.Steam.DepotDownloader
 
             if (loggedOn.Result == EResult.ServiceUnavailable)
             {
-                Console.WriteLine("Unable to login to Steam3: {0}", loggedOn.Result);
+                logger.Info("Unable to login to Steam3: {0}", loggedOn.Result);
                 Abort(false);
 
                 return;
@@ -668,20 +676,20 @@ namespace FO4Down.Steam.DepotDownloader
 
             if (loggedOn.Result != EResult.OK)
             {
-                Console.WriteLine("Unable to login to Steam3: {0}", loggedOn.Result);
+                logger.Info("Unable to login to Steam3: {0}", loggedOn.Result);
                 Abort();
 
                 return;
             }
 
-            Console.WriteLine(" Done!");
+            logger.Info("Authentication complete!");
 
             seq++;
             IsLoggedOn = true;
 
             if (dlConfig.CellID == 0)
             {
-                Console.WriteLine("Using Steam3 suggested CellID: " + loggedOn.CellID);
+                logger.Info("Using Steam3 suggested CellID: " + loggedOn.CellID);
                 dlConfig.CellID = (int)loggedOn.CellID;
             }
         }
@@ -690,13 +698,13 @@ namespace FO4Down.Steam.DepotDownloader
         {
             if (licenseList.Result != EResult.OK)
             {
-                Console.WriteLine("Unable to get license list: {0} ", licenseList.Result);
+                logger.Info("Unable to get license list: {0} ", licenseList.Result);
                 Abort();
 
                 return;
             }
 
-            Console.WriteLine("Got {0} licenses for account!", licenseList.LicenseList.Count);
+            logger.Info("Got {0} licenses for account!", licenseList.LicenseList.Count);
             Licenses = licenseList.LicenseList;
 
             foreach (var license in licenseList.LicenseList)
@@ -708,7 +716,9 @@ namespace FO4Down.Steam.DepotDownloader
             }
         }
 
-        private static void DisplayQrCode(string challengeUrl)
+        public static Action<string> OnDisplayQrCode;
+
+        private void DisplayQrCode(string challengeUrl)
         {
             // Encode the link as a QR code
             using var qrGenerator = new QRCodeGenerator();
@@ -716,8 +726,14 @@ namespace FO4Down.Steam.DepotDownloader
             using var qrCode = new AsciiQRCode(qrCodeData);
             var qrCodeAsAsciiArt = qrCode.GetGraphic(1, drawQuietZones: false);
 
-            Console.WriteLine("Use the Steam Mobile App to sign in with this QR code:");
-            Console.WriteLine(qrCodeAsAsciiArt);
+            if (OnDisplayQrCode != null)
+            {
+                OnDisplayQrCode(qrCodeAsAsciiArt);
+                return;
+            }
+
+            logger.Info("Use the Steam Mobile App to sign in with this QR code:");
+            logger.Info(qrCodeAsAsciiArt);
         }
     }
 }

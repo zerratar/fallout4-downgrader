@@ -272,7 +272,7 @@ namespace FO4Down.Steam.DepotDownloader
             return info["name"].AsString();
         }
 
-        public static bool InitializeSteam3(string username, string password)
+        public static bool InitializeSteam3(string username, string password, StepContext ctx)
         {
             string loginToken = null;
 
@@ -290,7 +290,8 @@ namespace FO4Down.Steam.DepotDownloader
                     AccessToken = loginToken,
                     LoginID = Config.LoginID ?? 0x534B32, // "SK2"
                 },
-                Config
+                Config,
+                ctx
             );
 
             if (!steam3.WaitForCredentials())
@@ -316,8 +317,10 @@ namespace FO4Down.Steam.DepotDownloader
             steam3.Disconnect();
         }
 
-        public static async Task DownloadAppAsync(uint appId, List<(uint depotId, ulong manifestId)> depotManifestIds, string branch, string os, string arch, string language, bool lv, bool isUgc)
+        public static async Task DownloadAppAsync(uint appId, List<(uint depotId, ulong manifestId)> depotManifestIds, string branch, string os, string arch, string language, bool lv, bool isUgc, StepContext? ctx = null)
         {
+            if (ctx == null) ctx = new StepContext();
+
             if (cdnPool == null)
                 cdnPool = new CDNClientPool(steam3, appId);
 
@@ -341,7 +344,7 @@ namespace FO4Down.Steam.DepotDownloader
                 if (steam3.RequestFreeAppLicense(appId))
                 {
                     Config.Logger.Info("Obtained FreeOnDemand license for app {0}", appId);
-
+                    ctx.Notify("Obtained FreeOnDemand license for app {0}", appId);
                     // Fetch app info again in case we didn't get it fully without a license.
                     steam3.RequestAppInfo(appId, true);
                 }
@@ -456,12 +459,13 @@ namespace FO4Down.Steam.DepotDownloader
 
             try
             {
-                await DownloadSteam3Async(infos).ConfigureAwait(false);
+                ctx.Notify("Preparing download of {0} depots for app {1}", infos.Count, appId);
+                await DownloadSteam3Async(infos, ctx).ConfigureAwait(false);
             }
-            catch (OperationCanceledException)
+            catch (OperationCanceledException e)
             {
                 Config.Logger.Error("App {0} was not completely downloaded.", appId);
-                throw;
+                throw new Exception(string.Format("App {0} was not completely downloaded.", appId), e);
             }
         }
 
@@ -550,7 +554,7 @@ namespace FO4Down.Steam.DepotDownloader
             public ulong DepotBytesUncompressed;
         }
 
-        private static async Task DownloadSteam3Async(List<DepotDownloadInfo> depots)
+        private static async Task DownloadSteam3Async(List<DepotDownloadInfo> depots, StepContext ctx)
         {
             var cts = new CancellationTokenSource();
             cdnPool.ExhaustedToken = cts;
@@ -562,7 +566,7 @@ namespace FO4Down.Steam.DepotDownloader
             // First, fetch all the manifests for each depot (including previous manifests) and perform the initial setup
             foreach (var depot in depots)
             {
-                var depotFileData = await ProcessDepotManifestAndFiles(cts, depot);
+                var depotFileData = await ProcessDepotManifestAndFiles(cts, depot, ctx);
 
                 if (depotFileData != null)
                 {
@@ -588,16 +592,22 @@ namespace FO4Down.Steam.DepotDownloader
                 }
             }
 
+
+
+
+            ctx.Notify("Downloading {0} depots", depotsToDownload.Count);
+
             foreach (var depotFileData in depotsToDownload)
             {
-                await DownloadSteam3AsyncDepotFiles(cts, downloadCounter, depotFileData, allFileNamesAllDepots);
+                await DownloadSteam3AsyncDepotFiles(cts, downloadCounter, depotFileData, allFileNamesAllDepots, ctx);
+                ctx.DepotsDownloaded++;
             }
 
             Config.Logger.Info("Total downloaded: {0} bytes ({1} bytes uncompressed) from {2} depots",
                 downloadCounter.TotalBytesCompressed, downloadCounter.TotalBytesUncompressed, depots.Count);
         }
 
-        private static async Task<DepotFilesData> ProcessDepotManifestAndFiles(CancellationTokenSource cts, DepotDownloadInfo depot)
+        private static async Task<DepotFilesData> ProcessDepotManifestAndFiles(CancellationTokenSource cts, DepotDownloadInfo depot, StepContext ctx)
         {
             var depotCounter = new DepotDownloadCounter();
 
@@ -716,8 +726,8 @@ namespace FO4Down.Steam.DepotDownloader
                                     cts.Cancel();
                                 }
                             }
-
-                            DebugLog.WriteLine("ContentDownloader",
+                            //DebugLog.WriteLine
+                            ctx.Notify("ContentDownloader",
                                 "Downloading manifest {0} from {1} with {2}",
                                 depot.ManifestId,
                                 connection,
@@ -834,7 +844,8 @@ namespace FO4Down.Steam.DepotDownloader
         }
 
         private static async Task DownloadSteam3AsyncDepotFiles(CancellationTokenSource cts,
-            GlobalDownloadCounter downloadCounter, DepotFilesData depotFilesData, HashSet<string> allFileNamesAllDepots)
+            GlobalDownloadCounter downloadCounter, DepotFilesData depotFilesData, HashSet<string> allFileNamesAllDepots,
+            StepContext ctx)
         {
             var depot = depotFilesData.depotDownloadInfo;
             var depotCounter = depotFilesData.depotCounter;
@@ -843,17 +854,18 @@ namespace FO4Down.Steam.DepotDownloader
 
             var files = depotFilesData.filteredFiles.Where(f => !f.Flags.HasFlag(EDepotFileFlag.Directory)).ToArray();
             var networkChunkQueue = new ConcurrentQueue<(FileStreamData fileStreamData, ProtoManifest.FileData fileData, ProtoManifest.ChunkData chunk)>();
+            var fileCount = files.Length;
 
             await Util.InvokeAsync(
-                files.Select(file => new Func<Task>(async () =>
-                    await Task.Run(() => DownloadSteam3AsyncDepotFile(cts, depotFilesData, file, networkChunkQueue)))),
+                files.Select((file, index) => new Func<Task>(async () =>
+                    await Task.Run(() => DownloadSteam3AsyncDepotFile(cts, depotFilesData, file, networkChunkQueue, index, fileCount, ctx)))),
                 maxDegreeOfParallelism: Config.MaxDownloads
             );
-
+            var chunkCount = networkChunkQueue.Count;
             await Util.InvokeAsync(
-                networkChunkQueue.Select(q => new Func<Task>(async () =>
+                networkChunkQueue.Select((q, index) => new Func<Task>(async () =>
                     await Task.Run(() => DownloadSteam3AsyncDepotFileChunk(cts, downloadCounter, depotFilesData,
-                        q.fileData, q.fileStreamData, q.chunk)))),
+                        q.fileData, q.fileStreamData, q.chunk, index, chunkCount, ctx)))),
                 maxDegreeOfParallelism: Config.MaxDownloads
             );
 
@@ -896,7 +908,8 @@ namespace FO4Down.Steam.DepotDownloader
             CancellationTokenSource cts,
             DepotFilesData depotFilesData,
             ProtoManifest.FileData file,
-            ConcurrentQueue<(FileStreamData, ProtoManifest.FileData, ProtoManifest.ChunkData)> networkChunkQueue)
+            ConcurrentQueue<(FileStreamData, ProtoManifest.FileData, ProtoManifest.ChunkData)> networkChunkQueue,
+            int fileIndex, int totalFileCount, StepContext ctx)
         {
             cts.Token.ThrowIfCancellationRequested();
 
@@ -1048,6 +1061,8 @@ namespace FO4Down.Steam.DepotDownloader
                     neededChunks = Util.ValidateSteam3FileChecksums(fs, [.. file.Chunks.OrderBy(x => x.Offset)]);
                 }
 
+                ctx.Progress($"Downloading {fi.Name}", (float)fileIndex / totalFileCount);
+
                 if (neededChunks.Count == 0)
                 {
                     lock (depotDownloadCounter)
@@ -1097,7 +1112,8 @@ namespace FO4Down.Steam.DepotDownloader
             DepotFilesData depotFilesData,
             ProtoManifest.FileData file,
             FileStreamData fileStreamData,
-            ProtoManifest.ChunkData chunk)
+            ProtoManifest.ChunkData chunk,
+            int fileIndex, int totalFileCount, StepContext ctx)
         {
             cts.Token.ThrowIfCancellationRequested();
 
@@ -1117,6 +1133,10 @@ namespace FO4Down.Steam.DepotDownloader
 
             DepotChunk chunkData = null;
 
+
+            //ctx.Progress($"Downloading Depot File Chunk for " + file.FileName, (float)fileIndex / totalFileCount);
+            ctx.Progress(null, (float)fileIndex / totalFileCount);
+
             do
             {
                 cts.Token.ThrowIfCancellationRequested();
@@ -1126,14 +1146,18 @@ namespace FO4Down.Steam.DepotDownloader
                 try
                 {
                     connection = cdnPool.GetConnection(cts.Token);
-
+                    var cp = ctx.ChunkDownloadProgress(file.FileName, data.Offset, data.CompressedLength);
                     DebugLog.WriteLine("ContentDownloader", "Downloading chunk {0} from {1} with {2}", chunkID, connection, cdnPool.ProxyServer != null ? cdnPool.ProxyServer : "no proxy");
                     chunkData = await cdnPool.CDNClient.DownloadDepotChunkAsync(
                         depot.DepotId,
                         data,
                         connection,
                         depot.DepotKey,
-                        cdnPool.ProxyServer).ConfigureAwait(false);
+                        cdnPool.ProxyServer,
+                        cp)
+                        .ConfigureAwait(false);
+
+                    ctx.ChunkDownloadProgressFinished(cp);
 
                     cdnPool.ReturnConnection(connection);
                 }
@@ -1216,7 +1240,9 @@ namespace FO4Down.Steam.DepotDownloader
             if (remainingChunks == 0)
             {
                 var fileFinalPath = Path.Combine(depot.InstallDir, file.FileName);
-                Config.Logger.Info("{0,6:#00.00}% {1}", sizeDownloaded / (float)depotDownloadCounter.CompleteDownloadSize * 100.0f, fileFinalPath);
+
+                //Config.Logger.Info("{0,6:#00.00}% {1}", sizeDownloaded / (float)depotDownloadCounter.CompleteDownloadSize * 100.0f, fileFinalPath);
+                Config.Logger.Info($"Downloading {fileFinalPath}");
             }
         }
 

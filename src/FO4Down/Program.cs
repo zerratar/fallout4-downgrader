@@ -1,18 +1,15 @@
-﻿using FO4Down.Core;
+﻿using FO4Down;
+using FO4Down.Core;
 using FO4Down.Steam;
 using FO4Down.Steam.DepotDownloader;
-using SteamKit2.GC.Artifact.Internal;
-using SteamKit2.Internal;
-using System.Diagnostics.Metrics;
+using FO4Down.Windows;
 using System.Reflection;
-using static SteamKit2.GC.Artifact.Internal.CServerLobbyData_DraftCards;
-using static SteamKit2.Internal.PublishedFileDetails;
+using Terminal.Gui;
 
 namespace Fallout4Downgrader
 {
     internal class Program
     {
-        private ILogger logger;
         public static string GetTitle()
         {
             return "Fallout 4 Downgrader";
@@ -20,6 +17,8 @@ namespace Fallout4Downgrader
 
         static async Task Main(string[] args)
         {
+
+            //args = ["-qr"];
             var settings = LoadSettingsFromArgs(args);
 
             if (args.Contains("-help") || args.Contains("-h") || args.Contains("/?") || args.Contains("-?"))
@@ -37,6 +36,18 @@ namespace Fallout4Downgrader
                 Console.ReadKey();
                 return;
             }
+
+            Application.Run<MainWindow>();
+            Application.Shutdown();
+            return;
+
+            // setup qr code hook
+            Steam3Session.OnDisplayQrCode += (qrCode) =>
+            {
+                Console.WriteLine("Scan the QR code with your Steam mobile app to login.");
+                Console.WriteLine(qrCode);
+            };
+
             try
             {
                 Console.ResetColor();
@@ -133,6 +144,7 @@ namespace Fallout4Downgrader
 
         private static void LoginToSteam(AppSettings settings)
         {
+            var ctx = new StepContext();
             AccountSettingsStore.LoadFromFile("account.config");
 
             string username = null;
@@ -170,7 +182,7 @@ namespace Fallout4Downgrader
                         }
                     }
 
-                    if (!InitializeSteam(username, password))
+                    if (!InitializeSteam(username, password, ctx))
                     {
                         username = null;
                         password = null;
@@ -189,7 +201,7 @@ namespace Fallout4Downgrader
                 }
                 else
                 {
-                    if (!InitializeSteam(username, password))
+                    if (!InitializeSteam(username, password, ctx))
                     {
                         Console.WriteLine("Login to steam failed. Restart the app and try again");
                         Console.ReadKey();
@@ -383,7 +395,7 @@ namespace Fallout4Downgrader
             return settings;
         }
 
-        static bool InitializeSteam(string username, string password)
+        static bool InitializeSteam(string username, string password, StepContext ctx)
         {
             if (!ContentDownloader.Config.UseQrCode)
             {
@@ -411,7 +423,7 @@ namespace Fallout4Downgrader
                 }
             }
 
-            return ContentDownloader.InitializeSteam3(username, password);
+            return ContentDownloader.InitializeSteam3(username, password, ctx);
         }
 
         private static void CopyFiles(string srcDirectory, string dstDirectory)
