@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
 
-namespace Fallout4Downgrader
+namespace FO4Down.Steam
 {
     public class SteamGameLocator
     {
@@ -37,7 +37,7 @@ namespace Fallout4Downgrader
                 if (!Directory.Exists(path))
                     continue;
 
-                var acfFiles = System.IO.Directory.GetFiles(path, "appmanifest_*.acf", SearchOption.AllDirectories);
+                var acfFiles = Directory.GetFiles(path, "appmanifest_*.acf", SearchOption.AllDirectories);
                 foreach (var apps in acfFiles)
                 {
                     var gameName = ExtractGameNameFromAcf(apps);

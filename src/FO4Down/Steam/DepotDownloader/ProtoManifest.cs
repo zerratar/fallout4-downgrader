@@ -6,7 +6,7 @@ using System.Security.Cryptography;
 using ProtoBuf;
 using SteamKit2;
 
-namespace DepotDownloader
+namespace FO4Down.Steam.DepotDownloader
 {
     [ProtoContract]
     class ProtoManifest

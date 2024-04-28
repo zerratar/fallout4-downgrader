@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Text;
 
-namespace Fallout4Downgrader
+namespace FO4Down.Steam
 {
     public static class Tokenizer
     {
@@ -14,7 +14,7 @@ namespace Fallout4Downgrader
 
             void Token(TokenType type, string value)
             {
-                tokens.Add(new Tokenizer.Token
+                tokens.Add(new Token
                 {
                     Type = type,
                     Value = value,

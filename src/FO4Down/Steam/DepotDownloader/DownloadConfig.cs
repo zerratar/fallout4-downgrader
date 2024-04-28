@@ -1,10 +1,14 @@
-﻿using System.Collections.Generic;
+﻿using FO4Down.Core;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
-namespace DepotDownloader
+namespace FO4Down.Steam.DepotDownloader
 {
-    class DownloadConfig
+    public class DownloadConfig
     {
+        private ILogger logger;
+        private ILogger consoleLogger = new ConsoleLogger();
+        public ILogger Logger { get => logger ?? consoleLogger; set => logger = value; }
         public int CellID { get; set; }
         public bool DownloadAllPlatforms { get; set; }
         public bool DownloadAllLanguages { get; set; }

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace Fallout4Downgrader
+namespace FO4Down.Steam
 {
     public static class SteamJsonParser
     {

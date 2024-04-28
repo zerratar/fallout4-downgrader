@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using System.Reflection;
 
-namespace Fallout4Downgrader
+namespace FO4Down.Steam
 {
     public class SteamCMD : IDisposable
     {
@@ -17,7 +17,7 @@ namespace Fallout4Downgrader
 
         public static void RunCommand(string command, Action<string> onData, Action onComplete)
         {
-            var workingDirectory = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(Assembly.GetCallingAssembly().Location), "Steam");
+            var workingDirectory = Path.Combine(Path.GetDirectoryName(Assembly.GetCallingAssembly().Location), "Steam");
             var startInfo = new ProcessStartInfo
             {
                 RedirectStandardInput = true,
@@ -26,7 +26,7 @@ namespace Fallout4Downgrader
                 UseShellExecute = false,
                 CreateNoWindow = true,
                 Arguments = command,
-                FileName = System.IO.Path.Combine(workingDirectory, "steamcmd.exe"),
+                FileName = Path.Combine(workingDirectory, "steamcmd.exe"),
                 WorkingDirectory = workingDirectory
             };
             using (var process = new Process())
@@ -62,7 +62,7 @@ namespace Fallout4Downgrader
 
         public void Start()
         {
-            var workingDirectory = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(Assembly.GetCallingAssembly().Location), "Steam");
+            var workingDirectory = Path.Combine(Path.GetDirectoryName(Assembly.GetCallingAssembly().Location), "Steam");
             var startInfo = new ProcessStartInfo
             {
                 RedirectStandardInput = true,
@@ -70,11 +70,11 @@ namespace Fallout4Downgrader
                 RedirectStandardError = true,
                 UseShellExecute = false,
                 CreateNoWindow = true,
-                FileName = System.IO.Path.Combine(workingDirectory, "steamcmd.exe"),
+                FileName = Path.Combine(workingDirectory, "steamcmd.exe"),
                 WorkingDirectory = workingDirectory
             };
 
-            this.process = new Process();
+            process = new Process();
             process.StartInfo = startInfo;
             process.OutputDataReceived += OutputDataReceived;
             process.ErrorDataReceived += ErrorDataReceived;

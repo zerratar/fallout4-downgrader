@@ -4,7 +4,7 @@ using System.IO;
 using System.IO.Compression;
 using ProtoBuf;
 
-namespace DepotDownloader
+namespace FO4Down.Steam.DepotDownloader
 {
     [ProtoContract]
     class DepotConfigStore
@@ -19,7 +19,7 @@ namespace DepotDownloader
             InstalledManifestIDs = [];
         }
 
-        static bool Loaded
+        public static bool Loaded
         {
             get { return Instance != null; }
         }

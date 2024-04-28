@@ -6,7 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using SteamKit2.CDN;
 
-namespace DepotDownloader
+namespace FO4Down.Steam.DepotDownloader
 {
     /// <summary>
     /// CDNClientPool provides a pool of connections to CDN endpoints, requesting CDN tokens as needed
@@ -47,7 +47,7 @@ namespace DepotDownloader
         {
             try
             {
-                var cdnServers = await this.steamSession.steamContent.GetServersForSteamPipe();
+                var cdnServers = await steamSession.steamContent.GetServersForSteamPipe();
                 if (cdnServers != null)
                 {
                     return cdnServers;

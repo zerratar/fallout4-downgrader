@@ -2,7 +2,7 @@ using System;
 using System.Diagnostics.Tracing;
 using System.Text;
 
-namespace DepotDownloader
+namespace FO4Down.Steam.DepotDownloader
 {
     internal sealed class HttpDiagnosticEventListener : EventListener
     {

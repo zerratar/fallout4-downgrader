@@ -6,7 +6,7 @@ using System.IO.Compression;
 using System.IO.IsolatedStorage;
 using ProtoBuf;
 
-namespace DepotDownloader
+namespace FO4Down.Steam.DepotDownloader
 {
     [ProtoContract]
     class AccountSettingsStore

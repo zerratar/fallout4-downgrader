@@ -2,7 +2,7 @@
 using System.IO;
 using System.Linq;
 
-namespace Fallout4Downgrader
+namespace FO4Down.Steam
 {
     public static class SteamJson
     {
@@ -15,7 +15,7 @@ namespace Fallout4Downgrader
             {
                 if (folder.Identifier == null)
                 {
-                    foreach(var f in folder.Children)
+                    foreach (var f in folder.Children)
                     {
                         list.Add(ParseSteamFolder(f));
                     }

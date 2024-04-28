@@ -9,7 +9,7 @@ using SteamKit2;
 using SteamKit2.Authentication;
 using SteamKit2.Internal;
 
-namespace DepotDownloader
+namespace FO4Down.Steam.DepotDownloader
 {
     class Steam3Session
     {
@@ -35,51 +35,51 @@ namespace DepotDownloader
         readonly SteamCloud steamCloud;
         readonly SteamUnifiedMessages.UnifiedService<IPublishedFile> steamPublishedFile;
 
-        readonly CallbackManager callbacks;
+        private readonly CallbackManager callbacks;
 
-        readonly bool authenticatedUser;
-        bool bConnected;
-        bool bConnecting;
-        bool bAborted;
-        bool bExpectingDisconnectRemote;
-        bool bDidDisconnect;
-        bool bIsConnectionRecovery;
-        int connectionBackoff;
-        int seq; // more hack fixes
-        DateTime connectTime;
-        AuthSession authSession;
+        private readonly bool authenticatedUser;
+        private bool bConnected;
+        private bool bConnecting;
+        private bool bAborted;
+        private bool bExpectingDisconnectRemote;
+        private bool bDidDisconnect;
+        private bool bIsConnectionRecovery;
+        private int connectionBackoff;
+        private int seq; // more hack fixes
+        private DateTime connectTime;
+        private AuthSession authSession;
 
         // input
-        readonly SteamUser.LogOnDetails logonDetails;
-
+        private readonly SteamUser.LogOnDetails logonDetails;
+        private readonly DownloadConfig dlConfig;
         static readonly TimeSpan STEAM3_TIMEOUT = TimeSpan.FromSeconds(30);
 
-
-        public Steam3Session(SteamUser.LogOnDetails details)
+        public Steam3Session(SteamUser.LogOnDetails details, DownloadConfig dlConfig)
         {
-            this.logonDetails = details;
-            this.authenticatedUser = details.Username != null || ContentDownloader.Config.UseQrCode;
+            logonDetails = details;
+            this.dlConfig = dlConfig;
+            authenticatedUser = details.Username != null || dlConfig.UseQrCode;
 
             var clientConfiguration = SteamConfiguration.Create(config =>
                 config
                     .WithHttpClientFactory(HttpClientFactory.CreateHttpClient)
             );
 
-            this.steamClient = new SteamClient(clientConfiguration);
+            steamClient = new SteamClient(clientConfiguration);
 
-            this.steamUser = this.steamClient.GetHandler<SteamUser>();
-            this.steamApps = this.steamClient.GetHandler<SteamApps>();
-            this.steamCloud = this.steamClient.GetHandler<SteamCloud>();
-            var steamUnifiedMessages = this.steamClient.GetHandler<SteamUnifiedMessages>();
-            this.steamPublishedFile = steamUnifiedMessages.CreateService<IPublishedFile>();
-            this.steamContent = this.steamClient.GetHandler<SteamContent>();
+            steamUser = steamClient.GetHandler<SteamUser>();
+            steamApps = steamClient.GetHandler<SteamApps>();
+            steamCloud = steamClient.GetHandler<SteamCloud>();
+            var steamUnifiedMessages = steamClient.GetHandler<SteamUnifiedMessages>();
+            steamPublishedFile = steamUnifiedMessages.CreateService<IPublishedFile>();
+            steamContent = steamClient.GetHandler<SteamContent>();
 
-            this.callbacks = new CallbackManager(this.steamClient);
+            callbacks = new CallbackManager(steamClient);
 
-            this.callbacks.Subscribe<SteamClient.ConnectedCallback>(ConnectedCallback);
-            this.callbacks.Subscribe<SteamClient.DisconnectedCallback>(DisconnectedCallback);
-            this.callbacks.Subscribe<SteamUser.LoggedOnCallback>(LogOnCallback);
-            this.callbacks.Subscribe<SteamApps.LicenseListCallback>(LicenseListCallback);
+            callbacks.Subscribe<SteamClient.ConnectedCallback>(ConnectedCallback);
+            callbacks.Subscribe<SteamClient.DisconnectedCallback>(DisconnectedCallback);
+            callbacks.Subscribe<SteamUser.LoggedOnCallback>(LogOnCallback);
+            callbacks.Subscribe<SteamApps.LicenseListCallback>(LicenseListCallback);
 
             Console.Write("Connecting to Steam3...");
             Connect();
@@ -123,7 +123,7 @@ namespace DepotDownloader
 
         public void RequestAppInfo(uint appId, bool bForce = false)
         {
-            if ((AppInfo.ContainsKey(appId) && !bForce) || bAborted)
+            if (AppInfo.ContainsKey(appId) && !bForce || bAborted)
                 return;
 
             var completed = false;
@@ -137,7 +137,7 @@ namespace DepotDownloader
 
                 foreach (var token_dict in appTokens.AppTokens)
                 {
-                    this.AppTokens[token_dict.Key] = token_dict.Value;
+                    AppTokens[token_dict.Key] = token_dict.Value;
                 }
             };
 
@@ -381,8 +381,8 @@ namespace DepotDownloader
 
             ResetConnectionFlags();
 
-            this.connectTime = DateTime.Now;
-            this.steamClient.Connect();
+            connectTime = DateTime.Now;
+            steamClient.Connect();
         }
 
         private void Abort(bool sendLogOff = true)
@@ -459,11 +459,11 @@ namespace DepotDownloader
                         try
                         {
                             _ = AccountSettingsStore.Instance.GuardData.TryGetValue(logonDetails.Username, out var guarddata);
-                            authSession = await steamClient.Authentication.BeginAuthSessionViaCredentialsAsync(new SteamKit2.Authentication.AuthSessionDetails
+                            authSession = await steamClient.Authentication.BeginAuthSessionViaCredentialsAsync(new AuthSessionDetails
                             {
                                 Username = logonDetails.Username,
                                 Password = logonDetails.Password,
-                                IsPersistentSession = ContentDownloader.Config.RememberPassword,
+                                IsPersistentSession = dlConfig.RememberPassword,
                                 GuardData = guarddata,
                                 Authenticator = new UserConsoleAuthenticator(),
                             });
@@ -479,7 +479,7 @@ namespace DepotDownloader
                             return;
                         }
                     }
-                    else if (logonDetails.AccessToken is null && ContentDownloader.Config.UseQrCode)
+                    else if (logonDetails.AccessToken is null && dlConfig.UseQrCode)
                     {
                         Console.WriteLine("Logging in with QR code...");
 
@@ -487,7 +487,7 @@ namespace DepotDownloader
                         {
                             var session = await steamClient.Authentication.BeginAuthSessionViaQRAsync(new AuthSessionDetails
                             {
-                                IsPersistentSession = ContentDownloader.Config.RememberPassword,
+                                IsPersistentSession = dlConfig.RememberPassword,
                                 Authenticator = new UserConsoleAuthenticator(),
                             });
 
@@ -599,7 +599,7 @@ namespace DepotDownloader
         {
             var isSteamGuard = loggedOn.Result == EResult.AccountLogonDenied;
             var is2FA = loggedOn.Result == EResult.AccountLoginDeniedNeedTwoFactor;
-            var isAccessToken = ContentDownloader.Config.RememberPassword && logonDetails.AccessToken != null &&
+            var isAccessToken = dlConfig.RememberPassword && logonDetails.AccessToken != null &&
                 loggedOn.Result is EResult.InvalidPassword
                 or EResult.InvalidSignature
                 or EResult.AccessDenied
@@ -676,13 +676,13 @@ namespace DepotDownloader
 
             Console.WriteLine(" Done!");
 
-            this.seq++;
+            seq++;
             IsLoggedOn = true;
 
-            if (ContentDownloader.Config.CellID == 0)
+            if (dlConfig.CellID == 0)
             {
                 Console.WriteLine("Using Steam3 suggested CellID: " + loggedOn.CellID);
-                ContentDownloader.Config.CellID = (int)loggedOn.CellID;
+                dlConfig.CellID = (int)loggedOn.CellID;
             }
         }
 

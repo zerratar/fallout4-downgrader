@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DepotDownloader
+namespace FO4Down.Steam.DepotDownloader
 {
     static class Util
     {
@@ -109,7 +109,7 @@ namespace DepotDownloader
                 b = (b + a) % 65521;
             }
 
-            return BitConverter.GetBytes(a | (b << 16));
+            return BitConverter.GetBytes(a | b << 16);
         }
 
         public static byte[] DecodeHexString(string hex)

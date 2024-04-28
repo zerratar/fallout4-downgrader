@@ -1,7 +1,7 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace DepotDownloader
+namespace FO4Down.Steam.DepotDownloader
 {
     static class PlatformUtilities
     {
@@ -53,7 +53,7 @@ namespace DepotDownloader
         private static extern int chmod(string path, uint mode);
 
         [DllImport("libc", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
-        private static extern IntPtr strerror(int errno);
+        private static extern nint strerror(int errno);
 
         private static void ThrowIf(int i)
         {
@@ -71,20 +71,20 @@ namespace DepotDownloader
                 switch (RuntimeInformation.ProcessArchitecture)
                 {
                     case Architecture.X64:
-                    {
-                        ThrowIf(statLinuxX64(1, path, out var stat));
-                        return stat.st_mode;
-                    }
+                        {
+                            ThrowIf(statLinuxX64(1, path, out var stat));
+                            return stat.st_mode;
+                        }
                     case Architecture.Arm:
-                    {
-                        ThrowIf(statLinuxArm32(3, path, out var stat));
-                        return stat.st_mode;
-                    }
+                        {
+                            ThrowIf(statLinuxArm32(3, path, out var stat));
+                            return stat.st_mode;
+                        }
                     case Architecture.Arm64:
-                    {
-                        ThrowIf(statLinuxArm64(0, path, out var stat));
-                        return stat.st_mode;
-                    }
+                        {
+                            ThrowIf(statLinuxArm64(0, path, out var stat));
+                            return stat.st_mode;
+                        }
                 }
             }
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
@@ -92,15 +92,15 @@ namespace DepotDownloader
                 switch (RuntimeInformation.ProcessArchitecture)
                 {
                     case Architecture.X64:
-                    {
-                        ThrowIf(statOSXCompat(path, out var stat));
-                        return stat.st_mode;
-                    }
+                        {
+                            ThrowIf(statOSXCompat(path, out var stat));
+                            return stat.st_mode;
+                        }
                     case Architecture.Arm64:
-                    {
-                        ThrowIf(statOSX(path, out var stat));
-                        return stat.st_mode;
-                    }
+                        {
+                            ThrowIf(statOSX(path, out var stat));
+                            return stat.st_mode;
+                        }
                 }
             }
             throw new PlatformNotSupportedException();

@@ -1,4 +1,4 @@
-﻿namespace Fallout4Downgrader
+﻿namespace FO4Down.Steam
 {
     public class SteamGame
     {
