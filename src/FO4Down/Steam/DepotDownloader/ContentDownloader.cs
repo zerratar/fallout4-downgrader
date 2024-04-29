@@ -272,7 +272,7 @@ namespace FO4Down.Steam.DepotDownloader
             return info["name"].AsString();
         }
 
-        public static bool InitializeSteam3(string username, string password, StepContext ctx)
+        public static bool InitializeSteam3(string username, string password, DowngradeContext ctx)
         {
             string loginToken = null;
 
@@ -317,9 +317,9 @@ namespace FO4Down.Steam.DepotDownloader
             steam3.Disconnect();
         }
 
-        public static async Task DownloadAppAsync(uint appId, List<(uint depotId, ulong manifestId)> depotManifestIds, string branch, string os, string arch, string language, bool lv, bool isUgc, StepContext? ctx = null)
+        public static async Task DownloadAppAsync(uint appId, List<(uint depotId, ulong manifestId)> depotManifestIds, string branch, string os, string arch, string language, bool lv, bool isUgc, DowngradeContext? ctx = null)
         {
-            if (ctx == null) ctx = new StepContext();
+            if (ctx == null) ctx = new DowngradeContext();
 
             if (cdnPool == null)
                 cdnPool = new CDNClientPool(steam3, appId);
@@ -554,7 +554,7 @@ namespace FO4Down.Steam.DepotDownloader
             public ulong DepotBytesUncompressed;
         }
 
-        private static async Task DownloadSteam3Async(List<DepotDownloadInfo> depots, StepContext ctx)
+        private static async Task DownloadSteam3Async(List<DepotDownloadInfo> depots, DowngradeContext ctx)
         {
             var cts = new CancellationTokenSource();
             cdnPool.ExhaustedToken = cts;
@@ -607,7 +607,7 @@ namespace FO4Down.Steam.DepotDownloader
                 downloadCounter.TotalBytesCompressed, downloadCounter.TotalBytesUncompressed, depots.Count);
         }
 
-        private static async Task<DepotFilesData> ProcessDepotManifestAndFiles(CancellationTokenSource cts, DepotDownloadInfo depot, StepContext ctx)
+        private static async Task<DepotFilesData> ProcessDepotManifestAndFiles(CancellationTokenSource cts, DepotDownloadInfo depot, DowngradeContext ctx)
         {
             var depotCounter = new DepotDownloadCounter();
 
@@ -845,7 +845,7 @@ namespace FO4Down.Steam.DepotDownloader
 
         private static async Task DownloadSteam3AsyncDepotFiles(CancellationTokenSource cts,
             GlobalDownloadCounter downloadCounter, DepotFilesData depotFilesData, HashSet<string> allFileNamesAllDepots,
-            StepContext ctx)
+            DowngradeContext ctx)
         {
             var depot = depotFilesData.depotDownloadInfo;
             var depotCounter = depotFilesData.depotCounter;
@@ -909,7 +909,7 @@ namespace FO4Down.Steam.DepotDownloader
             DepotFilesData depotFilesData,
             ProtoManifest.FileData file,
             ConcurrentQueue<(FileStreamData, ProtoManifest.FileData, ProtoManifest.ChunkData)> networkChunkQueue,
-            int fileIndex, int totalFileCount, StepContext ctx)
+            int fileIndex, int totalFileCount, DowngradeContext ctx)
         {
             cts.Token.ThrowIfCancellationRequested();
 
@@ -1113,7 +1113,7 @@ namespace FO4Down.Steam.DepotDownloader
             ProtoManifest.FileData file,
             FileStreamData fileStreamData,
             ProtoManifest.ChunkData chunk,
-            int fileIndex, int totalFileCount, StepContext ctx)
+            int fileIndex, int totalFileCount, DowngradeContext ctx)
         {
             cts.Token.ThrowIfCancellationRequested();
 

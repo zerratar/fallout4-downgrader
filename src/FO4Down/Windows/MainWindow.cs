@@ -165,7 +165,7 @@ namespace FO4Down.Windows
             Task.Factory.StartNew(async () => await downgrader.RunAsync(OnStepUpdate));
         }
 
-        private void OnStepUpdate(StepContext context)
+        private void OnStepUpdate(DowngradeContext context)
         {
             Application.Invoke(() =>
             {
@@ -200,6 +200,15 @@ namespace FO4Down.Windows
 
                 switch (context.Step)
                 {
+                    case FO4DowngraderStep.UserSettings:
+                        var userSettings = new UserSettingsDialog(context);
+                        if (userSettings.ShowDialog())
+                        {
+                            context.Next(userSettings.Settings);
+                            return;
+                        }
+                        context.Next(null);
+                        break;
                     case FO4DowngraderStep.LookingForFallout4Path:
                         lblStatus.Text = "Fallout 4 install path found\n" + context.Fallout4.Path;
                         break;

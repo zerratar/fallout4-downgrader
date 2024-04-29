@@ -144,7 +144,7 @@ namespace Fallout4Downgrader
 
         private static void LoginToSteam(AppSettings settings)
         {
-            var ctx = new StepContext();
+            var ctx = new DowngradeContext();
             AccountSettingsStore.LoadFromFile("account.config");
 
             string username = null;
@@ -395,7 +395,7 @@ namespace Fallout4Downgrader
             return settings;
         }
 
-        static bool InitializeSteam(string username, string password, StepContext ctx)
+        static bool InitializeSteam(string username, string password, DowngradeContext ctx)
         {
             if (!ContentDownloader.Config.UseQrCode)
             {

@@ -53,11 +53,11 @@ namespace FO4Down.Steam.DepotDownloader
         // input
         private readonly SteamUser.LogOnDetails logonDetails;
         private readonly DownloadConfig dlConfig;
-        private readonly StepContext ctx;
+        private readonly DowngradeContext ctx;
         private readonly ILogger logger;
         static readonly TimeSpan STEAM3_TIMEOUT = TimeSpan.FromSeconds(30);
 
-        public Steam3Session(SteamUser.LogOnDetails details, DownloadConfig dlConfig, StepContext ctx)
+        public Steam3Session(SteamUser.LogOnDetails details, DownloadConfig dlConfig, DowngradeContext ctx)
         {
             logonDetails = details;
             this.dlConfig = dlConfig;

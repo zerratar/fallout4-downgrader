@@ -3,22 +3,22 @@ using FO4Down.Core;
 using FO4Down.Steam;
 using FO4Down.Steam.DepotDownloader;
 using SteamKit2.Authentication;
-using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Text;
-using static QRCoder.PayloadGenerator;
 
 namespace FO4Down
 {
     public class FO4Downgrader
     {
-        public async Task RunAsync(Action<StepContext> onStepUpdate)
+        public async Task RunAsync(Action<DowngradeContext> onStepUpdate)
         {
-            var ctx = new StepContext();
+            var ctx = new DowngradeContext();
             ctx.OnStepUpdate = onStepUpdate;
             ctx.Settings = LoadSettings(ctx);
+
             try
             {
+
                 Steam3Session.OnDisplayQrCode += (qrCode) =>
                 {
                     ctx.QRCode = qrCode;
@@ -28,10 +28,15 @@ namespace FO4Down
                 // step 1: Find out where or if Fallout 4 is installed
                 var fo4 = FindFallout4(ctx);
 
+                // step 1.5: Handle user settings
+                // before we start, we should request settings changes that the user may want
+                // such as language, whether or not it should try to download all dlcs and/or hd textures pack.
+                await HandleUserSettingsAsync(ctx);
+
                 // step 2: login to steam
                 while (!await LoginToSteamAsync(ctx))
                 {
-                    ctx.Error("Login failed. Invalid username or password");
+                    ctx.Error("Login failed. Invalid username or password.\nLogin using QR if problem persists");
                 }
 
                 // step 3: Download all depot files into the /depots/ folder.
@@ -42,6 +47,12 @@ namespace FO4Down
 
                 // step 5: copy all depot files from /depots/ to /fallout 4/ and then delete the /depots/ folder
                 CopyDepotFiles(ctx);
+
+                // step 6: delete creation club data if needed.
+                if (ctx.DeleteCreationClubData)
+                {
+                    DeleteCreationClubData(ctx);
+                }
 
                 ctx.Step = FO4DowngraderStep.Finished;
                 ctx.Notify("Your Fallout 4 installation has been downgraded. Enjoy!\nYou may now close this application.");
@@ -61,8 +72,17 @@ namespace FO4Down
             }
         }
 
+        private async Task HandleUserSettingsAsync(DowngradeContext ctx)
+        {
+            ctx.Step = FO4DowngraderStep.UserSettings;
+            var userSettings = await ctx.RequestAsync<UserProvidedSettings>("settings");
+            if (userSettings != null)
+            {
+                ctx.Merge(userSettings);
+            }
+        }
 
-        private static void CopyDepotFiles(StepContext ctx)
+        private static void CopyDepotFiles(DowngradeContext ctx)
         {
             ctx.Step = FO4DowngraderStep.CopyDepotFiles;
 
@@ -101,7 +121,7 @@ namespace FO4Down
             }
         }
 
-        private static void CopyFiles(StepContext ctx, string srcDirectory, string dstDirectory)
+        private static void CopyFiles(DowngradeContext ctx, string srcDirectory, string dstDirectory)
         {
             int copyCount = 0;
             var fileCount = 0;
@@ -135,12 +155,58 @@ namespace FO4Down
             ctx.Progress("All files copied.", 1);
         }
 
-        private static void DeleteNextGenFiles(StepContext ctx)
+        private static void DeleteCreationClubData(DowngradeContext ctx)
+        {
+            ctx.Step = FO4DowngraderStep.DeleteCreationClubData;
+            var fo4 = ctx.Fallout4;
+            var deleteCreationClubData = ctx.DeleteCreationClubData;
+            var dataFolder = System.IO.Path.Combine(fo4.Path, "Data");
+            var filesToDelete = new List<string>
+            {
+                "ccBGSFO4006-PipBoy(Chrome) - Main.ba2",
+                "ccFSVFO4002-MidCenturyModern - Textures.ba2",
+                "ccFRSFO4001-HandmadeShotgun - Textures.ba2",
+                "ccFSVFO4002-MidCenturyModern - Main.ba2",
+                "ccFSVFO4001-ModularMilitaryBackpack - Textures.ba2",
+                "ccFRSFO4001-HandmadeShotgun - Main.ba2",
+                "ccFSVFO4001-ModularMilitaryBackpack - Main.ba2",
+                "ccBGSFO4038-HorseArmor - Textures.ba2",
+                "ccBGSFO4020-PowerArmorSkin(Black) - Main.ba2",
+                "ccBGSFO4038-HorseArmor - Main.ba2",
+                "ccBGSFO4018-GaussRiflePrototype - Textures.ba2",
+                "ccBGSFO4019-ChineseStealthArmor - Textures.ba2",
+                "ccBGSFO4020-PowerArmorSkin(Black) - Textures.ba2",
+                "ccBGSFO4016-Prey - Textures.ba2",
+                "ccBGSFO4018-GaussRiflePrototype - Main.ba2",
+                "ccBGSFO4019-ChineseStealthArmor - Main.ba2",
+                "ccBGSFO4001-PipBoy(Black) - Main.ba2",
+                "ccBGSFO4001-PipBoy(Black) - Textures.ba2",
+                "ccBGSFO4003-PipBoy(Camo01) - Main.ba2",
+                "ccBGSFO4003-PipBoy(Camo01) - Textures.ba2",
+                "ccBGSFO4004-PipBoy(Camo02) - Main.ba2",
+                "ccBGSFO4004-PipBoy(Camo02) - Textures.ba2",
+                "ccBGSFO4006-PipBoy(Chrome) - Textures.ba2",
+                "ccBGSFO4016-Prey - Main.ba2"
+            };
+
+            ctx.Notify("Deleting Creation Club Content Files...");
+            var paths = filesToDelete.Select(x => Path.Combine(dataFolder, x)).ToArray();
+            var existingFiles = paths.Where(x => File.Exists(x)).ToArray();
+
+            for (int i = 0; i < existingFiles.Length; i++)
+            {
+                string? file = existingFiles[i];
+                ctx.Progress("Deleting " + Path.GetFileName(file) + " (" + (i + 1) + "/" + existingFiles.Length + ")", (i / (float)existingFiles.Length));
+                File.Delete(file);
+            }
+            ctx.Progress("All Creation Club files deleted.", 1f);
+        }
+
+        private static void DeleteNextGenFiles(DowngradeContext ctx)
         {
             ctx.Step = FO4DowngraderStep.DeleteNextGenFiles;
             var fo4 = ctx.Fallout4;
             var downloadCreationKit = ctx.DownloadCreationKit;
-
             var dataFolder = System.IO.Path.Combine(fo4.Path, "Data");
             // finally delete following files from the fallout 4 folder:
             var filesToDelete = new List<string>
@@ -174,41 +240,7 @@ namespace FO4Down
                     "ccSBJFO4003-Grenade.esl",
                 };
 
-            // if we did not download the creation kit, delete all CC files
-            if (!downloadCreationKit)
-            {
-                filesToDelete.AddRange([
-                    "ccBGSFO4006-PipBoy(Chrome) - Main.ba2",
-                        "ccFSVFO4002-MidCenturyModern - Textures.ba2",
-                        "ccFRSFO4001-HandmadeShotgun - Textures.ba2",
-                        "ccFSVFO4002-MidCenturyModern - Main.ba2",
-                        "ccFSVFO4001-ModularMilitaryBackpack - Textures.ba2",
-                        "ccFRSFO4001-HandmadeShotgun - Main.ba2",
-                        "ccFSVFO4001-ModularMilitaryBackpack - Main.ba2",
-                        "ccBGSFO4038-HorseArmor - Textures.ba2",
-                        "ccBGSFO4020-PowerArmorSkin(Black) - Main.ba2",
-                        "ccBGSFO4038-HorseArmor - Main.ba2",
-                        "ccBGSFO4018-GaussRiflePrototype - Textures.ba2",
-                        "ccBGSFO4019-ChineseStealthArmor - Textures.ba2",
-                        "ccBGSFO4020-PowerArmorSkin(Black) - Textures.ba2",
-                        "ccBGSFO4016-Prey - Textures.ba2",
-                        "ccBGSFO4018-GaussRiflePrototype - Main.ba2",
-                        "ccBGSFO4019-ChineseStealthArmor - Main.ba2",
-                        "ccBGSFO4001-PipBoy(Black) - Main.ba2",
-                        "ccBGSFO4001-PipBoy(Black) - Textures.ba2",
-                        "ccBGSFO4003-PipBoy(Camo01) - Main.ba2",
-                        "ccBGSFO4003-PipBoy(Camo01) - Textures.ba2",
-                        "ccBGSFO4004-PipBoy(Camo02) - Main.ba2",
-                        "ccBGSFO4004-PipBoy(Camo02) - Textures.ba2",
-                        "ccBGSFO4006-PipBoy(Chrome) - Textures.ba2",
-                        "ccBGSFO4016-Prey - Main.ba2"
-                ]);
-            }
-
-            //Console.WriteLine("Next step will delete " + filesToDelete.Count + " files. Press any key to continue or CTRL+C to cancel.");
-            //Console.ReadKey();
-
-            Console.WriteLine("Deleting Next-Gen Content Files...");
+            ctx.Notify("Deleting Next-Gen Content Files...");
             var paths = filesToDelete.Select(x => Path.Combine(dataFolder, x)).ToArray();
             var existingFiles = paths.Where(x => File.Exists(x)).ToArray();
 
@@ -216,37 +248,46 @@ namespace FO4Down
             {
                 string? file = existingFiles[i];
                 ctx.Progress("Deleting " + Path.GetFileName(file) + " (" + (i + 1) + "/" + existingFiles.Length + ")", (i / (float)existingFiles.Length));
-                Console.WriteLine("Deleting " + file);
                 File.Delete(file);
             }
-            ctx.Progress("All next gen files deleted.", 1f);
+            ctx.Progress("All Next-Gen Content Files deleted.", 1f);
         }
 
-        private static async Task DownloadDepotFilesAsync(StepContext ctx)
+
+        private static async Task DownloadDepotFilesAsync(DowngradeContext ctx)
         {
             var settings = ctx.Settings;
             var downloadCreationKit = ctx.DownloadCreationKit;
 
-            List<(uint, ulong)> depots = new List<(uint, ulong)>
-                {
-                    (377161,7497069378349273908),
-                    (377162,5847529232406005096),
-                    (377163,5819088023757897745),
-                    (377164,2178106366609958945),
-                    (435880,1255562923187931216),
-                    (435870,1691678129192680960),
-                    (435871,5106118861901111234)
-                };
+            List<Depot> depots = new List<Depot>();
 
-            var totalDepotsToDownload = depots.Count + (downloadCreationKit ? 2 : 0);
+            depots.AddRange(DepotManager.GetLanguageNeutral(DepotTarget.Game));
+            depots.AddRange(DepotManager.GetLanguageNeutral(DepotTarget.RequiredDlc));
 
-            ContentDownloader.Config.MaxDownloads = depots.Count;
-
-            var language = settings.Language;
+            var language = settings.Language.ToLower();
             if (!settings.DownloadAllLanguages && string.IsNullOrEmpty(settings.Language))
                 language = "english";
             if (settings.DownloadAllLanguages)
                 language = null;
+
+            depots.AddRange(DepotManager.Get(DepotTarget.Game, language));
+            depots.AddRange(DepotManager.Get(DepotTarget.RequiredDlc, language));
+
+            if (ctx.DownloadAllDLCs)
+            {
+                depots.AddRange(DepotManager.GetLanguageNeutral(DepotTarget.AllDlc));
+                depots.AddRange(DepotManager.Get(DepotTarget.AllDlc, language));
+            }
+
+            if (ctx.DownloadHDTextures)
+            {
+                // <HD Textures>
+                depots.Add(DepotManager.GetHDTextures());
+            }
+
+            var totalDepotsToDownload = depots.Count + (downloadCreationKit ? 2 : 0);
+
+            ContentDownloader.Config.MaxDownloads = depots.Count;
 
             uint f4AppId = 377160;
             uint ckAppId = 1946160;
@@ -255,7 +296,7 @@ namespace FO4Down
             ctx.TotalDepotsToDownload = totalDepotsToDownload;
             ctx.Step = FO4DowngraderStep.DownloadGameDepotFiles;
             await ContentDownloader.DownloadAppAsync(
-                f4AppId, depots, "public", "windows", "64",
+                f4AppId, depots.Select(x => x.AsTuple()).ToList(), "public", "windows", "64",
                 settings.Language,
                 false, false, ctx);
 
@@ -265,12 +306,10 @@ namespace FO4Down
             {
                 ctx.Step = FO4DowngraderStep.DownloadCreationKitDepotFiles;
                 depots.Clear();
-                depots.AddRange([
-                        (1946161, 6928748513006443409),
-                        (1946162, 3951536123944501689),
-                    ]);
+                depots.AddRange(DepotManager.GetCreationKit());
                 await ContentDownloader.DownloadAppAsync(
-                    ckAppId, depots, "public", "windows", "64",
+                    ckAppId, depots.Select(x => x.AsTuple()).ToList(),
+                    "public", "windows", "64",
                     settings.Language, false, false, ctx);
             }
 
@@ -278,7 +317,7 @@ namespace FO4Down
         }
 
 
-        private static SteamGame FindFallout4(StepContext ctx)
+        private static SteamGame FindFallout4(DowngradeContext ctx)
         {
             ctx.Step = FO4DowngraderStep.LookingForFallout4Path;
             var steamPath = SteamGameLocator.GetSteamInstallPath();
@@ -307,7 +346,7 @@ namespace FO4Down
         }
 
 
-        private static async Task<bool> LoginToSteamAsync(StepContext ctx)
+        private static async Task<bool> LoginToSteamAsync(DowngradeContext ctx)
         {
             ctx.Step = FO4DowngraderStep.LoginToSteam;
 
@@ -353,7 +392,7 @@ namespace FO4Down
             return result;
         }
 
-        private static AppSettings LoadSettings(StepContext ctx)
+        private static AppSettings LoadSettings(DowngradeContext ctx)
         {
             var p = Params.FromArgs(Environment.GetCommandLineArgs());
             var settings = AppSettings.FromParams(p);
@@ -383,6 +422,7 @@ namespace FO4Down
     public enum FO4DowngraderStep
     {
         LookingForFallout4Path,
+        UserSettings,
         LoginToSteam,
         DownloadDepotFiles,
         DownloadGameDepotFiles,
@@ -390,9 +430,10 @@ namespace FO4Down
         DeleteNextGenFiles,
         CopyDepotFiles,
         Finished,
+        DeleteCreationClubData,
     }
 
-    public class StepContext
+    public class DowngradeContext
     {
         public FO4DowngraderStep Step { get; set; }
         public bool IsError { get; set; }
@@ -406,8 +447,11 @@ namespace FO4Down
         public Dictionary<string, SteamGame> InstalledGames { get; set; }
         public SteamGame Fallout4 { get; set; }
         public AppSettings Settings { get; internal set; }
-        public bool DownloadCreationKit { get; internal set; }
-        public Action<StepContext> OnStepUpdate { get; internal set; }
+        public bool DownloadCreationKit { get; set; }
+        public bool DeleteCreationClubData { get; set; }
+        public bool DownloadAllDLCs { get; set; }
+        public bool DownloadHDTextures { get; set; }
+        public Action<DowngradeContext> OnStepUpdate { get; internal set; }
         public StepRequest Request { get; set; }
         public float Fraction { get; internal set; }
         public string QRCode { get; internal set; }
@@ -417,7 +461,7 @@ namespace FO4Down
 
         private StringBuilder log = new StringBuilder();
 
-        public StepContext()
+        public DowngradeContext()
         {
             UserAuthenticator = new UserAuthenticator(this);
         }
@@ -499,7 +543,14 @@ namespace FO4Down
                 this.OnStepUpdate(this);
         }
 
-        public void Next<T>(T value)
+        //public void Next<T>(T value)
+        //{
+        //    var r = Request;
+        //    Request = null;
+        //    r.SetResult(value);
+        //}
+
+        public void Next(object value)
         {
             var r = Request;
             Request = null;
@@ -597,14 +648,26 @@ namespace FO4Down
                 return "";
             }
         }
+
+        internal void Merge(UserProvidedSettings userSettings)
+        {
+            if (userSettings == null) return;
+            Settings.KeepDepotFiles = userSettings.KeepDepotFilesWhenDone;
+            Settings.DownloadAllLanguages = string.IsNullOrEmpty(userSettings.Language);
+            Settings.Language = userSettings.Language;
+            Settings.DownloadCreationKit = userSettings.DownloadCreationKit;
+            this.DownloadAllDLCs = userSettings.DownloadAllDLCs;
+            this.DownloadHDTextures = userSettings.DownloadHDTextures;
+            ContentDownloader.Config.DownloadAllLanguages = Settings.DownloadAllLanguages;
+        }
     }
 
     public class ChunkDownloadProgress
     {
-        private StepContext stepContext;
+        private DowngradeContext stepContext;
         private DateTime startTime;
 
-        public ChunkDownloadProgress(StepContext stepContext)
+        public ChunkDownloadProgress(DowngradeContext stepContext)
         {
             this.stepContext = stepContext;
             this.startTime = DateTime.UtcNow;
@@ -676,9 +739,9 @@ namespace FO4Down
 
     public class UserAuthenticator : IAuthenticator
     {
-        private readonly StepContext ctx;
+        private readonly DowngradeContext ctx;
 
-        public UserAuthenticator(StepContext context)
+        public UserAuthenticator(DowngradeContext context)
         {
             this.ctx = context;
         }

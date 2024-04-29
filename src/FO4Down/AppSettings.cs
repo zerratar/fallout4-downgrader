@@ -1,5 +1,15 @@
 ﻿namespace Fallout4Downgrader
 {
+    public class UserProvidedSettings
+    {
+        public string Language { get; set; }
+        public bool DownloadCreationKit { get; set; }
+        public bool DeleteCreationClubFiles { get; set; }
+        public bool KeepDepotFilesWhenDone { get; set; }
+        public bool DownloadHDTextures { get; set; }
+        public bool DownloadAllDLCs { get; set; }
+    }
+
     public class AppSettings
     {
         public bool UseQrCode { get; set; }
