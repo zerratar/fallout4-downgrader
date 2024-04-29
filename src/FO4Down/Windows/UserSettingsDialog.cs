@@ -27,9 +27,9 @@ namespace FO4Down.Windows
             Width = Dim.Percent(65);
             Height = 19;
 
-            var note = Lbl("Note: Automatron and Wasteland Workshop\nare always included.\n");
-            cbDownloadAllDlcs = Check("Download Contraptions, Far Harbor, Vault-Tec and Nuka World?", note, (_, value) => Settings.DownloadAllDLCs = value.GetValueOrDefault());
-            cbHDTextures = Check("Download HD Textures", cbDownloadAllDlcs, (_, value) => Settings.DownloadHDTextures = value.GetValueOrDefault());
+            var note = Lbl("Note: Automatron and Wasteland Workshop\nare always downgraded.\n");
+            cbDownloadAllDlcs = Check("Downgrade Contraptions, Far Harbor, Vault-Tec and Nuka World?", note, (_, value) => Settings.DownloadAllDLCs = value.GetValueOrDefault());
+            cbHDTextures = Check("Downgrade HD Textures", cbDownloadAllDlcs, (_, value) => Settings.DownloadHDTextures = value.GetValueOrDefault());
             cbCreationKit = Check("Downgrade Creation Kit", cbHDTextures, (_, value) => Settings.DownloadCreationKit = value.GetValueOrDefault());
             cbCreationClub = Check("Delete Creation Club files", cbCreationKit, (_, value) => Settings.DeleteCreationClubFiles = value.GetValueOrDefault());
             cbKeepDepots = Check("Keep Depots when done", cbCreationClub, (_, value) => Settings.KeepDepotFilesWhenDone = value.GetValueOrDefault());
