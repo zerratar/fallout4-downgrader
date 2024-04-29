@@ -164,111 +164,119 @@ namespace FO4Down.Windows
 
             Task.Factory.StartNew(async () => await downgrader.RunAsync(OnStepUpdate));
         }
-
+        private int runningStepUpdate;
         private void OnStepUpdate(DowngradeContext context)
         {
             Application.Invoke(() =>
             {
-                lblQr.Visible = false;
-                progressBar.Visible = false;
-                lblProgress.Visible = false;
-
-                if (context.IsError)
-                {
-                    lblStatus.ColorScheme = ErrorLabelColorScheme;
-                    lblStatus.Text = "Error: " + context.Message;
-                }
-
-                if (context.ReportToDeveloper)
-                {
-                    File.WriteAllText("error.txt", context.Exception.ToString());
-                    MessageBox.ErrorQuery("Unexpected Error", "An unexpected error occurred: " + context.Message + "\nA full report has been saved to error.txt\nPlease report this to zerratar", "OK");
-                    RequestStop();
+                // check if this is already running
+                if (Interlocked.CompareExchange(ref runningStepUpdate, 1, 0) == 1)
                     return;
-                }
 
-                if (context.IsError && !context.Continue)
+                try
                 {
-                    return;
-                }
 
-                lblStatus.ColorScheme = DefaultLabelColorScheme;
-                if (!string.IsNullOrEmpty(context.Message))
-                {
-                    lblStatus.Text = context.Message;
-                }
+                    lblQr.Visible = false;
+                    progressBar.Visible = false;
+                    lblProgress.Visible = false;
 
-                switch (context.Step)
-                {
-                    case FO4DowngraderStep.UserSettings:
-                        var userSettings = new UserSettingsDialog(context);
-                        if (userSettings.ShowDialog())
-                        {
+                    if (context.IsError)
+                    {
+                        lblStatus.ColorScheme = ErrorLabelColorScheme;
+                        lblStatus.Text = "Error: " + context.Message;
+                    }
+
+                    if (context.ReportToDeveloper)
+                    {
+                        File.WriteAllText("error.txt", context.Exception.ToString());
+                        MessageBox.ErrorQuery("Unexpected Error", "An unexpected error occurred: " + context.Message + "\nA full report has been saved to error.txt\nPlease report this to zerratar", "OK");
+                        RequestStop();
+                        return;
+                    }
+
+                    if (context.IsError && !context.Continue)
+                    {
+                        return;
+                    }
+
+                    lblStatus.ColorScheme = DefaultLabelColorScheme;
+                    if (!string.IsNullOrEmpty(context.Message))
+                    {
+                        lblStatus.Text = context.Message;
+                    }
+
+                    switch (context.Step)
+                    {
+                        case FO4DowngraderStep.UserSettings:
+                            var userSettings = new UserSettingsDialog(context);
+                            userSettings.ShowDialog();
                             context.Next(userSettings.Settings);
-                            return;
-                        }
-                        context.Next(null);
-                        break;
-                    case FO4DowngraderStep.LookingForFallout4Path:
-                        lblStatus.Text = "Fallout 4 install path found\n" + context.Fallout4.Path;
-                        break;
-                    case FO4DowngraderStep.LoginToSteam:
-                        if (context.Request != null)
-                        {
-                            switch (context.Request.Name)
+                            break;
+                        case FO4DowngraderStep.LookingForFallout4Path:
+                            lblStatus.Text = "Fallout 4 install path found\n" + context.Fallout4.Path;
+                            break;
+                        case FO4DowngraderStep.LoginToSteam:
+                            if (context.Request != null)
                             {
-                                case "auth_code":
-                                    var auth = new SteamAuthCodeDialog(context);
-                                    if (auth.ShowDialog())
-                                    {
-                                        context.Next(auth.AuthCode);
-                                    }
-                                    break;
-                                case "credentials":
-                                    var login = new SteamLoginDialog(context);
-                                    if (login.ShowDialog())
-                                    {
-                                        if (login.QR)
+                                switch (context.Request.Name)
+                                {
+                                    case "auth_code":
+                                        var auth = new SteamAuthCodeDialog(context);
+                                        if (auth.ShowDialog())
                                         {
-                                            context.Settings.UseQrCode = true;
-                                            context.Next(((string)null, (string)null));
+                                            context.Next(auth.AuthCode);
+                                        }
+                                        break;
+                                    case "credentials":
+                                        var login = new SteamLoginDialog(context);
+                                        if (login.ShowDialog())
+                                        {
+                                            if (login.QR)
+                                            {
+                                                context.Settings.UseQrCode = true;
+                                                context.Next(((string)null, (string)null));
+                                            }
+                                            else
+                                            {
+                                                context.Next((login.Username, login.Password));
+                                            }
                                         }
                                         else
                                         {
-                                            context.Next((login.Username, login.Password));
+                                            context.Next(((string)null, (string)null));
                                         }
-                                    }
-                                    else
-                                    {
-                                        context.Next(((string)null, (string)null));
-                                    }
-                                    break;
+                                        break;
+                                }
+                                // context.Next(("username", "password"));
                             }
-                            // context.Next(("username", "password"));
-                        }
-                        else if (!string.IsNullOrEmpty(context.QRCode))
-                        {
-                            lblQr.Text = context.QRCode;
-                            lblQr.Visible = true;
-                        }
-                        break;
-                    case FO4DowngraderStep.DownloadDepotFiles:
-                        break;
-                    case FO4DowngraderStep.DownloadCreationKitDepotFiles:
-                    case FO4DowngraderStep.DownloadGameDepotFiles:
+                            else if (!string.IsNullOrEmpty(context.QRCode))
+                            {
+                                lblQr.Text = context.QRCode;
+                                lblQr.Visible = true;
+                            }
+                            break;
+                        case FO4DowngraderStep.DownloadDepotFiles:
+                            break;
+                        case FO4DowngraderStep.DownloadCreationKitDepotFiles:
+                        case FO4DowngraderStep.DownloadGameDepotFiles:
 
-                        progressBar.Visible = context.Fraction > 0.0;
-                        lblProgress.Visible = progressBar.Visible;
-                        lblProgress.Text = $"{(context.Fraction * 100):00.00}%\n\n" + "Processing depot " + (context.DepotsDownloaded + 1) + " out of " + context.TotalDepotsToDownload + ".\nThis will take a while! Do not worry if nothing happens for a while.";// + context.GetAverageDownloadSpeed();
-                        progressBar.Fraction = context.Fraction;
-                        break;
-                    case FO4DowngraderStep.CopyDepotFiles:
-                    case FO4DowngraderStep.DeleteNextGenFiles:
-                        progressBar.Visible = true;
-                        lblProgress.Visible = true;
-                        lblProgress.Text = $"{(context.Fraction * 100):00.00}%";
-                        progressBar.Fraction = context.Fraction;
-                        break;
+                            progressBar.Visible = context.Fraction > 0.0;
+                            lblProgress.Visible = progressBar.Visible;
+                            lblProgress.Text = $"{(context.Fraction * 100):00.00}%\n\n" + "Processing depot " + (context.DepotsDownloaded + 1) + " out of " + context.TotalDepotsToDownload + ".\nThis will take a while! Do not worry if nothing happens for a while.";// + context.GetAverageDownloadSpeed();
+                            progressBar.Fraction = context.Fraction;
+                            break;
+                        case FO4DowngraderStep.CopyDepotFiles:
+                        case FO4DowngraderStep.DeleteNextGenFiles:
+                            progressBar.Visible = true;
+                            lblProgress.Visible = true;
+                            lblProgress.Text = $"{(context.Fraction * 100):00.00}%";
+                            progressBar.Fraction = context.Fraction;
+                            break;
+                    }
+                }
+                finally
+                {
+                    Interlocked.Exchange(ref runningStepUpdate, 0);
                 }
             });
         }
