@@ -13,7 +13,7 @@ namespace FO4Down.Windows
         private CheckBox cbCreationKit;
         private CheckBox cbCreationClub;
         private Button btnOK;
-        private string[] languages = ["All", "English", "Polish", "Italian", "Japanese", "Portuguese", "German", "Spanish", "Traditional Chinese", "French"];
+        private string[] languages = ["All", "English", "French", "German", "Italian", "Spanish", "Polish", "Russian", "Portuguese", "Traditional Chinese", "Japanese"];
 
         public UserProvidedSettings Settings { get; set; }
 

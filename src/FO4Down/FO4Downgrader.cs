@@ -474,12 +474,20 @@ namespace FO4Down
 
         public void Notify(string message, params object[] args)
         {
-            var msg = args != null && args.Length > 0 ? string.Format(message, args) : message;
-            if (msg != Message)
+            try
             {
-                log.AppendLine(msg);
+                var msg = args != null && args.Length > 0 ? string.Format(message, args) : message;
+                if (msg != Message)
+                {
+                    log.AppendLine(msg);
+                }
+                Message = msg;
             }
-            Message = msg;
+            catch (Exception exc)
+            {
+                Error(exc.ToString());
+                return;
+            }
             if (OnStepUpdate != null)
                 this.OnStepUpdate(this);
         }
@@ -501,14 +509,14 @@ namespace FO4Down
 
         public void Error(string message, params object[] args)
         {
-            var msg = args != null && args.Length > 0 ? string.Format(message, args) : message; ;
+            var msg = args != null && args.Length > 0 ? string.Format(message, args) : message;
             IsError = true;
             Continue = true;
             ReportToDeveloper = false;
 
             if (msg != message)
             {
-                log.AppendLine(message);
+                log.AppendLine(msg);
             }
 
             Message = msg;
@@ -552,6 +560,11 @@ namespace FO4Down
 
         public void Next(object value)
         {
+            if (Request == null)
+            {
+                return;
+            }
+
             var r = Request;
             Request = null;
             r.SetResult(value);
@@ -733,8 +746,12 @@ namespace FO4Down
         public async Task<T> AwaitResponseAsync()
         {
             var result = await src.Task;
+            if (result == null || result is not T)
+                return default(T);
+
             return (T)result;
         }
+
     }
 
     public class UserAuthenticator : IAuthenticator

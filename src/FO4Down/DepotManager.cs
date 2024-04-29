@@ -18,16 +18,18 @@ namespace FO4Down
                 new (377161, 7497069378349273908, "Fallout Content a", DepotTarget.Game), // 
                 new (377162, 5847529232406005096, "Fallout.exe", DepotTarget.Game), //
                 new (377163, 5819088023757897745, "Fallout Content b", DepotTarget.Game), // 
-                new (377164, 2178106366609958945, "Fallout in English", "english", DepotTarget.Game), //
 
+                new (377164, 2178106366609958945, "Fallout in English", "english", DepotTarget.Game), //
                 new (377165, 7549549550652702123, "Fallout in French", "french", DepotTarget.Game),
                 new (377166, 6854162778963425477, "Fallout in German", "german", DepotTarget.Game),
                 new (377167, 783101348965844295 , "Fallout in Italian", "italian", DepotTarget.Game),
-                new (393884, 3455288010746962666, "Fallout in Japanese", "japanese", DepotTarget.Game),
-                new (393880, 8378357397609964253, "Fallout in Polish", "polish", DepotTarget.Game),
-                new (393882, 7540680803954664080, "Fallout in Portuguese", "portuguese", DepotTarget.Game),
                 new (377168, 7717372852115364102, "Fallout in Spanish", "spanish", DepotTarget.Game),
+                new (393880, 8378357397609964253, "Fallout in Polish", "polish", DepotTarget.Game),
+                new (393881, 9220466047319762009, "Fallout in Russian", "russian", DepotTarget.Game),
+                new (393882, 7540680803954664080, "Fallout in Portuguese", "portuguese", DepotTarget.Game),
                 new (393883, 6742459130628608886, "Fallout in Traditional Chinese", "Traditional Chinese", DepotTarget.Game),
+                new (393884, 3455288010746962666, "Fallout in Japanese", "japanese", DepotTarget.Game),
+
                 // <Base DLCs>
                 new (435880, 1255562923187931216, "Wasteland Workshop", DepotTarget.RequiredDlc), // 
                 new (435870, 1691678129192680960, "Automatron", DepotTarget.RequiredDlc), // 
@@ -40,6 +42,7 @@ namespace FO4Down
                 new (435875, 2953236065717816833, "Automatron Spanish", "spanish", DepotTarget.RequiredDlc),
                 new (435879, 367504569468547727, "Automatron Traditional Chinese", "traditional chinese", DepotTarget.RequiredDlc),
                 new (435872, 5590419866095647350, "Automatron French", "french", DepotTarget.RequiredDlc),
+                new (435877, 7266521576458366233, "Automatron Russian", "russian", DepotTarget.RequiredDlc), //
                 
                 // <Extended DLCs>
                 new (480630, 5527412439359349504, "Contraptions Workshop", DepotTarget.AllDlc),
@@ -54,6 +57,7 @@ namespace FO4Down
                 new (435886, 6337694505107499720, "Far Harbor Spanish", "spanish", DepotTarget.AllDlc),
                 new (404092, 6806984433357643395, "Far Harbor Traditional Chinese", "traditional chinese", DepotTarget.AllDlc),
                 new (435883, 8148702710057205377, "Far Harbor French", "french", DepotTarget.AllDlc),
+                new (435888, 2814340383581262374, "Far Harbor Russian", "russian", DepotTarget.AllDlc),
 
                 new (480631, 6588493486198824788, "Vault-Tec Workshop", DepotTarget.AllDlc),
                 new (393885, 5000262035721758737, "Vault-Tec Workshop English", "english", DepotTarget.AllDlc),
@@ -63,8 +67,9 @@ namespace FO4Down
                 new (393892, 1388883862084490494, "Vault-Tec Workshop portuguese", "portuguese", DepotTarget.AllDlc),
                 new (393887, 4458604458983717666, "Vault-Tec Workshop german", "german", DepotTarget.AllDlc),
                 new (393889, 7553859846726526417, "Vault-Tec Workshop spanish", "spanish", DepotTarget.AllDlc),
-                new (393893, 442593679549850747, "Vault-Tec Workshop Traditional Chinese", "Traditional Chinese", DepotTarget.AllDlc),
-                new (393886, 4075502974578231964, "Vault-Tec Workshop French", "French", DepotTarget.AllDlc),
+                new (393893, 442593679549850747, "Vault-Tec Workshop Traditional Chinese", "traditional chinese", DepotTarget.AllDlc),
+                new (393886, 4075502974578231964, "Vault-Tec Workshop French", "french", DepotTarget.AllDlc),
+                new (393891, 631542034352937768, "Vault-Tec Workshop Russian", "russian", DepotTarget.AllDlc),
 
                 new (490650, 4873048792354485093, "Nuka World", DepotTarget.AllDlc),
                 new (393895, 7677765994120765493, "Nuka World English", "english", DepotTarget.AllDlc),
@@ -76,9 +81,9 @@ namespace FO4Down
                 new (393898, 8573679706590820412, "Nuka-World Spanish", "spanish", DepotTarget.AllDlc),
                 new (404095, 3169890264626778200, "Nuka-World Traditional Chinese", "traditional chinese", DepotTarget.AllDlc),
                 new (393896, 4271967849859961419, "Nuka-World French", "french", DepotTarget.AllDlc),
+                new (393899, 4271967849859961419, "Nuka-World Russian", "russian", DepotTarget.AllDlc),
 
                 new (540810, 1558929737289295473, "HD Texture Pack", DepotTarget.HDTextures),
-
                 new (1946161, 6928748513006443409, DepotTarget.CreationKit),
                 new (1946162, 3951536123944501689, DepotTarget.CreationKit),
             };

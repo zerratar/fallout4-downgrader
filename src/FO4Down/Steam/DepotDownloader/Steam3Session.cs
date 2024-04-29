@@ -260,7 +260,7 @@ namespace FO4Down.Steam.DepotDownloader
 
                 if (depotKey.Result != EResult.OK)
                 {
-                    Abort();
+                    //Abort();
                     return;
                 }
 
