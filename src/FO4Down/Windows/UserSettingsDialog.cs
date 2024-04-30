@@ -35,7 +35,7 @@ namespace FO4Down.Windows
             cbKeepDepots = Check("Keep Depots when done", cbCreationClub, (_, value) => Settings.KeepDepotFilesWhenDone = value.GetValueOrDefault());
 
             cbLanguage = Combo("Select Language (Press arrow and use mouse scroll)", cbKeepDepots, OnLanguageChanged, languages);
-
+                         
             var defaultLanguage = Thread.CurrentThread.CurrentCulture.EnglishName;
             var defeaultLanguageIndex = GetLanguageIndex(defaultLanguage);
             if (defeaultLanguageIndex == -1)

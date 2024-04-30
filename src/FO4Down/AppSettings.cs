@@ -19,6 +19,10 @@
         public bool DownloadAllLanguages { get; set; }
         public bool KeepDepotFiles { get; set; }
         public bool DownloadCreationKit { get; set; }
+        public bool DeleteCreationClubFiles { get; set; }
+        public bool DownloadHDTextures { get; set; }
+        public bool DownloadAllDLCs { get; set; }
+
         public static AppSettings FromParams(Params p)
         {
             return new AppSettings

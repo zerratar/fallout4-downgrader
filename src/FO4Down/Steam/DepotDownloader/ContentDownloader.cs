@@ -300,6 +300,8 @@ namespace FO4Down.Steam.DepotDownloader
                 return false;
             }
 
+            ctx.IsAuthenticated = username != null || ctx.Settings.UseQrCode;
+
             return true;
         }
 

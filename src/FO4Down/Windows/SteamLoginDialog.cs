@@ -1,5 +1,4 @@
 ﻿using Terminal.Gui;
-using static SteamKit2.Internal.CChatUsability_ClientUsabilityMetrics_Notification;
 
 namespace FO4Down.Windows
 {
@@ -16,6 +15,8 @@ namespace FO4Down.Windows
         {
             this.ctx = ctx;
 
+            Closing += SteamLoginDialog_Closing;
+
             Title = "Steam Login";
             Width = Dim.Percent(50);
             Height = 12;
@@ -23,7 +24,7 @@ namespace FO4Down.Windows
             txtUsername = Input("Username");
             txtPassword = Input("Password", true, txtUsername);
             btnLogin = Btn("Login", txtPassword, BtnLoginClicked);
-            btnCancel = Btn("Cancel", txtPassword, BtnCancelClicked);
+            //btnCancel = Btn("Cancel", txtPassword, BtnCancelClicked);
             btnCancel = Btn("QR", txtPassword, BtnQRClicked);
             btnCancel.X = Pos.Right(btnLogin) + 1;
 
@@ -37,6 +38,11 @@ namespace FO4Down.Windows
             }
         }
 
+        private void SteamLoginDialog_Closing(object? sender, ToplevelClosingEventArgs e)
+        {
+            if (!result)
+                e.Cancel = true;
+        }
 
         private void BtnQRClicked()
         {
@@ -44,15 +50,16 @@ namespace FO4Down.Windows
             result = true;
             RequestStop();
         }
+
         public string Username => txtUsername.Text;
         public string Password => txtPassword.Text;
         public bool QR { get; private set; }
 
-        private void BtnCancelClicked()
-        {
-            result = false;
-            RequestStop();
-        }
+        //private void BtnCancelClicked()
+        //{
+        //    result = false;
+        //    RequestStop();
+        //}
 
         private void BtnLoginClicked()
         {

@@ -17,3 +17,7 @@ Potential Fix:
 	Add a checkbox "Update language in Fallout4.ini" on startup
 	Update Fallout4.ini and update the language to target language that was used by the tool. 
 	Remove any duplicate files in the Data folder.
+
+Another issue: App crashes if read access is denied to a game folder (not necessarily fallout 4) 
+			  in the steam game locator. It can also be a good idea to search for appmanifest_377160 in same folder as .exe 
+			  and parent folders as a fallback when steam game is not found.

@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json.Linq;
+using SteamKit2.WebUI.Internal;
 using System;
 using System.Collections.Generic;
 using System.IO.IsolatedStorage;
@@ -188,7 +189,8 @@ namespace FO4Down.Windows
 
                     if (context.ReportToDeveloper)
                     {
-                        File.WriteAllText("error.txt", context.Exception.ToString());
+
+                        File.WriteAllText("error.txt", BuildErrorReport(context));
                         MessageBox.ErrorQuery("Unexpected Error", "An unexpected error occurred: " + context.Message + "\nA full report has been saved to error.txt\nPlease report this to zerratar", "OK");
                         RequestStop();
                         return;
@@ -279,6 +281,39 @@ namespace FO4Down.Windows
                     Interlocked.Exchange(ref runningStepUpdate, 0);
                 }
             });
+        }
+
+        private string? BuildErrorReport(DowngradeContext context)
+        {
+            var sb = new StringBuilder();
+            var s = context.Settings;
+            sb.AppendLine("Version: " + GetVersion());
+            sb.AppendLine();
+            sb.AppendLine("[Settings]");
+            sb.AppendLine("QR: " + s.UseQrCode);
+            sb.AppendLine("Authenticated: " + context.IsAuthenticated);
+            sb.AppendLine("Language: " + (s.DownloadAllLanguages ? "All" : s.Language));
+            sb.AppendLine("Downgrade Creation Kit: " + s.DownloadCreationKit);
+            sb.AppendLine("Downgrade All DLCs: " + s.DownloadAllDLCs);
+            sb.AppendLine("Delete Creation Club files: " + s.DeleteCreationClubFiles);
+            sb.AppendLine("Keep Depot: " + s.KeepDepotFiles);
+            sb.AppendLine();
+
+            if (context.LoggedErrors.Count > 0)
+            {
+                sb.AppendLine("[Previous Errors]");
+                for (var i = 0; i < context.LoggedErrors.Count; ++i)
+                {
+                    var err = context.LoggedErrors[i];
+                    sb.AppendLine("Error #" + (i + 1) + ": " + err);
+                    sb.AppendLine();
+                }
+            }
+
+            sb.AppendLine("[Crashing Error]");
+            sb.AppendLine(context.Exception.ToString());
+            return sb.ToString();
+
         }
 
         public override bool OnKeyDown(Key keyEvent)

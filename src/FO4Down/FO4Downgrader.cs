@@ -2,9 +2,12 @@
 using FO4Down.Core;
 using FO4Down.Steam;
 using FO4Down.Steam.DepotDownloader;
+using SteamKit2;
 using SteamKit2.Authentication;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Text;
+using static SteamKit2.Internal.CChatUsability_ClientUsabilityMetrics_Notification;
 
 namespace FO4Down
 {
@@ -49,7 +52,7 @@ namespace FO4Down
                 CopyDepotFiles(ctx);
 
                 // step 6: delete creation club data if needed.
-                if (ctx.DeleteCreationClubData)
+                if (ctx.Settings.DeleteCreationClubFiles)
                 {
                     DeleteCreationClubData(ctx);
                 }
@@ -159,7 +162,7 @@ namespace FO4Down
         {
             ctx.Step = FO4DowngraderStep.DeleteCreationClubData;
             var fo4 = ctx.Fallout4;
-            var deleteCreationClubData = ctx.DeleteCreationClubData;
+            var deleteCreationClubData = ctx.Settings.DeleteCreationClubFiles;
             var dataFolder = System.IO.Path.Combine(fo4.Path, "Data");
             var filesToDelete = new List<string>
             {
@@ -273,13 +276,13 @@ namespace FO4Down
             depots.AddRange(DepotManager.Get(DepotTarget.Game, language));
             depots.AddRange(DepotManager.Get(DepotTarget.RequiredDlc, language));
 
-            if (ctx.DownloadAllDLCs)
+            if (ctx.Settings.DownloadAllDLCs)
             {
                 depots.AddRange(DepotManager.GetLanguageNeutral(DepotTarget.AllDlc));
                 depots.AddRange(DepotManager.Get(DepotTarget.AllDlc, language));
             }
 
-            if (ctx.DownloadHDTextures)
+            if (ctx.Settings.DownloadHDTextures)
             {
                 // <HD Textures>
                 depots.Add(DepotManager.GetHDTextures());
@@ -327,11 +330,13 @@ namespace FO4Down
             }
 
             //steamPath = "G:\\GitHub\\fallout4-downgrader\\publish\\Self-contained\\libraryfolders.vdf";
-            ctx.LibraryFolders = SteamGameLocator.GetLibraryFolders(steamPath);
-            ctx.InstalledGames = SteamGameLocator.GetInstalledGames(ctx.LibraryFolders);
+            SteamGameLocator.GetLibraryFolders(ctx, steamPath);
+            SteamGameLocator.GetInstalledGames(ctx);
 
             if (!ctx.InstalledGames.TryGetValue("Fallout 4", out var fo4))
             {
+                //add fallback to find fallout 4 folder in parent folder or same folder.look for manifest
+
                 throw new FileNotFoundException("Fallout 4 is not installed.");
             }
 
@@ -436,21 +441,20 @@ namespace FO4Down
     public class DowngradeContext
     {
         public FO4DowngraderStep Step { get; set; }
+        public string Version { get; set; }
         public bool IsError { get; set; }
         public bool Continue { get; set; }
         public bool ReportToDeveloper { get; set; }
         public string Message { get; set; }
         public string LastErrorMessage { get; set; }
+        public List<string> LoggedErrors { get; set; } = new List<string>();
+
         public Exception Exception { get; set; }
 
         public List<SteamLibFolder> LibraryFolders { get; set; }
         public Dictionary<string, SteamGame> InstalledGames { get; set; }
         public SteamGame Fallout4 { get; set; }
         public AppSettings Settings { get; internal set; }
-        public bool DownloadCreationKit { get; set; }
-        public bool DeleteCreationClubData { get; set; }
-        public bool DownloadAllDLCs { get; set; }
-        public bool DownloadHDTextures { get; set; }
         public Action<DowngradeContext> OnStepUpdate { get; internal set; }
         public StepRequest Request { get; set; }
         public float Fraction { get; internal set; }
@@ -458,6 +462,8 @@ namespace FO4Down
         public IAuthenticator UserAuthenticator { get; set; }
         public int TotalDepotsToDownload { get; set; }
         public int DepotsDownloaded { get; set; }
+        public bool DownloadCreationKit { get; internal set; }
+        public bool IsAuthenticated { get; internal set; }
 
         private StringBuilder log = new StringBuilder();
 
@@ -520,8 +526,8 @@ namespace FO4Down
             }
 
             Message = msg;
-            LastErrorMessage = message;
-
+            LastErrorMessage = msg;
+            LoggedErrors.Add(msg);
             if (OnStepUpdate != null)
                 this.OnStepUpdate(this);
         }
@@ -533,6 +539,7 @@ namespace FO4Down
             Message = exc.Message;
             Exception = exc;
             LastErrorMessage = Message;
+            LoggedErrors.Add(exc.ToString());
             log.AppendLine(exc.ToString());
             if (OnStepUpdate != null)
                 this.OnStepUpdate(this);
@@ -669,8 +676,10 @@ namespace FO4Down
             Settings.DownloadAllLanguages = string.IsNullOrEmpty(userSettings.Language);
             Settings.Language = userSettings.Language;
             Settings.DownloadCreationKit = userSettings.DownloadCreationKit;
-            this.DownloadAllDLCs = userSettings.DownloadAllDLCs;
-            this.DownloadHDTextures = userSettings.DownloadHDTextures;
+            Settings.DownloadHDTextures = userSettings.DownloadHDTextures;
+            Settings.DownloadAllDLCs = userSettings.DownloadAllDLCs;
+            Settings.DeleteCreationClubFiles = userSettings.DeleteCreationClubFiles;
+
             ContentDownloader.Config.DownloadAllLanguages = Settings.DownloadAllLanguages;
         }
     }
