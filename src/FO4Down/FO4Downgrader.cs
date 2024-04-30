@@ -43,10 +43,10 @@ namespace FO4Down
                     ctx.Error("Login failed. Invalid username or password.\nLogin using QR if problem persists");
                 }
 
-                //// step 2.5: Handle user settings
-                //// before we start, we should request settings changes that the user may want
-                //// such as language, whether or not it should try to download all dlcs and/or hd textures pack.
-                //await HandleUserSettingsAsync(ctx);
+                // step 2.5: Handle user settings
+                // before we start, we should request settings changes that the user may want
+                // such as language, whether or not it should try to download all dlcs and/or hd textures pack.
+                await HandleUserSettingsAsync(ctx);
 
                 // step 3: Download all depot files into the /depots/ folder.
                 await DownloadDepotFilesAsync(ctx);
@@ -149,15 +149,24 @@ namespace FO4Down
             }
         }
 
+        private static T Random<T>(params T[] values)
+        {
+            if (values.Length == 0) return default;
+            if (values.Length == 1) return values[0];
+            return values[System.Random.Shared.Next(values.Length)];
+        }
+
         private async Task HandleUserSettingsAsync(DowngradeContext ctx)
         {
-            // skip this step if we already merged
-            if (ctx.Settings.Merged)
-            {
-                return;
-            }
-
             ctx.Step = FO4DowngraderStep.UserSettings;
+            ctx.Message = Random([
+                "Fine-tune your survival kit.",
+                "Adjust your settings before venturing out into the Commonwealth.",
+                "Customize your experience, wastelander.",
+                "Tweak the dials, tune the wasteland.",
+                "Choose your gear wisely.",
+            ]);
+
             var userSettings = await ctx.RequestAsync<UserProvidedSettings>("settings");
             if (userSettings != null)
             {

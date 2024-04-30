@@ -19,7 +19,7 @@ namespace FO4Down.Windows
 
             Title = "Steam Login";
             Width = Dim.Percent(50);
-            Height = 13;
+            Height = 12;
 
             txtUsername = Input("Username");
             txtPassword = Input("Password", true, txtUsername);
@@ -29,8 +29,8 @@ namespace FO4Down.Windows
             btnQuery = Btn("QR", txtPassword, BtnQRClicked);
             btnQuery.X = Pos.Right(btnLogin) + 1;
 
-            btnQuery = Btn("Settings", txtPassword, BtnSettingsClicked);
-            btnQuery.X = Pos.Right(btnQuery) + 1;
+            //btnQuery = Btn("Settings", txtPassword, BtnSettingsClicked);
+            //btnQuery.X = Pos.Right(btnQuery) + 1;
 
             if (ctx != null && ctx.IsError)
             {
@@ -38,7 +38,7 @@ namespace FO4Down.Windows
             }
             else
             {
-                Lbl("Please login to steam to start the downgrade.\nWant to change language? Click on settings", txtPassword);
+                Lbl("Please login to steam to continue", txtPassword);
             }
         }
 
@@ -48,12 +48,12 @@ namespace FO4Down.Windows
                 e.Cancel = true;
         }
 
-        private void BtnSettingsClicked()
-        {
-            var settingsDialog = new UserSettingsDialog(ctx);
-            settingsDialog.ShowDialog();
-            ctx.Merge(settingsDialog.Settings);
-        }
+        //private void BtnSettingsClicked()
+        //{
+        //    var settingsDialog = new UserSettingsDialog(ctx);
+        //    settingsDialog.ShowDialog();
+        //    ctx.Merge(settingsDialog.Settings);
+        //}
 
         private void BtnQRClicked()
         {
