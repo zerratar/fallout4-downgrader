@@ -7,7 +7,7 @@ namespace FO4Down.Windows
         private readonly TextField txtUsername;
         private readonly TextField txtPassword;
         private readonly Button btnLogin;
-        private readonly Button btnCancel;
+        private readonly Button btnQuery;
         private DowngradeContext ctx;
 
         public SteamLoginDialog(DowngradeContext ctx)
@@ -19,14 +19,18 @@ namespace FO4Down.Windows
 
             Title = "Steam Login";
             Width = Dim.Percent(50);
-            Height = 12;
+            Height = 13;
 
             txtUsername = Input("Username");
             txtPassword = Input("Password", true, txtUsername);
             btnLogin = Btn("Login", txtPassword, BtnLoginClicked);
             //btnCancel = Btn("Cancel", txtPassword, BtnCancelClicked);
-            btnCancel = Btn("QR", txtPassword, BtnQRClicked);
-            btnCancel.X = Pos.Right(btnLogin) + 1;
+
+            btnQuery = Btn("QR", txtPassword, BtnQRClicked);
+            btnQuery.X = Pos.Right(btnLogin) + 1;
+
+            btnQuery = Btn("Settings", txtPassword, BtnSettingsClicked);
+            btnQuery.X = Pos.Right(btnQuery) + 1;
 
             if (ctx != null && ctx.IsError)
             {
@@ -34,7 +38,7 @@ namespace FO4Down.Windows
             }
             else
             {
-                Lbl("Please enter your Steam user/pass", txtPassword);
+                Lbl("Please login to steam to start the downgrade.\nWant to change language? Click on settings", txtPassword);
             }
         }
 
@@ -42,6 +46,13 @@ namespace FO4Down.Windows
         {
             if (!result)
                 e.Cancel = true;
+        }
+
+        private void BtnSettingsClicked()
+        {
+            var settingsDialog = new UserSettingsDialog(ctx);
+            settingsDialog.ShowDialog();
+            ctx.Merge(settingsDialog.Settings);
         }
 
         private void BtnQRClicked()

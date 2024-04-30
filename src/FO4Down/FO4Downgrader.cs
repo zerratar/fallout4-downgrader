@@ -2,12 +2,12 @@
 using FO4Down.Core;
 using FO4Down.Steam;
 using FO4Down.Steam.DepotDownloader;
-using SteamKit2;
 using SteamKit2.Authentication;
-using System.ComponentModel;
 using System.Diagnostics;
+using System.Globalization;
+using System.IO.Compression;
+using System.Reflection;
 using System.Text;
-using static SteamKit2.Internal.CChatUsability_ClientUsabilityMetrics_Notification;
 
 namespace FO4Down
 {
@@ -31,16 +31,22 @@ namespace FO4Down
                 // step 1: Find out where or if Fallout 4 is installed
                 var fo4 = FindFallout4(ctx);
 
-                // step 1.5: Handle user settings
-                // before we start, we should request settings changes that the user may want
-                // such as language, whether or not it should try to download all dlcs and/or hd textures pack.
-                await HandleUserSettingsAsync(ctx);
+
+                //// step 2.5: Handle user settings
+                //// before we start, we should request settings changes that the user may want
+                //// such as language, whether or not it should try to download all dlcs and/or hd textures pack.
+                //await HandleUserSettingsAsync(ctx);
 
                 // step 2: login to steam
                 while (!await LoginToSteamAsync(ctx))
                 {
                     ctx.Error("Login failed. Invalid username or password.\nLogin using QR if problem persists");
                 }
+
+                //// step 2.5: Handle user settings
+                //// before we start, we should request settings changes that the user may want
+                //// such as language, whether or not it should try to download all dlcs and/or hd textures pack.
+                //await HandleUserSettingsAsync(ctx);
 
                 // step 3: Download all depot files into the /depots/ folder.
                 await DownloadDepotFilesAsync(ctx);
@@ -57,8 +63,19 @@ namespace FO4Down
                     DeleteCreationClubData(ctx);
                 }
 
+                // 7. delete english language files if we selected a non-english language and update ini file
+                await ApplyLanguageAsync(ctx);
+
                 ctx.Step = FO4DowngraderStep.Finished;
-                ctx.Notify("Your Fallout 4 installation has been downgraded. Enjoy!\nYou may now close this application.");
+
+                if (ctx.LoggedErrors.Count > 0)
+                {
+                    ctx.WarnAndReport("Your Fallout 4 installation has been downgraded but with " + ctx.LoggedErrors.Count + " error(s) and may not work as expected.");
+                }
+                else
+                {
+                    ctx.Notify("Your Fallout 4 installation has been downgraded without any problems. Enjoy!\nYou may now close this application.");
+                }
 
             }
             catch (FileNotFoundException ex)
@@ -75,8 +92,71 @@ namespace FO4Down
             }
         }
 
+        private static async Task ApplyLanguageAsync(DowngradeContext ctx)
+        {
+            ctx.Step = FO4DowngraderStep.ApplyLanguage;
+
+            var fo4 = ctx.Fallout4;
+            var targetCulture = ctx.GetTargetCultureInfo();
+            var targetLanguage = targetCulture.EnglishName;
+            if (!ctx.Settings.DownloadAllLanguages && targetLanguage.IndexOf("english", StringComparison.OrdinalIgnoreCase) == -1)
+            {
+                var fallout4Files = Directory.GetFiles(fo4.Path, "*_" + targetCulture.TwoLetterISOLanguageName + ".*", SearchOption.AllDirectories);
+                var englishFilesToDelete = new List<string>();
+                foreach (var file in fallout4Files)
+                {
+                    var name = System.IO.Path.GetFileName(file);
+                    var dir = System.IO.Path.GetDirectoryName(file);
+                    var duplicate = Path.Combine(dir, name.Replace("_" + targetCulture.TwoLetterISOLanguageName, "_en", StringComparison.OrdinalIgnoreCase));
+                    if (File.Exists(duplicate))
+                    {
+                        englishFilesToDelete.Add(duplicate);
+                    }
+                }
+
+                if (englishFilesToDelete.Count > 0)
+                {
+                    var result = ctx.Settings.DeleteEnglishLanguageFiles ||
+                        await ctx.RequestAsync<bool>("confirm", englishFilesToDelete.Count + " English archives have been found in your Data folder.\nThis will most likely prevent your selected language \"" + targetLanguage + "\" from working.\nDo you want to delete these?");
+                    if (result)
+                    {
+                        foreach (var f in englishFilesToDelete)
+                        {
+                            System.IO.File.Delete(f);
+                        }
+                    }
+                }
+
+                // only update fallout 4 ini if it exists. as default one will be replaced
+                if (ctx.Fallout4Ini != null)
+                {
+                    var ini = ctx.Fallout4Ini;
+                    var langCode = targetCulture.TwoLetterISOLanguageName.ToLower();
+                    var general = ini["General"];
+                    var existingLanguageSettings = general["sLanguage"];
+                    if (existingLanguageSettings != langCode)
+                    {
+                        ini["General"]["sLanguage"] = langCode;
+                        var archive = ini["Archive"];
+                        foreach (var prop in archive.Properties)
+                        {
+                            archive.Properties[prop.Key] = prop.Value.Replace("_en.", "_" + langCode + ".");
+                        }
+
+                        ini.Save();
+                    }
+                }
+            }
+        }
+
         private async Task HandleUserSettingsAsync(DowngradeContext ctx)
         {
+            // skip this step if we already merged
+            if (ctx.Settings.Merged)
+            {
+                return;
+            }
+
             ctx.Step = FO4DowngraderStep.UserSettings;
             var userSettings = await ctx.RequestAsync<UserProvidedSettings>("settings");
             if (userSettings != null)
@@ -259,19 +339,37 @@ namespace FO4Down
 
         private static async Task DownloadDepotFilesAsync(DowngradeContext ctx)
         {
+            ctx.Step = FO4DowngraderStep.DownloadDepotFiles;
             var settings = ctx.Settings;
             var downloadCreationKit = ctx.DownloadCreationKit;
 
             List<Depot> depots = new List<Depot>();
 
-            depots.AddRange(DepotManager.GetLanguageNeutral(DepotTarget.Game));
-            depots.AddRange(DepotManager.GetLanguageNeutral(DepotTarget.RequiredDlc));
-
-            var language = settings.Language.ToLower();
+            var language = settings.Language?.ToLower();
             if (!settings.DownloadAllLanguages && string.IsNullOrEmpty(settings.Language))
                 language = "english";
             if (settings.DownloadAllLanguages)
                 language = null;
+
+            // verify whether or not we are downloading the correct language.
+            if (!settings.DownloadAllLanguages)
+            {
+                var targetLanguage = ctx.GetTargetCultureInfo();
+                if (!targetLanguage.EnglishName.Equals(language, StringComparison.OrdinalIgnoreCase))
+                {
+                    ctx.Message = "Preparing for download...";
+                    if (await ctx.RequestAsync<bool>("confirm",
+                        "You are about to download English version of the game\n" +
+                        "but your current Fallout 4 installation is in \"" + targetLanguage.EnglishName + "\".\n" +
+                        "Do you want to download " + targetLanguage.EnglishName + " instead?"))
+                    {
+                        language = targetLanguage.EnglishName.ToLower();
+                    }
+                }
+            }
+
+            depots.AddRange(DepotManager.GetLanguageNeutral(DepotTarget.Game));
+            depots.AddRange(DepotManager.GetLanguageNeutral(DepotTarget.RequiredDlc));
 
             depots.AddRange(DepotManager.Get(DepotTarget.Game, language));
             depots.AddRange(DepotManager.Get(DepotTarget.RequiredDlc, language));
@@ -345,8 +443,19 @@ namespace FO4Down
                     || Directory.Exists(Path.Combine(fo4.Path, "Papyrus Compiler"))
                     || ctx.Settings.DownloadCreationKit;
 
-            ctx.Notify();
+            var defaultIni = Path.Combine(fo4.Path, "Fallout4_Default.ini");
+            if (System.IO.File.Exists(defaultIni))
+            {
+                ctx.Fallout4DefaultIni = Fallout4IniSettings.FromIni(defaultIni);
+            }
 
+            var ini = Path.Combine(fo4.Path, "Fallout4.ini");
+            if (System.IO.File.Exists(ini))
+            {
+                ctx.Fallout4Ini = Fallout4IniSettings.FromIni(ini);
+            }
+
+            ctx.Notify();
             return fo4;
         }
 
@@ -436,6 +545,7 @@ namespace FO4Down
         CopyDepotFiles,
         Finished,
         DeleteCreationClubData,
+        ApplyLanguage,
     }
 
     public class DowngradeContext
@@ -443,6 +553,7 @@ namespace FO4Down
         public FO4DowngraderStep Step { get; set; }
         public string Version { get; set; }
         public bool IsError { get; set; }
+        public bool IsWarning { get; set; }
         public bool Continue { get; set; }
         public bool ReportToDeveloper { get; set; }
         public string Message { get; set; }
@@ -467,9 +578,50 @@ namespace FO4Down
 
         private StringBuilder log = new StringBuilder();
 
+
+        public Fallout4IniSettings Fallout4DefaultIni { get; set; }
+        public Fallout4IniSettings Fallout4Ini { get; set; }
+
+        public CultureInfo GetTargetCultureInfo()
+        {
+            var l = Settings.Language;
+            if (!string.IsNullOrEmpty(l))
+            {
+                return GetLanguageFromCode(l);
+            }
+
+            var ini = Fallout4Ini ?? Fallout4DefaultIni;
+            if (ini == null)
+            {
+                return Thread.CurrentThread.CurrentCulture;
+            }
+
+            return GetLanguageFromCode(ini["General"]["sLanguage"]);
+        }
+
+        private CultureInfo GetLanguageFromCode(string language)
+        {
+            try
+            {
+                return new CultureInfo(language);
+            }
+            catch (CultureNotFoundException)
+            {
+                // Log the error or handle it appropriately if the language code is invalid
+                Warn($"Warning: The provided language code '{language}' is not valid.");
+                return CultureInfo.InvariantCulture; // Return invariant culture or a default culture
+            }
+        }
+
         public DowngradeContext()
         {
             UserAuthenticator = new UserAuthenticator(this);
+        }
+
+
+        public string GetWorkingDirectory()
+        {
+            return System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
         }
 
         public void Notify()
@@ -541,6 +693,34 @@ namespace FO4Down
             LastErrorMessage = Message;
             LoggedErrors.Add(exc.ToString());
             log.AppendLine(exc.ToString());
+            if (OnStepUpdate != null)
+                this.OnStepUpdate(this);
+        }
+
+        public void WarnAndReport(string message)
+        {
+            IsError = false;
+            IsWarning = true;
+            Continue = false;
+            ReportToDeveloper = true;
+            Message = message;
+            Exception = null;
+            LastErrorMessage = message;
+            log.AppendLine(message);
+            if (OnStepUpdate != null)
+                this.OnStepUpdate(this);
+        }
+
+        public void Warn(string message)
+        {
+            IsError = false;
+            IsWarning = true;
+            Continue = true;
+            ReportToDeveloper = false;
+            Message = message;
+            Exception = null;
+            LastErrorMessage = message;
+            log.AppendLine(message);
             if (OnStepUpdate != null)
                 this.OnStepUpdate(this);
         }
@@ -679,7 +859,8 @@ namespace FO4Down
             Settings.DownloadHDTextures = userSettings.DownloadHDTextures;
             Settings.DownloadAllDLCs = userSettings.DownloadAllDLCs;
             Settings.DeleteCreationClubFiles = userSettings.DeleteCreationClubFiles;
-
+            Settings.DeleteEnglishLanguageFiles = userSettings.DeleteEnglishLanguageFiles;
+            Settings.Merged = true;
             ContentDownloader.Config.DownloadAllLanguages = Settings.DownloadAllLanguages;
         }
     }
@@ -830,7 +1011,7 @@ namespace FO4Down
         /// <inheritdoc />
         public Task<bool> AcceptDeviceConfirmationAsync()
         {
-            ctx.Error("STEAM GUARD! Use the Steam Mobile App to confirm your sign in...");
+            ctx.Notify("STEAM GUARD! Use the Steam Mobile App to confirm your sign in...");
 
             return Task.FromResult(true);
         }

@@ -4,10 +4,11 @@
     {
         public string Language { get; set; }
         public bool DownloadCreationKit { get; set; }
-        public bool DeleteCreationClubFiles { get; set; }
+        public bool DeleteCreationClubFiles { get; set; } = true;
         public bool KeepDepotFilesWhenDone { get; set; }
         public bool DownloadHDTextures { get; set; }
         public bool DownloadAllDLCs { get; set; }
+        public bool DeleteEnglishLanguageFiles { get; internal set; }
     }
 
     public class AppSettings
@@ -22,6 +23,8 @@
         public bool DeleteCreationClubFiles { get; set; }
         public bool DownloadHDTextures { get; set; }
         public bool DownloadAllDLCs { get; set; }
+        public bool Merged { get; internal set; }
+        public bool DeleteEnglishLanguageFiles { get; internal set; }
 
         public static AppSettings FromParams(Params p)
         {

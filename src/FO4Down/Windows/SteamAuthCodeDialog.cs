@@ -15,18 +15,21 @@ namespace FO4Down.Windows
 
             Title = "Steam Login - Auth Code";
             Width = Dim.Percent(50);
-            Height = 7;
+            Height = 10;
 
             txtAuthCode = Input(WordWrap(ctx.Request.Arguments?.FirstOrDefault()
                 ?? "Please enter your auth code", (int)(ContentSize.Width * .5)));
 
             txtAuthCode.TextAlignment = TextAlignment.Centered;
-            btnLogin = Btn("OK", txtAuthCode, BtnLoginClicked);
+
+            View view = txtAuthCode;
 
             if (ctx != null && ctx.IsError)
             {
-                ErrorLbl(ctx.LastErrorMessage, txtAuthCode);
+                view = ErrorLbl(ctx.LastErrorMessage, txtAuthCode);
             }
+
+            btnLogin = Btn("OK", view, BtnLoginClicked);
         }
 
         private string WordWrap(string text, int maxWidth)

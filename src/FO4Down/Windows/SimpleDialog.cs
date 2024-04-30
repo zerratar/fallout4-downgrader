@@ -6,8 +6,9 @@ namespace FO4Down.Windows
     {
         protected bool result;
 
-        protected CheckBox Check(string label, View? other = null, Action<CheckBox, bool?>? onValueChanged = null)
+        protected CheckBox Check(string label, View? other = null, View? parent = null, Action<CheckBox, bool?>? onValueChanged = null)
         {
+            parent = parent != null ? parent : this;
             var cb = new CheckBox
             {
                 Visible = true,
@@ -29,26 +30,30 @@ namespace FO4Down.Windows
                     onValueChanged?.Invoke(cb, cb.Checked);
                 }
             };
-            Add(cb);
+            parent.Add(cb);
             return cb;
         }
 
 
         protected ComboBox Combo<T>(
             string label,
+            View? parent,
             Action<ComboBox, int, T> onSelectionChanged,
             params T[] items)
         {
-            return Combo<T>(label, null, onSelectionChanged, items);
+            parent = parent != null ? parent : this;
+            return Combo<T>(label, null, parent, onSelectionChanged, items);
         }
 
         protected ComboBox Combo<T>(
             string label,
             View? other,
+            View? parent,
             Action<ComboBox, int, T> onSelectionChanged,
             params T[] items)
         {
-            var lbl = Lbl(label, other);
+            parent = parent != null ? parent : this;
+            var lbl = Lbl(label, other, parent);
             lbl.TextAlignment = TextAlignment.Left;
 
             var cb = new ComboBox
@@ -73,12 +78,13 @@ namespace FO4Down.Windows
                 };
             }
 
-            Add(cb);
+            parent.Add(cb);
             return cb;
         }
 
-        protected Label Lbl(string message, View? other = null)
+        protected Label Lbl(string message, View? other = null, View? parent = null)
         {
+            parent = parent != null ? parent : this;
             var lbl = new Label()
             {
                 Height = message.Count(x => x == '\n') + 1,
@@ -89,17 +95,21 @@ namespace FO4Down.Windows
                 Text = message,
             };
 
-            Add(lbl);
+            parent.Add(lbl);
             return lbl;
         }
 
-        protected void ErrorLbl(string message, View? other = null)
+        protected Label ErrorLbl(string message, View? other = null, View? parent = null)
         {
-            var lbl = Lbl(message, other);
+            parent = parent != null ? parent : this;
+
+            var lbl = Lbl(message, other, parent);
             lbl.ColorScheme = new ColorScheme
             {
                 Normal = new Terminal.Gui.Attribute(Color.Red, lbl.ColorScheme.Normal.Background)
             };
+
+            return lbl;
         }
 
         protected Button Btn(string text, View other, Action onInvoke)
@@ -124,8 +134,10 @@ namespace FO4Down.Windows
             return btn;
         }
 
-        protected TextField Input(string label, bool isPassword = false, View other = null)
+        protected TextField Input(string label, bool isPassword = false, View other = null, View? parent = null)
         {
+            parent = parent != null ? parent : this;
+
             var lbl = new Label()
             {
                 Height = label.Count(x => x == '\n') + 1,
@@ -134,7 +146,8 @@ namespace FO4Down.Windows
                 Y = other != null ? Pos.Bottom(other) + 1 : 1,
                 Text = label,
             };
-            Add(lbl);
+
+            parent.Add(lbl);
 
             var txt = new TextField()
             {
@@ -143,7 +156,8 @@ namespace FO4Down.Windows
                 Y = Pos.Bottom(lbl),
                 Width = Dim.Fill(2),
             };
-            Add(txt);
+
+            parent.Add(txt);
             return txt;
         }
 

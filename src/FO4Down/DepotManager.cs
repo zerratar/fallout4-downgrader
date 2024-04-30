@@ -113,6 +113,10 @@ namespace FO4Down
             && x.Target == target).ToList();
         }
 
+        internal static Depot GetById(uint depotId)
+        {
+            return depots.FirstOrDefault(x => x.Id == depotId);
+        }
     }
 
     public struct Depot

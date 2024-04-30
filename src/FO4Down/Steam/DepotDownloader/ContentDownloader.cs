@@ -478,8 +478,8 @@ namespace FO4Down.Steam.DepotDownloader
 
             if (!AccountHasAccess(depotId))
             {
-                Config.Logger.Error("Depot {0} is not available from this account.", depotId);
-
+                var depot = DepotManager.GetById(depotId);
+                Config.Logger.Error("Depot {0} \"{1}\" is not available from this account.", depotId, depot.Name);
                 return null;
             }
 
@@ -1071,7 +1071,7 @@ namespace FO4Down.Steam.DepotDownloader
                     {
                         depotDownloadCounter.SizeDownloaded += file.TotalSize;
                         var percent = depotDownloadCounter.SizeDownloaded / (float)depotDownloadCounter.CompleteDownloadSize * 100.0f;
-                        Console.Title = Program.GetTitle() + " - " + $" {percent:00.00}% - " + depotDownloadCounter.SizeDownloaded + " / " + depotDownloadCounter.CompleteDownloadSize + " bytes";
+                        //Console.Title = Program.GetTitle() + " - " + $" {percent:00.00}% - " + depotDownloadCounter.SizeDownloaded + " / " + depotDownloadCounter.CompleteDownloadSize + " bytes";
                         Config.Logger.Info("{0,6:#00.00}% {1}", depotDownloadCounter.SizeDownloaded / (float)depotDownloadCounter.CompleteDownloadSize * 100.0f, fileFinalPath);
                     }
 

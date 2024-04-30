@@ -22,6 +22,11 @@ namespace FO4Down.Windows
             Normal = new Terminal.Gui.Attribute(Color.Red, Color.Black),
         };
 
+        private readonly ColorScheme WarningLabelColorScheme = new ColorScheme
+        {
+            Normal = new Terminal.Gui.Attribute(Color.Yellow, Color.Black),
+        };
+
         private readonly ColorScheme DefaultLabelColorScheme;
         private readonly FO4Downgrader downgrader;
 
@@ -187,11 +192,31 @@ namespace FO4Down.Windows
                         lblStatus.Text = "Error: " + context.Message;
                     }
 
+                    if (context.IsWarning)
+                    {
+                        lblStatus.ColorScheme = WarningLabelColorScheme;
+                        lblStatus.Text = context.Message;
+                    }
+
                     if (context.ReportToDeveloper)
                     {
-
                         File.WriteAllText("error.txt", BuildErrorReport(context));
-                        MessageBox.ErrorQuery("Unexpected Error", "An unexpected error occurred: " + context.Message + "\nA full report has been saved to error.txt\nPlease report this to zerratar", "OK");
+                        if (context.IsError)
+                        {
+                            MessageBox.ErrorQuery("Unexpected Error", "An unexpected error occurred: " + context.Message + "\nA full report has been saved to error.txt\nPlease report this to zerratar", "OK");
+                        }
+                        else
+                        {
+                            MessageBox.ErrorQuery("Warning", context.Message + "\nA full report has been saved to error.txt\nPlease report this to zerratar if the game is not working as expected", "OK");
+                        }
+
+                        try
+                        {
+                            var dir = context.GetWorkingDirectory();
+                            Shell32.OpenFolderAndSelectItem(dir, "error.txt");
+                        }
+                        catch { }
+
                         RequestStop();
                         return;
                     }
@@ -209,6 +234,18 @@ namespace FO4Down.Windows
 
                     switch (context.Step)
                     {
+                        case FO4DowngraderStep.ApplyLanguage:
+                            if (context.Request != null)
+                            {
+                                switch (context.Request.Name)
+                                {
+                                    case "confirm":
+                                        var result = MessageBox.Query("Confirm", context.Request.Arguments[0], "Yes", "No") == 0;
+                                        context.Next(result);
+                                        break;
+                                }
+                            }
+                            break;
                         case FO4DowngraderStep.UserSettings:
                             var userSettings = new UserSettingsDialog(context);
                             userSettings.ShowDialog();
@@ -258,6 +295,16 @@ namespace FO4Down.Windows
                             }
                             break;
                         case FO4DowngraderStep.DownloadDepotFiles:
+                            if (context.Request != null)
+                            {
+                                switch (context.Request.Name)
+                                {
+                                    case "confirm":
+                                        var result = MessageBox.Query("Confirm", context.Request.Arguments[0], "Yes", "No") == 0;
+                                        context.Next(result);
+                                        break;
+                                }
+                            }
                             break;
                         case FO4DowngraderStep.DownloadCreationKitDepotFiles:
                         case FO4DowngraderStep.DownloadGameDepotFiles:
@@ -310,8 +357,15 @@ namespace FO4Down.Windows
                 }
             }
 
-            sb.AppendLine("[Crashing Error]");
-            sb.AppendLine(context.Exception.ToString());
+            if (context.Exception != null)
+            {
+                sb.AppendLine("[Crashing Error]");
+            }
+            else
+            {
+                sb.AppendLine(context.LastErrorMessage);
+            }
+
             return sb.ToString();
 
         }

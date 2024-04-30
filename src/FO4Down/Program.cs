@@ -1,6 +1,4 @@
-﻿using FO4Down;
-using FO4Down.Core;
-using FO4Down.Steam;
+﻿using FO4Down.Core;
 using FO4Down.Steam.DepotDownloader;
 using FO4Down.Windows;
 using System.Reflection;
@@ -17,6 +15,15 @@ namespace Fallout4Downgrader
 
         static async Task Main(string[] args)
         {
+            //var s = Fallout4IniSettings.FromIni(@"G:\SteamLibrary\steamapps\common\Fallout 4\Fallout4_Default.ini");
+            //var general = s["General"];
+            //general["sLanguage"] = "de";
+            //var archive = s["Archive"];
+            //var props = archive.Properties;
+            //foreach (var archives in archive.Properties)
+            //{
+            //    props[archives.Key]
+            //}
 
             //args = ["-qr"];
             var settings = LoadSettingsFromArgs(args);
