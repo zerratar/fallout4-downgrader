@@ -1165,7 +1165,7 @@ namespace FO4Down.Steam.DepotDownloader
                 }
                 catch (TaskCanceledException)
                 {
-                    Config.Logger.Error("Connection timeout downloading chunk {0}", chunkID);
+                    Config.Logger.Warning("Connection timeout downloading chunk {0}. Retrying", chunkID);
                 }
                 catch (SteamKitWebRequestException e)
                 {

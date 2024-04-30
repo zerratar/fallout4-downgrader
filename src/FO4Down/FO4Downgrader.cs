@@ -616,6 +616,10 @@ namespace FO4Down
             }
             catch (CultureNotFoundException)
             {
+
+                var ci = CultureInfo.GetCultures(CultureTypes.AllCultures)
+                                .FirstOrDefault(r => r.EnglishName.Equals(language, StringComparison.OrdinalIgnoreCase));
+                if (ci != null) return ci;
                 // Log the error or handle it appropriately if the language code is invalid
                 Warn($"Warning: The provided language code '{language}' is not valid.");
                 return CultureInfo.InvariantCulture; // Return invariant culture or a default culture
@@ -728,7 +732,6 @@ namespace FO4Down
             ReportToDeveloper = false;
             Message = message;
             Exception = null;
-            LastErrorMessage = message;
             log.AppendLine(message);
             if (OnStepUpdate != null)
                 this.OnStepUpdate(this);

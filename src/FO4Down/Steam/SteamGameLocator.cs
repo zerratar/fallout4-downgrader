@@ -41,7 +41,7 @@ namespace FO4Down.Steam
                     }
                     else
                     {
-                        ctx.Error("No appmanifest files found in '" + folder.Path);
+                        ctx.Warn("No appmanifest files found in '" + folder.Path);
                     }
 
                     continue;

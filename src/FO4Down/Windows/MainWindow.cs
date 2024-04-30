@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.IO.IsolatedStorage;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
@@ -251,9 +252,6 @@ namespace FO4Down.Windows
                             userSettings.ShowDialog();
                             context.Next(userSettings.Settings);
                             break;
-                        case FO4DowngraderStep.LookingForFallout4Path:
-                            lblStatus.Text = "Fallout 4 install path found\n" + context.Fallout4.Path;
-                            break;
                         case FO4DowngraderStep.LoginToSteam:
                             if (context.Request != null)
                             {
@@ -322,6 +320,10 @@ namespace FO4Down.Windows
                             progressBar.Fraction = context.Fraction;
                             break;
                     }
+                }
+                catch (Exception exc)
+                {
+                    context.Error(exc);
                 }
                 finally
                 {
