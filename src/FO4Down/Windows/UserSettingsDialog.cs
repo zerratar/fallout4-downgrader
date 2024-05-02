@@ -15,7 +15,7 @@ namespace FO4Down.Windows
         private CheckBox cbCreationKit;
         private CheckBox cbCreationClub;
         private Button btnOK;
-        private string[] languages = ["All", "English", "French", "German", "Italian", "Spanish", "Polish", "Russian", "Portuguese", "Traditional Chinese", "Japanese"];
+        private string[] languages = [/*"All", */ "English", "French", "German", "Italian", "Spanish", "Polish", "Russian", "Portuguese", "Traditional Chinese", "Japanese"];
 
         private TabView tabView;
         private bool delEnglishFilesWasSelected;
@@ -67,7 +67,7 @@ namespace FO4Down.Windows
                 var defeaultLanguageIndex = GetLanguageIndex(defaultLanguage);
                 if (defeaultLanguageIndex == -1)
                 {
-                    defeaultLanguageIndex = 1; // english
+                    defeaultLanguageIndex = Array.IndexOf(languages, "English"); // english
                 }
 
                 if (ctx.Settings.DownloadAllLanguages)
@@ -80,7 +80,6 @@ namespace FO4Down.Windows
                 }
 
                 //Check
-
             }
             tabView.AddTab(basic, true);
 

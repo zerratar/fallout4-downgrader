@@ -1,5 +1,6 @@
 ﻿using Microsoft.Win32;
 using SteamKit2.WebUI.Internal;
+using System.Collections.Concurrent;
 using System.Text.RegularExpressions;
 
 namespace FO4Down.Steam
@@ -24,14 +25,24 @@ namespace FO4Down.Steam
             }
         }
 
-        public static void GetInstalledGames(DowngradeContext ctx)//List<SteamLibFolder> libraryFolders)
+
+        public static void GetInstalledGames(DowngradeContext ctx)
         {
             var libraryFolders = ctx.LibraryFolders;
-            ctx.InstalledGames = new Dictionary<string, SteamGame>();
+            var installedGames = new ConcurrentDictionary<string, SteamGame>(); // Use thread-safe collection
 
-            foreach (var folder in libraryFolders)
+            var start = DateTime.Now;
+            int reportedSlowSearch = 0;
+            // Use Parallel.ForEach to handle each library folder concurrently
+            var r = Parallel.ForEach(libraryFolders, folder =>
             {
-                // Get by appmanifest_*.acf files
+                var now = DateTime.Now;
+                var elapsed = now - start;
+
+                if (elapsed > TimeSpan.FromSeconds(5) && Interlocked.CompareExchange(ref reportedSlowSearch, 1, 0) == 0)
+                {
+                    ctx.Warn("Looking for Fallout 4 installation is taking longer than expected\nJust keep the app running, it will find it eventually.");
+                }
 
                 if (!TryGetAppManifests(folder, out string[] acfFiles, out var manifestError))
                 {
@@ -41,10 +52,10 @@ namespace FO4Down.Steam
                     }
                     else
                     {
-                        ctx.Warn("No appmanifest files found in '" + folder.Path);
+                        ctx.Warn("No appmanifest files found in '" + folder.Path + "'");
                     }
 
-                    continue;
+                    return;
                 }
 
 
@@ -54,15 +65,53 @@ namespace FO4Down.Steam
                     if (string.IsNullOrEmpty(gameName))
                         continue;
 
-                    ctx.InstalledGames[gameName] = new SteamGame
+                    var game = new SteamGame
                     {
                         Name = gameName,
                         Path = Path.Combine(folder.Path, "steamapps", "common", gameName),
                         AppId = apps
                     };
+
+                    installedGames[gameName] = game; // Safe update of ConcurrentDictionary
                 }
-            }
+            });
+
+            ctx.InstalledGames = new Dictionary<string, SteamGame>(installedGames); // Convert back to standard dictionary if needed
         }
+
+        //public static void GetInstalledGames(DowngradeContext ctx)//List<SteamLibFolder> libraryFolders)
+        //{
+        //    var libraryFolders = ctx.LibraryFolders;
+        //    ctx.InstalledGames = new Dictionary<string, SteamGame>();
+        //    foreach (var folder in libraryFolders)
+        //    {
+        //        // Get by appmanifest_*.acf files
+        //        if (!TryGetAppManifests(folder, out string[] acfFiles, out var manifestError))
+        //        {
+        //            if (manifestError != null)
+        //            {
+        //                ctx.Error("Error reading appmanifests in '" + folder.Path + "'\nError: " + manifestError.Message);
+        //            }
+        //            else
+        //            {
+        //                ctx.Warn("No appmanifest files found in '" + folder.Path);
+        //            }
+        //            continue;
+        //        }
+        //        foreach (var apps in acfFiles)
+        //        {
+        //            var gameName = ExtractGameNameFromAcf(ctx, apps);
+        //            if (string.IsNullOrEmpty(gameName))
+        //                continue;
+        //            ctx.InstalledGames[gameName] = new SteamGame
+        //            {
+        //                Name = gameName,
+        //                Path = Path.Combine(folder.Path, "steamapps", "common", gameName),
+        //                AppId = apps
+        //            };
+        //        }
+        //    }
+        //}
 
         private static bool TryGetAppManifests(SteamLibFolder folder, out string[] acfFiles, out Exception exception)
         {

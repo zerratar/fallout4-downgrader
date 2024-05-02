@@ -13,6 +13,9 @@ namespace FO4Down
 {
     public class FO4Downgrader
     {
+        private const string Fallout4_AppId = "377160";
+        private const string Fallout4_Name = "Fallout 4";
+
         public async Task RunAsync(Action<DowngradeContext> onStepUpdate)
         {
             var ctx = new DowngradeContext();
@@ -426,28 +429,42 @@ namespace FO4Down
             ctx.Notify();
         }
 
-
         private static SteamGame FindFallout4(DowngradeContext ctx)
         {
             ctx.Step = FO4DowngraderStep.LookingForFallout4Path;
-            var steamPath = SteamGameLocator.GetSteamInstallPath();
-            if (string.IsNullOrEmpty(steamPath))
+            ctx.Notify("Searching the wasteland to find your installation of Fallout 4");
+
+            var fo4 = TryFindFalloutInCurrentPath(ctx);
+
+            if (fo4 == null)
             {
-                throw new FileNotFoundException("Steam is not installed.");
+                // try finding the game path based on standard paths that the game may have
+                fo4 = FindFallout4ByKnownPaths(ctx, fo4);
             }
 
-            //steamPath = "G:\\GitHub\\fallout4-downgrader\\publish\\Self-contained\\libraryfolders.vdf";
-            SteamGameLocator.GetLibraryFolders(ctx, steamPath);
-            SteamGameLocator.GetInstalledGames(ctx);
-
-            if (!ctx.InstalledGames.TryGetValue("Fallout 4", out var fo4))
+            if (fo4 == null)
             {
-                //add fallback to find fallout 4 folder in parent folder or same folder.look for manifest
+                var steamPath = SteamGameLocator.GetSteamInstallPath();
+                if (string.IsNullOrEmpty(steamPath))
+                {
+                    throw new FileNotFoundException("Steam is not installed.");
+                }
 
-                throw new FileNotFoundException("Fallout 4 is not installed.");
+                //steamPath = "G:\\GitHub\\fallout4-downgrader\\publish\\Self-contained\\libraryfolders.vdf";
+                SteamGameLocator.GetLibraryFolders(ctx, steamPath);
+                SteamGameLocator.GetInstalledGames(ctx);
+
+                if (!ctx.InstalledGames.TryGetValue("Fallout 4", out fo4))
+                {
+                    //add fallback to find fallout 4 folder in parent folder or same folder.look for manifest
+
+                    throw new FileNotFoundException("Fallout 4 is not installed.");
+                }
+
+                ctx.Fallout4 = fo4;
             }
 
-            ctx.Fallout4 = fo4;
+
             ctx.DownloadCreationKit = Directory.Exists(Path.Combine(fo4.Path, "Tools"))
                     || Directory.Exists(Path.Combine(fo4.Path, "Papyrus Compiler"))
                     || ctx.Settings.DownloadCreationKit;
@@ -468,6 +485,103 @@ namespace FO4Down
             return fo4;
         }
 
+        private static SteamGame? TryFindFalloutInCurrentPath(DowngradeContext ctx)
+        {
+            SteamGame? fo4 = null;
+
+            var currentPath = Directory.GetCurrentDirectory();
+            if (currentPath.IndexOf(@"system32", StringComparison.OrdinalIgnoreCase) != -1)
+            {
+                throw new Exception("You cannot run FO4Down.exe directly from the zip file\nPlease extract it to a folder before running.");
+            }
+
+            var isInsideFallout4Folder = currentPath.IndexOf("\\Fallout 4\\", StringComparison.OrdinalIgnoreCase) > 0;
+            var isFallout4Folder = currentPath.EndsWith("\\Fallout 4", StringComparison.OrdinalIgnoreCase);
+            if (isInsideFallout4Folder || isFallout4Folder)
+            {
+                if (isFallout4Folder && File.Exists(Path.Combine(currentPath, "Fallout4.exe")))
+                {
+                    fo4 = ctx.Fallout4 = new SteamGame
+                    {
+                        AppId = Fallout4_AppId,
+                        Name = Fallout4_Name,
+                        Path = currentPath
+                    };
+                }
+                else if (isInsideFallout4Folder)
+                {
+                    // look into parent folders
+                    while (true)
+                    {
+                        var info = Directory.GetParent(currentPath);
+                        if (info == null) break;
+
+                        currentPath = info.FullName;
+                        var fo4Path = Path.Combine(currentPath, "Fallout4.exe");
+                        if (info.Name.Equals("Fallout 4", StringComparison.OrdinalIgnoreCase) && File.Exists(fo4Path))
+                        {
+                            fo4 = ctx.Fallout4 = new SteamGame
+                            {
+                                AppId = Fallout4_AppId,
+                                Name = Fallout4_Name,
+                                Path = currentPath
+                            };
+                            break;
+                        }
+                    }
+                }
+            }
+
+            return fo4;
+        }
+
+        private static SteamGame? FindFallout4ByKnownPaths(DowngradeContext ctx, SteamGame? fo4)
+        {
+            if (TryGetDrives(out var drives))
+            {
+                foreach (var drive in drives)
+                {
+                    try
+                    {
+                        var root = drive.RootDirectory.FullName;
+                        var libraryPath = Path.Combine(root, @"SteamLibrary\steamapps\common\Fallout 4");
+                        if (!Path.Exists(libraryPath))
+                        {
+                            libraryPath = Path.Combine(root, @"Program Files (x86)\Steam\steamapps\common\Fallout 4");
+                        }
+
+                        var f4exe = System.IO.Path.Combine(libraryPath, "Fallout4.exe");
+                        if (Path.Exists(f4exe))
+                        {
+                            fo4 = ctx.Fallout4 = new SteamGame
+                            {
+                                AppId = Fallout4_AppId,
+                                Name = Fallout4_Name,
+                                Path = libraryPath
+                            };
+                            break;
+                        }
+                    }
+                    catch { }
+                }
+            }
+
+            return fo4;
+        }
+
+        private static bool TryGetDrives(out DriveInfo[] drives)
+        {
+            try
+            {
+                drives = DriveInfo.GetDrives();
+                return true;
+            }
+            catch
+            {
+                drives = [];
+            }
+            return false;
+        }
 
         private static async Task<bool> LoginToSteamAsync(DowngradeContext ctx)
         {
