@@ -1084,14 +1084,14 @@ namespace FO4Down
         {
             if (previousCodeWasIncorrect)
             {
-                ctx.Error("The previous 2-factor auth code you have provided is incorrect.");
+                ctx.Warn("The previous 2-factor auth code you have provided is incorrect.");
             }
 
             string? code;
 
             do
             {
-                ctx.Error("STEAM GUARD! Please enter your 2-factor auth code from your authenticator app");
+                ctx.Notify("STEAM GUARD! Please enter your 2-factor auth code from your authenticator app");
 
                 code = await ctx.RequestAsync<string>("auth_code", "Please enter your 2-factor auth code from your authenticator app");
 
@@ -1111,14 +1111,14 @@ namespace FO4Down
         {
             if (previousCodeWasIncorrect)
             {
-                ctx.Error("The previous 2-factor auth code you have provided is incorrect.");
+                ctx.Warn("The previous 2-factor auth code you have provided is incorrect.");
             }
 
             string? code;
 
             do
             {
-                ctx.Error($"STEAM GUARD! Please enter the auth code sent to the email at {email}");
+                ctx.Notify($"STEAM GUARD! Please enter the auth code sent to the email at {email}");
 
                 code = await ctx.RequestAsync<string>("auth_code", $"Please enter the auth code sent to the email at {email}");
 
