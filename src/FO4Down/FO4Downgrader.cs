@@ -2,7 +2,10 @@
 using FO4Down.Core;
 using FO4Down.Steam;
 using FO4Down.Steam.DepotDownloader;
+using SharpCompress;
 using SharpCompress.Archives;
+using SharpCompress.Common;
+using SharpCompress.Readers;
 using SteamKit2.GC.CSGO.Internal;
 using System.Diagnostics;
 using System.IO.Compression;
@@ -113,6 +116,11 @@ namespace FO4Down
         {
             if (!ctx.CanPatch)
             {
+                if (ctx.Settings.InstallPlugins)
+                {
+                    await InstallPluginsAsync(ctx);
+                }
+
                 return false;
             }
 
@@ -120,20 +128,7 @@ namespace FO4Down
 
             if (ctx.Settings.InstallPlugins)
             {
-                if (!ctx.IsF4SEInstalled)
-                {
-                    await InstallF4SEAsync(ctx);
-                }
-
-                if (!ctx.IsF4SEAddressLibraryInstalled)
-                {
-                    await InstallAddressLibraryPluginAsync(ctx);
-                }
-
-                if (!ctx.IsF4SEBASSInstalled)
-                {
-                    await InstallBASSAsync(ctx);
-                }
+                await InstallPluginsAsync(ctx);
             }
             else if (ctx.Settings.InstallHelperEnabled && (!ctx.IsF4SEInstalled || !ctx.IsF4SEAddressLibraryInstalled || !ctx.IsF4SEBASSInstalled))
             {
@@ -183,6 +178,24 @@ namespace FO4Down
             return true;
         }
 
+        private static async Task InstallPluginsAsync(ApplicationContext ctx)
+        {
+            if (!ctx.IsF4SEInstalled)
+            {
+                await InstallF4SEAsync(ctx);
+            }
+
+            if (!ctx.IsF4SEAddressLibraryInstalled)
+            {
+                await InstallAddressLibraryPluginAsync(ctx);
+            }
+
+            if (!ctx.IsF4SEBASSInstalled)
+            {
+                await InstallBASSAsync(ctx);
+            }
+        }
+
         public static async Task InstallBASSAsync(ApplicationContext ctx)
         {
             ctx.Notify("Installing F4SE Plugin: BASS...");
@@ -193,10 +206,11 @@ namespace FO4Down
                     ctx.HttpClient = new HttpClient();
                 await DownloadFileAsync(ctx.HttpClient, "https://github.com/zerratar/fallout4-downgrader/releases/download/v1.0.5.2/BackportedBA2Support-1_0-81859-1-0-1714516128.zip", zip);
             }
+
             var targetDirectory = System.IO.Path.Combine(ctx.Fallout4.Path);
             using (var archive = SharpCompress.Archives.Zip.ZipArchive.Open("Downloads/baas.zip"))
             {
-                archive.ExtractToDirectory(targetDirectory);
+                ExtractToDirectory(archive, targetDirectory);
             }
             ctx.IsF4SEBASSInstalled = true;
         }
@@ -214,7 +228,7 @@ namespace FO4Down
             var targetDirectory = Path.Combine(ctx.Fallout4.Path, "Data\\");
             using (var archive = SharpCompress.Archives.Zip.ZipArchive.Open("Downloads/address.library.zip"))
             {
-                archive.ExtractToDirectory(targetDirectory);
+                ExtractToDirectory(archive, targetDirectory);
             }
             ctx.IsF4SEAddressLibraryInstalled = true;
         }
@@ -232,10 +246,11 @@ namespace FO4Down
             var targetDirectory = Path.Combine(ctx.Fallout4.Path);
             using (var archive = SharpCompress.Archives.Zip.ZipArchive.Open("Downloads/f4se.zip"))
             {
-                archive.ExtractToDirectory(targetDirectory);
+                ExtractToDirectory(archive, targetDirectory);
             }
             ctx.IsF4SEInstalled = true;
         }
+
         public static async Task DownloadFileAsync(HttpClient client, string url, string destinationOnDisk)
         {
             // Send a GET request to the specified URL
@@ -254,6 +269,36 @@ namespace FO4Down
                 {
                     // Copy the content stream to the file stream asynchronously
                     await contentStream.CopyToAsync(fileStream);
+                }
+            }
+        }
+
+        public static void ExtractToDirectory(IArchive archive, string destination, Action<double>? progressReport = null, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            long totalUncompressSize = archive.TotalUncompressSize;
+            long num = 0L;
+            HashSet<string> hashSet = new HashSet<string>();
+            IReader reader = archive.ExtractAllEntries();
+            while (reader.MoveToNextEntry())
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                IEntry entry = reader.Entry;
+                if (!entry.IsDirectory)
+                {
+                    string text = Path.Combine(destination, entry.Key.NotNull("Entry Key is null"));
+                    string directoryName = Path.GetDirectoryName(text);
+                    if (directoryName != null && hashSet.Add(text))
+                    {
+                        Directory.CreateDirectory(directoryName);
+                    }
+
+                    if (!System.IO.File.Exists(text))
+                    {
+                        using FileStream writableStream = File.OpenWrite(text);
+                        reader.WriteEntryTo(writableStream);
+                    }
+                    num += entry.Size;
+                    progressReport?.Invoke((double)num / (double)totalUncompressSize);
                 }
             }
         }
