@@ -9,6 +9,7 @@ using System.IO.Compression;
 using System.IO.Hashing;
 using System.Net.Http;
 using System.Security.Cryptography;
+using ZstdSharp.Unsafe;
 
 namespace FO4Down
 {
@@ -117,22 +118,27 @@ namespace FO4Down
 
             ctx.Step = FO4DowngraderStep.Patch;
 
-            //var shouldPatch = await ctx.RequestAsync<bool>("confirm");
-            //if (!shouldPatch) return false;
-
-            if (!ctx.IsF4SEInstalled)
+            if (ctx.Settings.InstallPlugins)
             {
-                await InstallF4SEAsync(ctx);
+                if (!ctx.IsF4SEInstalled)
+                {
+                    await InstallF4SEAsync(ctx);
+                }
+
+                if (!ctx.IsF4SEAddressLibraryInstalled)
+                {
+                    await InstallAddressLibraryPluginAsync(ctx);
+                }
+
+                if (!ctx.IsF4SEBASSInstalled)
+                {
+                    await InstallBASSAsync(ctx);
+                }
             }
-
-            if (!ctx.IsF4SEAddressLibraryInstalled)
+            else if (ctx.Settings.InstallHelperEnabled && (!ctx.IsF4SEInstalled || !ctx.IsF4SEAddressLibraryInstalled || !ctx.IsF4SEBASSInstalled))
             {
-                await InstallAddressLibraryPluginAsync(ctx);
-            }
-
-            if (!ctx.IsF4SEBAASInstalled)
-            {
-                await InstallBAASAsync(ctx);
+                var shouldPatch = await ctx.RequestAsync<bool>("confirm");
+                if (!shouldPatch) return false;
             }
 
             ctx.Notify("Patching Fallout4.exe...");
@@ -146,14 +152,40 @@ namespace FO4Down
 
 
             ctx.Step = FO4DowngraderStep.Finished;
-            ctx.Notify("All files patched! Your Fallout 4 installation has been downgraded!\nHappy Modding!");
+
+            var helperText = "";
+
+            if (!ctx.IsF4SEInstalled)
+            {
+                helperText += "\n* F4SE";
+            }
+
+            if (!ctx.IsF4SEAddressLibraryInstalled)
+            {
+                helperText += "\n* F4SE - Address Library Plugin";
+            }
+
+            if (!ctx.IsF4SEBASSInstalled)
+            {
+                helperText += "\n* F4SE - BASS Plugin";
+            }
+
+            if (helperText.Length > 0)
+            {
+                ctx.Notify("All files patched! Your Fallout 4 installation has been downgraded!\nDon't forget to install the following mods+plugins:" + helperText);
+            }
+            else
+            {
+                ctx.Notify("All files patched! Your Fallout 4 installation has been downgraded!\nHappy Modding!");
+            }
+
 
             return true;
         }
 
-        private async Task InstallBAASAsync(ApplicationContext ctx)
+        public static async Task InstallBASSAsync(ApplicationContext ctx)
         {
-            ctx.Notify("Installing F4SE Plugin: BAAS...");
+            ctx.Notify("Installing F4SE Plugin: BASS...");
             var zip = "Downloads/baas.zip";
             if (!File.Exists(zip))
             {
@@ -166,9 +198,10 @@ namespace FO4Down
             {
                 archive.ExtractToDirectory(targetDirectory);
             }
+            ctx.IsF4SEBASSInstalled = true;
         }
 
-        private async Task InstallAddressLibraryPluginAsync(ApplicationContext ctx)
+        public static async Task InstallAddressLibraryPluginAsync(ApplicationContext ctx)
         {
             ctx.Notify("Installing F4SE Plugin: Address Library...");
             var zip = "Downloads/address.library.zip";
@@ -183,9 +216,10 @@ namespace FO4Down
             {
                 archive.ExtractToDirectory(targetDirectory);
             }
+            ctx.IsF4SEAddressLibraryInstalled = true;
         }
 
-        private async Task InstallF4SEAsync(ApplicationContext ctx)
+        public static async Task InstallF4SEAsync(ApplicationContext ctx)
         {
             ctx.Notify("Installing F4SE...");
             var zip = "Downloads/f4se.zip";
@@ -200,9 +234,9 @@ namespace FO4Down
             {
                 archive.ExtractToDirectory(targetDirectory);
             }
+            ctx.IsF4SEInstalled = true;
         }
-
-        private async Task DownloadFileAsync(HttpClient client, string url, string destinationOnDisk)
+        public static async Task DownloadFileAsync(HttpClient client, string url, string destinationOnDisk)
         {
             // Send a GET request to the specified URL
             using (HttpResponseMessage response = await client.GetAsync(url, HttpCompletionOption.ResponseHeadersRead))
@@ -226,6 +260,7 @@ namespace FO4Down
 
         public static void CheckIfF4SEAddressLibraryIsInstalled(ApplicationContext ctx)
         {
+            if (ctx.IsF4SEAddressLibraryInstalled) return;
             if (!ctx.IsF4SEInstalled)
             {
                 return;
@@ -241,6 +276,7 @@ namespace FO4Down
 
         public static void CheckIfF4SEBAASIsInstalled(ApplicationContext ctx)
         {
+            if (ctx.IsF4SEBASSInstalled) return;
             if (!ctx.IsF4SEInstalled)
             {
                 return;
@@ -250,12 +286,14 @@ namespace FO4Down
             if (//File.Exists(Path.Combine(ctx.Fallout4.Path, f)) || 
                 File.Exists(Path.Combine(ctx.Fallout4.Path, "Data", f)))
             {
-                ctx.IsF4SEBAASInstalled = true;
+                ctx.IsF4SEBASSInstalled = true;
             }
         }
 
         public static void CheckIfF4SEIsInstalled(ApplicationContext ctx)
         {
+            if (ctx.IsF4SEInstalled) return;
+
             var f4se = Path.Combine(ctx.Fallout4.Path, "f4se_loader.exe");
             if (File.Exists(f4se))
             {

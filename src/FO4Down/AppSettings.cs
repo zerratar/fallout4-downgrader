@@ -25,12 +25,16 @@
         public bool DownloadAllDLCs { get; set; }
         public bool Merged { get; internal set; }
         public bool DeleteEnglishLanguageFiles { get; internal set; }
+        public bool InstallPlugins { get; set; }
+        public bool InstallHelperEnabled { get; internal set; }
 
         public static AppSettings FromParams(Params p)
         {
             return new AppSettings
             {
                 UseQrCode = p.Contains("-qr"),
+                InstallPlugins = p.Contains("-install-plugins"),
+                InstallHelperEnabled = p.Contains("-install-helper"),
                 KeepDepotFiles = p.Contains("-keep-depot"),
                 DownloadCreationKit = p.Contains("-creation-kit") || p.Contains("-ck"),
                 Username = p.Get<string>("-username") ?? p.Get<string>("-user"),

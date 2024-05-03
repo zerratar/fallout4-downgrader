@@ -32,6 +32,8 @@ namespace Fallout4Downgrader
             {
                 Console.WriteLine("Fallout 4 Downgrader - v" + Assembly.GetExecutingAssembly().GetName().Version);
                 Console.WriteLine("Usage: FO4Down.exe (optional: arguments)");
+                Console.WriteLine("  -install-plugins\tAutomatically install needed plugins into Fallout 4\\Data\\ folder");
+                Console.WriteLine("  -install-helper\tAllow for selecting downgrade and help installing plugins");
                 Console.WriteLine("  -user or -username <steam user>");
                 Console.WriteLine("  -pass or -password <steam pass>");
                 Console.WriteLine("  -qr\t\t\tLogin using QR code instead");

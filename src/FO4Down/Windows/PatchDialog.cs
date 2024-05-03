@@ -8,6 +8,7 @@ namespace FO4Down.Windows
     internal class PatchDialog : SimpleDialog
     {
         private ApplicationContext ctx;
+        private Label lblAutomaticInstall;
         private Timer timer;
         private Button btnPatch;
         private Button btnDowngrade;
@@ -34,7 +35,7 @@ namespace FO4Down.Windows
                 "If you decide to do a normal downgrade, this will download all depots\n(~32gb of files) " +
                 "and requires your steam username/password to proceed.\n", null, this);
 
-            if (!ctx.IsF4SEAddressLibraryInstalled || !ctx.IsF4SEInstalled || !ctx.IsF4SEBAASInstalled)
+            if (!ctx.IsF4SEAddressLibraryInstalled || !ctx.IsF4SEInstalled || !ctx.IsF4SEBASSInstalled)
             {
 
                 reqLabel = Lbl("Requirements for patching", notification);
@@ -84,7 +85,7 @@ namespace FO4Down.Windows
 
                 cbBAAS = Check("F4SE Plugin: Backported Archive2 Support System", other: cbf4seAddressLibrary, parent: requirements);
                 cbBAAS.Enabled = false;
-                cbBAAS.Checked = ctx.IsF4SEBAASInstalled;
+                cbBAAS.Checked = ctx.IsF4SEBASSInstalled;
                 if (!cbBAAS.Checked.GetValueOrDefault())
                 {
                     startTimer = true;
@@ -101,6 +102,9 @@ namespace FO4Down.Windows
 
                 if (startTimer)
                 {
+                    lblAutomaticInstall = Lbl("<Install All Automatically>", parent: requirements);
+                    lblAutomaticInstall.Y = Pos.Bottom(cbBAAS) + 1;
+                    lblAutomaticInstall.MouseClick += async (s, e) => await InstallAllPlugins();
                     timer = new Timer(CheckForInstallStates, null, 5000, 1000);
                 }
 
@@ -117,6 +121,28 @@ namespace FO4Down.Windows
 
             btnPatch = Btn("Yes patch it!", notification, BtnPatchClicked);
             btnDowngrade = Btn("Normal Downgrade", notification, BtnDowngradeClicked);
+        }
+
+        private async Task InstallAllPlugins()
+        {
+            var result = MessageBox.Query("Install into Fallout 4 folder?", "No support for MO2 yet.\nAll files will be installed directly under /Fallout 4/ folder.\nDo you wish to continue?", "Yes", "No, I will do this manually.");
+            if (result == 0)
+            {
+                if (!ctx.IsF4SEInstalled)
+                {
+                    await FO4Downgrader.InstallF4SEAsync(ctx);
+                }
+
+                if (!ctx.IsF4SEAddressLibraryInstalled)
+                {
+                    await FO4Downgrader.InstallAddressLibraryPluginAsync(ctx);
+                }
+
+                if (!ctx.IsF4SEBASSInstalled)
+                {
+                    await FO4Downgrader.InstallBASSAsync(ctx);
+                }
+            }
         }
 
         private void CheckForInstallStates(object? state)
@@ -139,13 +165,13 @@ namespace FO4Down.Windows
                     lblInstallAddress.Visible = false;
                 }
 
-                cbBAAS.Checked = ctx.IsF4SEBAASInstalled;
-                if (ctx.IsF4SEBAASInstalled && lblInstallBAAS != null)
+                cbBAAS.Checked = ctx.IsF4SEBASSInstalled;
+                if (ctx.IsF4SEBASSInstalled && lblInstallBAAS != null)
                 {
                     lblInstallBAAS.Visible = false;
                 }
 
-                if (ctx.IsF4SEBAASInstalled && ctx.IsF4SEInstalled && ctx.IsF4SEAddressLibraryInstalled)
+                if (ctx.IsF4SEBASSInstalled && ctx.IsF4SEInstalled && ctx.IsF4SEAddressLibraryInstalled)
                 {
                     timer.Dispose();
                     timer = null;
@@ -174,7 +200,7 @@ namespace FO4Down.Windows
 
         private void BtnPatchClicked()
         {
-            if (!ctx.IsF4SEAddressLibraryInstalled || !ctx.IsF4SEInstalled || !ctx.IsF4SEBAASInstalled)
+            if (!ctx.IsF4SEAddressLibraryInstalled || !ctx.IsF4SEInstalled || !ctx.IsF4SEBASSInstalled)
             {
                 if (MessageBox.Query("Requirements not met", "You still have not installed the required plugins, the patched Fallout 4 wont work without it\nIf you do not wish to do it now, you can do it after the patch is completed.\nDo you still want to apply the patch?", "Yes! I will do it after", "Cancel") != 0)
                 {
