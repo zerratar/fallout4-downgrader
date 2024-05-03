@@ -4,11 +4,11 @@ namespace FO4Down.Windows
 {
     internal class SteamAuthCodeDialog : SimpleDialog
     {
-        private DowngradeContext ctx;
+        private ApplicationContext ctx;
         private TextField txtAuthCode;
         private Button btnLogin;
 
-        public SteamAuthCodeDialog(DowngradeContext ctx)
+        public SteamAuthCodeDialog(ApplicationContext ctx)
             : base()
         {
             this.ctx = ctx;

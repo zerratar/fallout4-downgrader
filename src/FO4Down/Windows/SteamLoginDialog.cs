@@ -8,9 +8,9 @@ namespace FO4Down.Windows
         private readonly TextField txtPassword;
         private readonly Button btnLogin;
         private readonly Button btnQuery;
-        private DowngradeContext ctx;
+        private ApplicationContext ctx;
 
-        public SteamLoginDialog(DowngradeContext ctx)
+        public SteamLoginDialog(ApplicationContext ctx)
             : base()
         {
             this.ctx = ctx;

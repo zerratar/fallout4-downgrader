@@ -6,7 +6,7 @@ namespace FO4Down.Windows
 {
     internal class UserSettingsDialog : SimpleDialog
     {
-        private DowngradeContext ctx;
+        private ApplicationContext ctx;
         private ComboBox cbLanguage;
         private CheckBox cbDownloadAllDlcs;
         private CheckBox cbHDTextures;
@@ -23,7 +23,7 @@ namespace FO4Down.Windows
 
         public UserProvidedSettings Settings { get; set; }
 
-        public UserSettingsDialog(DowngradeContext ctx)
+        public UserSettingsDialog(ApplicationContext ctx)
             : base()
         {
             this.ctx = ctx;

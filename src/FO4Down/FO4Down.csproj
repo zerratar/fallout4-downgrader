@@ -19,7 +19,29 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Patch\" />
     <Folder Include="Steam\SteamKit2\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Patch\11608682506410180907_0.patch">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Patch\11608682506410180907_1.patch">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Patch\11608682506410180907_2.patch">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Patch\11608682506410180907_3.patch">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Patch\12022264289638961809_0.patch">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Patch\17651205152082834658_0.patch">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

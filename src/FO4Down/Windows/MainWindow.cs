@@ -45,7 +45,7 @@ namespace FO4Down.Windows
         {
             this.downgrader = new FO4Downgrader();
 
-            Title = "Fallout 4 Downgrader (Ctrl+C to quit)";
+            Title = "Fallout 4 Downgrader";
 
             X = 0;
             Y = 1;
@@ -172,7 +172,7 @@ namespace FO4Down.Windows
             Task.Factory.StartNew(async () => await downgrader.RunAsync(OnStepUpdate));
         }
         private int runningStepUpdate;
-        private void OnStepUpdate(DowngradeContext context)
+        private void OnStepUpdate(ApplicationContext context)
         {
             Application.Invoke(() =>
             {
@@ -235,6 +235,27 @@ namespace FO4Down.Windows
 
                     switch (context.Step)
                     {
+                        case FO4DowngraderStep.Patch:
+
+                            if (context.Request != null)
+                            {
+                                switch (context.Request.Name)
+                                {
+                                    case "confirm":
+                                        var pd = new PatchDialog(context);
+                                        if (pd.ShowDialog())
+                                        {
+                                            context.Next(true);
+                                        }
+                                        else
+                                        {
+                                            context.Next(false);
+                                        }
+                                        break;
+                                }
+                            }
+
+                            break;
                         case FO4DowngraderStep.ApplyLanguage:
                             if (context.Request != null)
                             {
@@ -332,7 +353,7 @@ namespace FO4Down.Windows
             });
         }
 
-        private string? BuildErrorReport(DowngradeContext context)
+        private string? BuildErrorReport(ApplicationContext context)
         {
             var sb = new StringBuilder();
             var s = context.Settings;

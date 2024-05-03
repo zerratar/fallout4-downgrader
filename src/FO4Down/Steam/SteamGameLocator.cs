@@ -15,7 +15,7 @@ namespace FO4Down.Steam
             return (string)Registry.LocalMachine.OpenSubKey(keyPath)?.GetValue("InstallPath");
         }
 
-        public static void GetLibraryFolders(DowngradeContext ctx, string path)
+        public static void GetLibraryFolders(ApplicationContext ctx, string path)
         {
             ctx.LibraryFolders = new List<SteamLibFolder>();
             var vdfPath = path.EndsWith(".vdf") ? path : Path.Combine(path, @"steamapps\libraryfolders.vdf");
@@ -26,7 +26,7 @@ namespace FO4Down.Steam
         }
 
 
-        public static void GetInstalledGames(DowngradeContext ctx)
+        public static void GetInstalledGames(ApplicationContext ctx)
         {
             var libraryFolders = ctx.LibraryFolders;
             var installedGames = new ConcurrentDictionary<string, SteamGame>(); // Use thread-safe collection
@@ -134,7 +134,7 @@ namespace FO4Down.Steam
             return false;
         }
 
-        private static string ExtractGameNameFromAcf(DowngradeContext ctx, string acfPath)
+        private static string ExtractGameNameFromAcf(ApplicationContext ctx, string acfPath)
         {
             try
             {

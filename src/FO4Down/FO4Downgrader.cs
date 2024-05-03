@@ -2,12 +2,11 @@
 using FO4Down.Core;
 using FO4Down.Steam;
 using FO4Down.Steam.DepotDownloader;
-using SteamKit2.Authentication;
+using SteamKit2.GC.CSGO.Internal;
 using System.Diagnostics;
-using System.Globalization;
 using System.IO.Compression;
-using System.Reflection;
-using System.Text;
+using System.IO.Hashing;
+using System.Security.Cryptography;
 
 namespace FO4Down
 {
@@ -16,9 +15,9 @@ namespace FO4Down
         private const string Fallout4_AppId = "377160";
         private const string Fallout4_Name = "Fallout 4";
 
-        public async Task RunAsync(Action<DowngradeContext> onStepUpdate)
+        public async Task RunAsync(Action<ApplicationContext> onStepUpdate)
         {
-            var ctx = new DowngradeContext();
+            var ctx = new ApplicationContext();
             ctx.OnStepUpdate = onStepUpdate;
             ctx.Settings = LoadSettings(ctx);
 
@@ -34,6 +33,18 @@ namespace FO4Down
                 // step 1: Find out where or if Fallout 4 is installed
                 var fo4 = FindFallout4(ctx);
 
+                CheckIfF4SEIsInstalled(ctx);
+
+                CheckIfF4SEAddressLibraryIsInstalled(ctx);
+
+                CheckIfF4SEBAASIsInstalled(ctx);
+
+                CheckIfPatchIsPossible(ctx);
+
+                if (await HandlePatchAsync(ctx))
+                {
+                    return;
+                }
 
                 //// step 2.5: Handle user settings
                 //// before we start, we should request settings changes that the user may want
@@ -95,7 +106,181 @@ namespace FO4Down
             }
         }
 
-        private static async Task ApplyLanguageAsync(DowngradeContext ctx)
+        private async Task<bool> HandlePatchAsync(ApplicationContext ctx)
+        {
+            if (!ctx.CanPatch)
+            {
+                return false;
+            }
+
+            ctx.Step = FO4DowngraderStep.Patch;
+
+            var shouldPatch = await ctx.RequestAsync<bool>("confirm");
+            if (!shouldPatch) return false;
+
+            ctx.Notify("Patching Fallout4.exe...");
+            Patch(ctx.Patch["Fallout4.exe"]);
+
+            ctx.Notify("Patching steam_api64.dll...");
+            Patch(ctx.Patch["steam_api64.dll"]);
+
+            ctx.Notify("Patching Fallout4Launcher.exe...");
+            Patch(ctx.Patch["Fallout4Launcher.exe"]);
+
+            ctx.Step = FO4DowngraderStep.Finished;
+            ctx.Notify("All files patched! Your Fallout 4 installation has been downgraded!\nHappy Modding!");
+
+            return true;
+        }
+
+        public static void CheckIfF4SEAddressLibraryIsInstalled(ApplicationContext ctx)
+        {
+            if (!ctx.IsF4SEInstalled)
+            {
+                return;
+            }
+
+            var f = "F4SE\\Plugins\\version-1-10-163-0.bin";
+            if (//File.Exists(Path.Combine(ctx.Fallout4.Path, f)) || 
+                File.Exists(Path.Combine(ctx.Fallout4.Path, "Data", f)))
+            {
+                ctx.IsF4SEAddressLibraryInstalled = true;
+            }
+        }
+
+        public static void CheckIfF4SEBAASIsInstalled(ApplicationContext ctx)
+        {
+            if (!ctx.IsF4SEInstalled)
+            {
+                return;
+            }
+
+            var f = "F4SE\\Plugins\\BackportedBA2Support.dll";
+            if (//File.Exists(Path.Combine(ctx.Fallout4.Path, f)) || 
+                File.Exists(Path.Combine(ctx.Fallout4.Path, "Data", f)))
+            {
+                ctx.IsF4SEBAASInstalled = true;
+            }
+        }
+
+        public static void CheckIfF4SEIsInstalled(ApplicationContext ctx)
+        {
+            var f4se = Path.Combine(ctx.Fallout4.Path, "f4se_loader.exe");
+            if (File.Exists(f4se))
+            {
+                ctx.IsF4SEInstalled = true;
+            }
+        }
+
+        private void CheckIfPatchIsPossible(ApplicationContext ctx)
+        {
+            // check if the patch is possible
+            // get the hash of the fallout4 exe to determine
+            var fo4Exe = Path.Combine(ctx.Fallout4.Path, "Fallout4.exe");
+            var steamApi = Path.Combine(ctx.Fallout4.Path, "steam_api64.dll");
+            var launcher = Path.Combine(ctx.Fallout4.Path, "Fallout4Launcher.exe");
+
+            if (CanPatch(ctx, fo4Exe) && CanPatch(ctx, steamApi) && CanPatch(ctx, launcher))
+            {
+                ctx.CanPatch = true;
+            }
+        }
+
+        private static bool CanPatch(ApplicationContext ctx, string file)
+        {
+            var id = Crc64.HashToUInt64(File.ReadAllBytes(file));
+            byte[] hash = null;
+            using (var read = File.OpenRead(file))
+            {
+                hash = GetChecksumBuffered(read);
+            }
+            var pi = ctx.Patch[Path.GetFileName(file)] = new PatchInfo
+            {
+                Id = id,
+                Hash = hash,
+                Target = file,
+                Files = GetPatches(id),
+            };
+            return pi.Files.Length > 0;
+        }
+
+        private static string[] GetPatches(ulong id)
+        {
+            return Directory
+                .GetFiles("Patch", id + "_*.patch")
+                .OrderBy(x => int.Parse(x.Split('_')[1].Split('.')[0])).ToArray();
+        }
+
+        private static void Patch(PatchInfo pi)
+        {
+            string fileToBeReplaced = pi.Target;
+            ulong id = pi.Id;
+            byte[] hash = pi.Hash;
+            var patches = pi.Files;
+            if (patches.Length == 0)
+            {
+                return;
+            }
+
+            if (System.IO.File.Exists(fileToBeReplaced) && !System.IO.File.Exists(fileToBeReplaced + "_backup"))
+                File.Move(fileToBeReplaced, fileToBeReplaced + "_backup");
+
+            using (var output = File.OpenWrite(fileToBeReplaced))
+            {
+                for (var i = 0; i < patches.Length; ++i)
+                {
+                    var file = patches[i];
+                    using (var read = File.OpenRead(file))
+                    //using (var gzip = new GZipStream(read, CompressionMode.Decompress))
+                    {
+                        var buffer = new byte[read.Length];
+                        read.Read(buffer, 0, buffer.Length);
+                        var toWrite = Decrypt(buffer, hash);
+                        output.Write(toWrite, 0, toWrite.Length);
+                    }
+                }
+            }
+        }
+
+        public static byte[] Decrypt(byte[] source, byte[] key)
+        {
+            if (!(key.Length == 16 || key.Length == 24 || key.Length == 32))
+                throw new ArgumentException("Key size is not valid for AES. Key must be either 128, 192, or 256 bits.");
+
+            using (var aesAlg = System.Security.Cryptography.Aes.Create())
+            {
+                aesAlg.Key = key;
+                aesAlg.Mode = CipherMode.CBC;
+
+                // Extract the IV from the original data and create decryptor
+                byte[] iv = new byte[aesAlg.BlockSize / 8];
+                Array.Copy(source, 0, iv, 0, iv.Length);
+                aesAlg.IV = iv;
+
+                var decryptor = aesAlg.CreateDecryptor(aesAlg.Key, aesAlg.IV);
+
+                using (var msDecrypt = new MemoryStream(source, iv.Length, source.Length - iv.Length))
+                {
+                    using (var csDecrypt = new CryptoStream(msDecrypt, decryptor, CryptoStreamMode.Read))
+                    {
+                        byte[] buffer = new byte[source.Length];
+                        var bytesRead = csDecrypt.Read(buffer, 0, buffer.Length);
+                        Array.Resize(ref buffer, bytesRead);
+                        return buffer;
+                    }
+                }
+            }
+        }
+
+        private static byte[] GetChecksumBuffered(Stream stream)
+        {
+            using (var bufferedStream = new BufferedStream(stream, 1024 * 32))
+            {
+                return SHA256.HashData(bufferedStream);
+            }
+        }
+
+        private static async Task ApplyLanguageAsync(ApplicationContext ctx)
         {
             ctx.Step = FO4DowngraderStep.ApplyLanguage;
 
@@ -159,7 +344,7 @@ namespace FO4Down
             return values[System.Random.Shared.Next(values.Length)];
         }
 
-        private async Task HandleUserSettingsAsync(DowngradeContext ctx)
+        private async Task HandleUserSettingsAsync(ApplicationContext ctx)
         {
             ctx.Step = FO4DowngraderStep.UserSettings;
             ctx.Message = Random([
@@ -177,7 +362,7 @@ namespace FO4Down
             }
         }
 
-        private static void CopyDepotFiles(DowngradeContext ctx)
+        private static void CopyDepotFiles(ApplicationContext ctx)
         {
             ctx.Step = FO4DowngraderStep.CopyDepotFiles;
 
@@ -216,7 +401,7 @@ namespace FO4Down
             }
         }
 
-        private static void CopyFiles(DowngradeContext ctx, string srcDirectory, string dstDirectory)
+        private static void CopyFiles(ApplicationContext ctx, string srcDirectory, string dstDirectory)
         {
             int copyCount = 0;
             var fileCount = 0;
@@ -250,7 +435,7 @@ namespace FO4Down
             ctx.Progress("All files copied.", 1);
         }
 
-        private static void DeleteCreationClubData(DowngradeContext ctx)
+        private static void DeleteCreationClubData(ApplicationContext ctx)
         {
             ctx.Step = FO4DowngraderStep.DeleteCreationClubData;
             var fo4 = ctx.Fallout4;
@@ -297,7 +482,7 @@ namespace FO4Down
             ctx.Progress("All Creation Club files deleted.", 1f);
         }
 
-        private static void DeleteNextGenFiles(DowngradeContext ctx)
+        private static void DeleteNextGenFiles(ApplicationContext ctx)
         {
             ctx.Step = FO4DowngraderStep.DeleteNextGenFiles;
             var fo4 = ctx.Fallout4;
@@ -349,7 +534,7 @@ namespace FO4Down
         }
 
 
-        private static async Task DownloadDepotFilesAsync(DowngradeContext ctx)
+        private static async Task DownloadDepotFilesAsync(ApplicationContext ctx)
         {
             ctx.Step = FO4DowngraderStep.DownloadDepotFiles;
             var settings = ctx.Settings;
@@ -429,7 +614,7 @@ namespace FO4Down
             ctx.Notify();
         }
 
-        private static SteamGame FindFallout4(DowngradeContext ctx)
+        private static SteamGame FindFallout4(ApplicationContext ctx)
         {
             ctx.Step = FO4DowngraderStep.LookingForFallout4Path;
             ctx.Notify("Searching the wasteland to find your installation of Fallout 4");
@@ -485,7 +670,7 @@ namespace FO4Down
             return fo4;
         }
 
-        private static SteamGame? TryFindFalloutInCurrentPath(DowngradeContext ctx)
+        private static SteamGame? TryFindFalloutInCurrentPath(ApplicationContext ctx)
         {
             SteamGame? fo4 = null;
 
@@ -535,7 +720,7 @@ namespace FO4Down
             return fo4;
         }
 
-        private static SteamGame? FindFallout4ByKnownPaths(DowngradeContext ctx, SteamGame? fo4)
+        private static SteamGame? FindFallout4ByKnownPaths(ApplicationContext ctx, SteamGame? fo4)
         {
             if (TryGetDrives(out var drives))
             {
@@ -583,7 +768,7 @@ namespace FO4Down
             return false;
         }
 
-        private static async Task<bool> LoginToSteamAsync(DowngradeContext ctx)
+        private static async Task<bool> LoginToSteamAsync(ApplicationContext ctx)
         {
             ctx.Step = FO4DowngraderStep.LoginToSteam;
 
@@ -629,7 +814,7 @@ namespace FO4Down
             return result;
         }
 
-        private static AppSettings LoadSettings(DowngradeContext ctx)
+        private static AppSettings LoadSettings(ApplicationContext ctx)
         {
             var p = Params.FromArgs(Environment.GetCommandLineArgs());
             var settings = AppSettings.FromParams(p);
@@ -656,407 +841,6 @@ namespace FO4Down
         }
     }
 
-    public enum FO4DowngraderStep
-    {
-        LookingForFallout4Path,
-        UserSettings,
-        LoginToSteam,
-        DownloadDepotFiles,
-        DownloadGameDepotFiles,
-        DownloadCreationKitDepotFiles,
-        DeleteNextGenFiles,
-        CopyDepotFiles,
-        Finished,
-        DeleteCreationClubData,
-        ApplyLanguage,
-    }
-
-    public class DowngradeContext
-    {
-        public FO4DowngraderStep Step { get; set; }
-        public string Version { get; set; }
-        public bool IsError { get; set; }
-        public bool IsWarning { get; set; }
-        public bool Continue { get; set; }
-        public bool ReportToDeveloper { get; set; }
-        public string Message { get; set; }
-        public string LastErrorMessage { get; set; }
-        public List<string> LoggedErrors { get; set; } = new List<string>();
-
-        public Exception Exception { get; set; }
-
-        public List<SteamLibFolder> LibraryFolders { get; set; }
-        public Dictionary<string, SteamGame> InstalledGames { get; set; }
-        public SteamGame Fallout4 { get; set; }
-        public AppSettings Settings { get; internal set; }
-        public Action<DowngradeContext> OnStepUpdate { get; internal set; }
-        public StepRequest Request { get; set; }
-        public float Fraction { get; internal set; }
-        public string QRCode { get; internal set; }
-        public IAuthenticator UserAuthenticator { get; set; }
-        public int TotalDepotsToDownload { get; set; }
-        public int DepotsDownloaded { get; set; }
-        public bool DownloadCreationKit { get; internal set; }
-        public bool IsAuthenticated { get; internal set; }
-
-        private StringBuilder log = new StringBuilder();
-
-
-        public Fallout4IniSettings Fallout4DefaultIni { get; set; }
-        public Fallout4IniSettings Fallout4Ini { get; set; }
-
-        public CultureInfo GetTargetCultureInfo()
-        {
-            var l = Settings.Language;
-            if (!string.IsNullOrEmpty(l))
-            {
-                return GetLanguageFromCode(l);
-            }
-
-            var ini = Fallout4Ini ?? Fallout4DefaultIni;
-            if (ini == null)
-            {
-                return Thread.CurrentThread.CurrentCulture;
-            }
-
-            return GetLanguageFromCode(ini["General"]["sLanguage"]);
-        }
-
-        private CultureInfo GetLanguageFromCode(string language)
-        {
-            try
-            {
-                return new CultureInfo(language);
-            }
-            catch (CultureNotFoundException)
-            {
-
-                var ci = CultureInfo.GetCultures(CultureTypes.AllCultures)
-                                .FirstOrDefault(r => r.EnglishName.Equals(language, StringComparison.OrdinalIgnoreCase));
-                if (ci != null) return ci;
-                // Log the error or handle it appropriately if the language code is invalid
-                Warn($"Warning: The provided language code '{language}' is not valid.");
-                return CultureInfo.InvariantCulture; // Return invariant culture or a default culture
-            }
-        }
-
-        public DowngradeContext()
-        {
-            UserAuthenticator = new UserAuthenticator(this);
-        }
-
-
-        public string GetWorkingDirectory()
-        {
-            return System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-        }
-
-        public void Notify()
-        {
-            if (OnStepUpdate != null)
-                this.OnStepUpdate(this);
-        }
-
-        public void Notify(string message, params object[] args)
-        {
-            try
-            {
-                var msg = args != null && args.Length > 0 ? string.Format(message, args) : message;
-                if (msg != Message)
-                {
-                    log.AppendLine(msg);
-                }
-                Message = msg;
-            }
-            catch (Exception exc)
-            {
-                Error(exc.ToString());
-                return;
-            }
-            if (OnStepUpdate != null)
-                this.OnStepUpdate(this);
-        }
-
-        public void Progress(string message, float fraction)
-        {
-            Fraction = fraction;
-
-            if (!string.IsNullOrEmpty(message) && message != Message)
-            {
-                Message = message;
-                log.AppendLine(message);
-            }
-
-            if (OnStepUpdate != null)
-                this.OnStepUpdate(this);
-        }
-
-
-        public void Error(string message, params object[] args)
-        {
-            var msg = args != null && args.Length > 0 ? string.Format(message, args) : message;
-            IsError = true;
-            Continue = true;
-            ReportToDeveloper = false;
-
-            if (msg != message)
-            {
-                log.AppendLine(msg);
-            }
-
-            Message = msg;
-            LastErrorMessage = msg;
-            LoggedErrors.Add(msg);
-            if (OnStepUpdate != null)
-                this.OnStepUpdate(this);
-        }
-
-        public void Error(Exception exc)
-        {
-            IsError = true;
-            Continue = false;
-            Message = exc.Message;
-            Exception = exc;
-            LastErrorMessage = Message;
-            LoggedErrors.Add(exc.ToString());
-            log.AppendLine(exc.ToString());
-            if (OnStepUpdate != null)
-                this.OnStepUpdate(this);
-        }
-
-        public void WarnAndReport(string message)
-        {
-            IsError = false;
-            IsWarning = true;
-            Continue = false;
-            ReportToDeveloper = true;
-            Message = message;
-            Exception = null;
-            LastErrorMessage = message;
-            log.AppendLine(message);
-            if (OnStepUpdate != null)
-                this.OnStepUpdate(this);
-        }
-
-        public void Warn(string message)
-        {
-            IsError = false;
-            IsWarning = true;
-            Continue = true;
-            ReportToDeveloper = false;
-            Message = message;
-            Exception = null;
-            log.AppendLine(message);
-            if (OnStepUpdate != null)
-                this.OnStepUpdate(this);
-        }
-
-        public void Report(Exception exc)
-        {
-            IsError = true;
-            Continue = false;
-            ReportToDeveloper = true;
-            Message = exc.Message;
-            Exception = exc;
-            LastErrorMessage = Message;
-            log.AppendLine(exc.ToString());
-            if (OnStepUpdate != null)
-                this.OnStepUpdate(this);
-        }
-
-        //public void Next<T>(T value)
-        //{
-        //    var r = Request;
-        //    Request = null;
-        //    r.SetResult(value);
-        //}
-
-        public void Next(object value)
-        {
-            if (Request == null)
-            {
-                return;
-            }
-
-            var r = Request;
-            Request = null;
-            r.SetResult(value);
-        }
-
-        public Task<T> RequestAsync<T>(string name, params string[] args)
-        {
-            var req = new StepRequest<T>();
-            req.Name = name;
-            Request = req;
-            Request.Arguments = args;
-            Notify("Logging in to steam...");
-            return req.AwaitResponseAsync();
-        }
-
-        public void SaveLog()
-        {
-            File.WriteAllText("log.txt", log.ToString());
-        }
-
-        internal string? RequestTwoFactorCode()
-        {
-            throw new NotImplementedException();
-        }
-
-        internal string? RequestEmailAuthCode()
-        {
-            throw new NotImplementedException();
-        }
-
-        private readonly object chunksMutex = new object();
-        private Dictionary<string, List<ChunkDownloadProgress>> chunkDownloadProgress =
-            new Dictionary<string, List<ChunkDownloadProgress>>();
-
-        internal ChunkDownloadProgress ChunkDownloadProgress(string fileName, ulong offset, uint chunkSize)
-        {
-            lock (chunksMutex)
-            {
-                if (!chunkDownloadProgress.TryGetValue(fileName, out var list))
-                {
-                    chunkDownloadProgress[fileName] = (list = new List<ChunkDownloadProgress>());
-                }
-                var progress = new ChunkDownloadProgress(this)
-                {
-                    FileName = fileName,
-                    Offset = offset,
-                    ChunkSize = chunkSize,
-                    Fraction = 0d,
-                };
-                list.Add(progress);
-                return progress;
-            }
-        }
-
-        internal void ChunkDownloadProgressFinished(ChunkDownloadProgress cp)
-        {
-            // do we need to do something?
-            cp.SetCompleted();
-        }
-
-        internal string GetAverageDownloadSpeed()
-        {
-            var totalDownloadSpeed = 0d;
-            var items = 0;
-            lock (chunksMutex)
-            {
-                var lists = chunkDownloadProgress.Values.ToArray();
-                foreach (var chunk in lists)
-                {
-                    if (chunk == null) continue;
-                    foreach (var cd in chunk)
-                    {
-                        if (cd == null) continue;
-                        if (!cd.Completed)
-                        {
-                            items++;
-                            totalDownloadSpeed += cd.KiloBytesPerSecond;
-                        }
-                    }
-                }
-
-                var avg = totalDownloadSpeed / items;
-                if (avg > 0)
-                {
-                    if (avg > 1000)
-                    {
-                        var mbs = avg / 1000;
-                        return $"{mbs:00.00} Mb/s";
-                    }
-
-                    return $"{avg:00.00} Kb/s";
-                }
-
-                return "";
-            }
-        }
-
-        internal void Merge(UserProvidedSettings userSettings)
-        {
-            if (userSettings == null) return;
-            Settings.KeepDepotFiles = userSettings.KeepDepotFilesWhenDone;
-            Settings.DownloadAllLanguages = string.IsNullOrEmpty(userSettings.Language);
-            Settings.Language = userSettings.Language;
-            Settings.DownloadCreationKit = userSettings.DownloadCreationKit;
-            Settings.DownloadHDTextures = userSettings.DownloadHDTextures;
-            Settings.DownloadAllDLCs = userSettings.DownloadAllDLCs;
-            Settings.DeleteCreationClubFiles = userSettings.DeleteCreationClubFiles;
-            Settings.DeleteEnglishLanguageFiles = userSettings.DeleteEnglishLanguageFiles;
-            Settings.Merged = true;
-            ContentDownloader.Config.DownloadAllLanguages = Settings.DownloadAllLanguages;
-        }
-    }
-
-    public class ChunkDownloadProgress
-    {
-        private DowngradeContext stepContext;
-        private DateTime startTime;
-
-        public ChunkDownloadProgress(DowngradeContext stepContext)
-        {
-            this.stepContext = stepContext;
-            this.startTime = DateTime.UtcNow;
-        }
-
-        public ulong Offset { get; internal set; }
-        public uint ChunkSize { get; internal set; }
-        public double Fraction { get; internal set; }
-        public long BytesDownloaded { get; set; }
-        public long ActualLength { get; set; }
-        public string FileName { get; internal set; }
-        public double KiloBytesPerSecond { get; set; }
-        public DateTime CompletedTime { get; private set; }
-        public bool Completed { get; private set; }
-        internal void Progress(long totalRead, long totalLength, double v)
-        {
-            BytesDownloaded = totalRead;
-            ActualLength = totalLength;
-            Fraction = v;
-
-            CalculateDownloadSpeed();
-        }
-
-        internal void SetCompleted()
-        {
-            CompletedTime = DateTime.UtcNow;
-            Completed = true;
-        }
-
-        private void CalculateDownloadSpeed()
-        {
-            var currentTime = DateTime.UtcNow;
-            var timeSpan = currentTime - startTime;
-            if (timeSpan.TotalSeconds > 0) // Ensure we do not divide by zero
-            {
-                KiloBytesPerSecond = (BytesDownloaded / 1024.0) / timeSpan.TotalSeconds;
-            }
-        }
-    }
-
-    public abstract class StepRequest
-    {
-        public string Name { get; set; }
-        public string[] Arguments { get; internal set; }
-
-        protected object Value;
-        protected TaskCompletionSource<object> src;
-
-        public void SetResult(object value)
-        {
-            this.Value = value;
-            src.SetResult(value);
-        }
-
-        protected StepRequest()
-        {
-            this.src = new TaskCompletionSource<object>();
-        }
-    }
-
     public class StepRequest<T> : StepRequest
     {
         public async Task<T> AwaitResponseAsync()
@@ -1068,78 +852,5 @@ namespace FO4Down
             return (T)result;
         }
 
-    }
-
-    public class UserAuthenticator : IAuthenticator
-    {
-        private readonly DowngradeContext ctx;
-
-        public UserAuthenticator(DowngradeContext context)
-        {
-            this.ctx = context;
-        }
-
-        /// <inheritdoc />
-        public async Task<string> GetDeviceCodeAsync(bool previousCodeWasIncorrect)
-        {
-            if (previousCodeWasIncorrect)
-            {
-                ctx.Warn("The previous 2-factor auth code you have provided is incorrect.");
-            }
-
-            string? code;
-
-            do
-            {
-                ctx.Notify("STEAM GUARD! Please enter your 2-factor auth code from your authenticator app");
-
-                code = await ctx.RequestAsync<string>("auth_code", "Please enter your 2-factor auth code from your authenticator app");
-
-                if (code == null)
-                {
-                    break;
-                }
-                code = code.Trim();
-            }
-            while (string.IsNullOrEmpty(code));
-
-            return code!;
-        }
-
-        /// <inheritdoc />
-        public async Task<string> GetEmailCodeAsync(string email, bool previousCodeWasIncorrect)
-        {
-            if (previousCodeWasIncorrect)
-            {
-                ctx.Warn("The previous 2-factor auth code you have provided is incorrect.");
-            }
-
-            string? code;
-
-            do
-            {
-                ctx.Notify($"STEAM GUARD! Please enter the auth code sent to the email at {email}");
-
-                code = await ctx.RequestAsync<string>("auth_code", $"Please enter the auth code sent to the email at {email}");
-
-                if (code == null)
-                {
-                    break;
-                }
-
-                code = code.Trim();
-            }
-            while (string.IsNullOrEmpty(code));
-
-            return code!;
-        }
-
-        /// <inheritdoc />
-        public Task<bool> AcceptDeviceConfirmationAsync()
-        {
-            ctx.Notify("STEAM GUARD! Use the Steam Mobile App to confirm your sign in...");
-
-            return Task.FromResult(true);
-        }
     }
 }
