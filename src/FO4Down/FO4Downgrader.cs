@@ -167,7 +167,7 @@ namespace FO4Down
 
             if (helperText.Length > 0)
             {
-                ctx.Notify("All files patched! Your Fallout 4 installation has been downgraded!\nDon't forget to install the following mods+plugins:" + helperText);
+                ctx.Notify("All files patched! Your Fallout 4 installation has been downgraded!\nDon't forget to install the following plugins if you have not already:\n" + helperText);
             }
             else
             {

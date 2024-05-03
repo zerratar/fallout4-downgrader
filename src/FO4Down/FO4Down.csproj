@@ -6,7 +6,9 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <AssemblyVersion>1.0.6.1</AssemblyVersion>
-    <FileVersion>1.0.6.1</FileVersion>
+    <FileVersion>1.0.6.2</FileVersion>
+    <PackageIcon>icon-128.png</PackageIcon>
+    <ApplicationIcon>icon.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
@@ -22,6 +24,13 @@
   <ItemGroup>
     <Folder Include="Patch\" />
     <Folder Include="Steam\SteamKit2\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\..\nexus mods\icon-128.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
   </ItemGroup>
 
   <ItemGroup>

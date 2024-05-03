@@ -336,6 +336,14 @@ namespace FO4Down.Windows
                 }
                 finally
                 {
+                    if (lblStatus != null)
+                    {
+                        // update size of lblStatus to ensure all text are shown
+                        if (lblStatus.Text.Length > 0)
+                        {
+                            lblStatus.Height = lblStatus.Text.Split('\n').Length;
+                        }
+                    }
                     Interlocked.Exchange(ref runningStepUpdate, 0);
                 }
             });
