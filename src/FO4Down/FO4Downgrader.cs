@@ -2,10 +2,12 @@
 using FO4Down.Core;
 using FO4Down.Steam;
 using FO4Down.Steam.DepotDownloader;
+using SharpCompress.Archives;
 using SteamKit2.GC.CSGO.Internal;
 using System.Diagnostics;
 using System.IO.Compression;
 using System.IO.Hashing;
+using System.Net.Http;
 using System.Security.Cryptography;
 
 namespace FO4Down
@@ -115,8 +117,23 @@ namespace FO4Down
 
             ctx.Step = FO4DowngraderStep.Patch;
 
-            var shouldPatch = await ctx.RequestAsync<bool>("confirm");
-            if (!shouldPatch) return false;
+            //var shouldPatch = await ctx.RequestAsync<bool>("confirm");
+            //if (!shouldPatch) return false;
+
+            if (!ctx.IsF4SEInstalled)
+            {
+                await InstallF4SEAsync(ctx);
+            }
+
+            if (!ctx.IsF4SEAddressLibraryInstalled)
+            {
+                await InstallAddressLibraryPluginAsync(ctx);
+            }
+
+            if (!ctx.IsF4SEBAASInstalled)
+            {
+                await InstallBAASAsync(ctx);
+            }
 
             ctx.Notify("Patching Fallout4.exe...");
             Patch(ctx.Patch["Fallout4.exe"]);
@@ -127,10 +144,84 @@ namespace FO4Down
             ctx.Notify("Patching Fallout4Launcher.exe...");
             Patch(ctx.Patch["Fallout4Launcher.exe"]);
 
+
             ctx.Step = FO4DowngraderStep.Finished;
             ctx.Notify("All files patched! Your Fallout 4 installation has been downgraded!\nHappy Modding!");
 
             return true;
+        }
+
+        private async Task InstallBAASAsync(ApplicationContext ctx)
+        {
+            ctx.Notify("Installing F4SE Plugin: BAAS...");
+            var zip = "Downloads/baas.zip";
+            if (!File.Exists(zip))
+            {
+                if (ctx.HttpClient == null)
+                    ctx.HttpClient = new HttpClient();
+                await DownloadFileAsync(ctx.HttpClient, "https://github.com/zerratar/fallout4-downgrader/releases/download/v1.0.5.2/BackportedBA2Support-1_0-81859-1-0-1714516128.zip", zip);
+            }
+            var targetDirectory = System.IO.Path.Combine(ctx.Fallout4.Path);
+            using (var archive = SharpCompress.Archives.Zip.ZipArchive.Open("Downloads/baas.zip"))
+            {
+                archive.ExtractToDirectory(targetDirectory);
+            }
+        }
+
+        private async Task InstallAddressLibraryPluginAsync(ApplicationContext ctx)
+        {
+            ctx.Notify("Installing F4SE Plugin: Address Library...");
+            var zip = "Downloads/address.library.zip";
+            if (!File.Exists(zip))
+            {
+                if (ctx.HttpClient == null)
+                    ctx.HttpClient = new HttpClient();
+                await DownloadFileAsync(ctx.HttpClient, "https://github.com/zerratar/fallout4-downgrader/releases/download/v1.0.5.2/Addres.Library-47327-1-10-163-0-1599728753.zip", zip);
+            }
+            var targetDirectory = Path.Combine(ctx.Fallout4.Path, "Data\\");
+            using (var archive = SharpCompress.Archives.Zip.ZipArchive.Open("Downloads/address.library.zip"))
+            {
+                archive.ExtractToDirectory(targetDirectory);
+            }
+        }
+
+        private async Task InstallF4SEAsync(ApplicationContext ctx)
+        {
+            ctx.Notify("Installing F4SE...");
+            var zip = "Downloads/f4se.zip";
+            if (!File.Exists(zip))
+            {
+                if (ctx.HttpClient == null)
+                    ctx.HttpClient = new HttpClient();
+                await DownloadFileAsync(ctx.HttpClient, "https://github.com/zerratar/fallout4-downgrader/releases/download/v1.0.5.2/f4se.zip", zip);
+            }
+            var targetDirectory = Path.Combine(ctx.Fallout4.Path);
+            using (var archive = SharpCompress.Archives.Zip.ZipArchive.Open("Downloads/f4se.zip"))
+            {
+                archive.ExtractToDirectory(targetDirectory);
+            }
+        }
+
+        private async Task DownloadFileAsync(HttpClient client, string url, string destinationOnDisk)
+        {
+            // Send a GET request to the specified URL
+            using (HttpResponseMessage response = await client.GetAsync(url, HttpCompletionOption.ResponseHeadersRead))
+            {
+                response.EnsureSuccessStatusCode(); // Throw an exception if the HTTP response status is an error
+
+                // Read the content as a stream.
+                var dir = Path.GetDirectoryName(destinationOnDisk);
+
+                if (!Directory.Exists(dir))
+                    Directory.CreateDirectory(dir);
+
+                using (Stream contentStream = await response.Content.ReadAsStreamAsync(),
+                      fileStream = new FileStream(destinationOnDisk, FileMode.Create, FileAccess.Write, FileShare.None, 8192, true))
+                {
+                    // Copy the content stream to the file stream asynchronously
+                    await contentStream.CopyToAsync(fileStream);
+                }
+            }
         }
 
         public static void CheckIfF4SEAddressLibraryIsInstalled(ApplicationContext ctx)

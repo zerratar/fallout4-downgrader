@@ -47,7 +47,7 @@ namespace FO4Down
         public bool IsF4SEInstalled { get; internal set; }
         public bool IsF4SEAddressLibraryInstalled { get; internal set; }
         public bool IsF4SEBAASInstalled { get; internal set; }
-
+        public HttpClient HttpClient { get; internal set; }
 
         public CultureInfo GetTargetCultureInfo()
         {

@@ -36,7 +36,6 @@ namespace Fallout4Downgrader
                 Console.WriteLine("  -pass or -password <steam pass>");
                 Console.WriteLine("  -qr\t\t\tLogin using QR code instead");
                 Console.WriteLine("  -ck or -creation-kit\tForce downgrade the creation kit as well, this will automatically happen if you have creation kit already installed");
-                Console.WriteLine("  -all-languages\tDownload all languages");
                 Console.WriteLine("  -language <language>\tDownloads a specific language, default is english");
                 Console.WriteLine("  -keep-depot\t\tKeep the downloaded depot files after finish");
                 Console.WriteLine("  -help\t\t\tThis text");

@@ -1,13 +1,6 @@
 ﻿using Newtonsoft.Json.Linq;
-using SteamKit2.WebUI.Internal;
-using System;
-using System.Collections.Generic;
-using System.IO.IsolatedStorage;
-using System.Linq;
-using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
-using System.Threading.Tasks;
 using Terminal.Gui;
 
 namespace FO4Down.Windows
@@ -35,11 +28,9 @@ namespace FO4Down.Windows
         private Label lblContact;
         private Label lblStatus;
         private Label lblProgress;
+        private Label lblQr;
 
         private ProgressBar progressBar;
-
-        private string contactText;
-        private Label lblQr;
 
         public MainWindow()
         {
@@ -70,24 +61,21 @@ namespace FO4Down.Windows
                         "OK"))
                 }),
 
-                #if DEBUG
-
-                new MenuBarItem("_DEBUG", new MenuItem[]
-                {
-                    new MenuItem("_Clear Settings", "", () => {
-                        var isolatedStorage = IsolatedStorageFile.GetUserStoreForAssembly();
-                        foreach(var f in isolatedStorage.GetFileNames())
-                        {
-                            isolatedStorage.DeleteFile(f);
-                        }
-
-                        foreach(var d in isolatedStorage.GetDirectoryNames()){
-                            isolatedStorage.DeleteDirectory(d);
-                        }
-                    })
-                })
-
-                #endif
+                //#if DEBUG
+                //new MenuBarItem("_DEBUG", new MenuItem[]
+                //{
+                //    new MenuItem("_Clear Settings", "", () => {
+                //        var isolatedStorage = IsolatedStorageFile.GetUserStoreForAssembly();
+                //        foreach(var f in isolatedStorage.GetFileNames())
+                //        {
+                //            isolatedStorage.DeleteFile(f);
+                //        }
+                //        foreach(var d in isolatedStorage.GetDirectoryNames()){
+                //            isolatedStorage.DeleteDirectory(d);
+                //        }
+                //    })
+                //})
+                //#endif
             ];
 
             Add(menu);
@@ -102,7 +90,7 @@ namespace FO4Down.Windows
             lblContact.Width = Dim.Fill();
             lblContact.VerticalTextAlignment = VerticalTextAlignment.Bottom;
             lblContact.TextAlignment = TextAlignment.Centered;
-            contactText = lblContact.Text = $"E-mail: zerratar@gmail.com | Discord: zerratar | Source: https://www.github.com/zerratar/fallout4-downgrader";
+            lblContact.Text = $"E-mail: zerratar@gmail.com | Discord: zerratar | Source: https://www.github.com/zerratar/fallout4-downgrader";
             Add(lblContact);
 
             lblLogo = new Label();
