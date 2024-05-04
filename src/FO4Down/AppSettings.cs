@@ -4,7 +4,7 @@
     {
         public string Language { get; set; }
         public bool DownloadCreationKit { get; set; }
-        public bool DeleteCreationClubFiles { get; set; } = true;
+        public bool DeleteCreationClubFiles { get; set; }
         public bool KeepDepotFilesWhenDone { get; set; }
         public bool DownloadHDTextures { get; set; }
         public bool DownloadAllDLCs { get; set; }

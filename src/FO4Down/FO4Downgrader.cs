@@ -102,6 +102,8 @@ namespace FO4Down
                 // 7. delete english language files if we selected a non-english language and update ini file
                 await ApplyLanguageAsync(ctx);
 
+                VerifyFileVersions(ctx);
+
                 ctx.Step = FO4DowngraderStep.Finished;
 
                 if (ctx.LoggedErrors.Count > 0)
@@ -125,6 +127,31 @@ namespace FO4Down
             finally
             {
                 ctx.SaveLog();
+            }
+        }
+
+        private void VerifyFileVersions(ApplicationContext ctx)
+        {
+            // update version numbering and details regarding the patched files.
+            CheckIfPatchIsPossible(ctx);
+
+            // if not correct verisons, patch!
+            var fo4p = ctx.Fallout4Patch;
+            if (!fo4p.IsPatched)
+            {
+                Patch(fo4p);
+            }
+
+            var lp = ctx.Fallout4LauncherPatch;
+            if (!lp.IsPatched)
+            {
+                Patch(lp);
+            }
+
+            var sp = ctx.SteamApi64Patch;
+            if (!sp.IsPatched)
+            {
+                Patch(sp);
             }
         }
 
@@ -158,9 +185,9 @@ namespace FO4Down
                 if (!shouldPatch) return false;
             }
 
-            var fo4 = ctx.Patch["Fallout4.exe"];
-            var sApi = ctx.Patch["steam_api64.dll"];
-            var launcher = ctx.Patch["Fallout4Launcher.exe"];
+            var fo4 = ctx.Fallout4Patch;
+            var launcher = ctx.Fallout4LauncherPatch;
+            var sApi = ctx.SteamApi64Patch;
 
             if (ctx.Settings.PatchFiles && !ctx.CanPatch)
             {
@@ -416,11 +443,23 @@ namespace FO4Down
 
         private static bool CanPatch(ApplicationContext ctx, string file, string patchedVersion)
         {
-            var id = Crc64.HashToUInt64(File.ReadAllBytes(file));
+            string keyFile = "Assets\\Keys\\" + Path.GetFileName(file) + ".key";
+            ulong id;
             byte[] hash = null;
-            using (var read = File.OpenRead(file))
+
+            if (File.Exists(keyFile))
             {
-                hash = GetChecksumBuffered(read);
+                var data = System.IO.File.ReadAllText(keyFile).Split('\t');
+                id = ulong.Parse(data[0]);
+                hash = Convert.FromBase64String(data[1]);
+            }
+            else
+            {
+                id = Crc64.HashToUInt64(File.ReadAllBytes(file));
+                using (var read = File.OpenRead(file))
+                {
+                    hash = GetChecksumBuffered(read);
+                }
             }
 
             var version = FileVersionInfo.GetVersionInfo(file);

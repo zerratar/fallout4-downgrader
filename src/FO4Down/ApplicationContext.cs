@@ -1,10 +1,12 @@
 ﻿using Fallout4Downgrader;
+using FO4Down.Core;
 using FO4Down.Steam;
 using FO4Down.Steam.DepotDownloader;
 using SteamKit2.Authentication;
 using System.Diagnostics;
 using System.Globalization;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace FO4Down
@@ -50,6 +52,45 @@ namespace FO4Down
         public bool IsF4SEBASSInstalled { get; internal set; }
         public HttpClient HttpClient { get; internal set; }
         public List<Depot> Depots { get; internal set; }
+
+        public PatchInfo Fallout4Patch
+        {
+            get
+            {
+                if (Patch.TryGetValue("Fallout4.exe", out var p)) return p;
+                return null;
+            }
+            set
+            {
+                Patch["Fallout4.exe"] = value;
+            }
+        }
+
+        public PatchInfo Fallout4LauncherPatch
+        {
+            get
+            {
+                if (Patch.TryGetValue("Fallout4Launcher.exe", out var p)) return p;
+                return null;
+            }
+            set
+            {
+                Patch["Fallout4Launcher.exe"] = value;
+            }
+        }
+
+        public PatchInfo SteamApi64Patch
+        {
+            get
+            {
+                if (Patch.TryGetValue("steam_api64.dll", out var p)) return p;
+                return null;
+            }
+            set
+            {
+                Patch["steam_api64.dll"] = value;
+            }
+        }
 
         public CultureInfo GetTargetCultureInfo()
         {
@@ -108,7 +149,7 @@ namespace FO4Down
             try
             {
                 IsSuccess = false;
-                var msg = args != null && args.Length > 0 ? string.Format(message, args) : message;
+                string msg = FormatMessage(message, args);
                 if (msg != Message)
                 {
                     log.AppendLine(msg);
@@ -140,7 +181,7 @@ namespace FO4Down
 
         public void Success(string message, params object[] args)
         {
-            var msg = args != null && args.Length > 0 ? string.Format(message, args) : message;
+            var msg = FormatMessage(message, args);
             IsSuccess = true;
             IsError = false;
             Continue = true;
@@ -158,7 +199,7 @@ namespace FO4Down
         }
         public void Error(string message, params object[] args)
         {
-            var msg = args != null && args.Length > 0 ? string.Format(message, args) : message;
+            var msg = FormatMessage(message, args);
             IsSuccess = false;
             IsError = true;
             Continue = true;
@@ -239,6 +280,20 @@ namespace FO4Down
         //    Request = null;
         //    r.SetResult(value);
         //}
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private string FormatMessage(string message, object[] args)
+        {
+            try
+            {
+                return args != null && args.Length > 0 && !string.IsNullOrEmpty(message) ? string.Format(message, args) : message;
+            }
+            catch (Exception exc)
+            {
+                log.AppendLine("Error formatting message (this can be ignored):\n" + exc.ToString());
+            }
+            return message;
+        }
 
         public void Next(object value)
         {
