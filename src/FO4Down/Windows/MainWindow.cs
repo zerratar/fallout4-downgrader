@@ -21,6 +21,11 @@ namespace FO4Down.Windows
             Normal = new Terminal.Gui.Attribute(Color.Yellow, Color.Black),
         };
 
+        private readonly ColorScheme SuccessLabelColorScheme = new ColorScheme
+        {
+            Normal = new Terminal.Gui.Attribute(Color.Green, Color.Black),
+        };
+
         private readonly ColorScheme DefaultLabelColorScheme;
         private readonly FO4Downgrader downgrader;
 
@@ -159,6 +164,7 @@ namespace FO4Down.Windows
 
             Task.Factory.StartNew(async () => await downgrader.RunAsync(OnStepUpdate));
         }
+
         private int runningStepUpdate;
         private void OnStepUpdate(ApplicationContext context)
         {
@@ -180,12 +186,21 @@ namespace FO4Down.Windows
                         lblStatus.ColorScheme = ErrorLabelColorScheme;
                         lblStatus.Text = "Error: " + context.Message;
                     }
-
-                    if (context.IsWarning)
+                    else if (context.IsWarning)
                     {
                         lblStatus.ColorScheme = WarningLabelColorScheme;
                         lblStatus.Text = context.Message;
                     }
+                    else if (context.IsSuccess)
+                    {
+                        lblStatus.ColorScheme = SuccessLabelColorScheme;
+                        lblStatus.Text = context.Message;
+                    }
+                    else
+                    {
+                        lblStatus.ColorScheme = DefaultLabelColorScheme;
+                    }
+
 
                     if (context.ReportToDeveloper)
                     {
@@ -215,7 +230,6 @@ namespace FO4Down.Windows
                         return;
                     }
 
-                    lblStatus.ColorScheme = DefaultLabelColorScheme;
                     if (!string.IsNullOrEmpty(context.Message))
                     {
                         lblStatus.Text = context.Message;
@@ -223,6 +237,18 @@ namespace FO4Down.Windows
 
                     switch (context.Step)
                     {
+                        case FO4DowngraderStep.LookingForFallout4Path:
+                            if (context.Request != null)
+                            {
+                                switch (context.Request.Name)
+                                {
+                                    case "confirm":
+                                        var result = MessageBox.Query("Confirm", context.Request.Arguments[0], "Yes", "No") == 0;
+                                        context.Next(result);
+                                        break;
+                                }
+                            }
+                            break;
                         case FO4DowngraderStep.Patch:
 
                             if (context.Request != null)
@@ -257,9 +283,12 @@ namespace FO4Down.Windows
                             }
                             break;
                         case FO4DowngraderStep.UserSettings:
-                            var userSettings = new UserSettingsDialog(context);
-                            userSettings.ShowDialog();
-                            context.Next(userSettings.Settings);
+                            if (context.Request != null && context.Request.Name == "settings")
+                            {
+                                var userSettings = new UserSettingsDialog(context);
+                                userSettings.ShowDialog();
+                                context.Next(userSettings.Settings);
+                            }
                             break;
                         case FO4DowngraderStep.LoginToSteam:
                             if (context.Request != null)

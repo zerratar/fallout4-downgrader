@@ -52,6 +52,22 @@ namespace FO4Down
                     return;
                 }
 
+                // if we only wanted to patch files, do not continue
+                if (ctx.Settings.PatchFiles)
+                {
+                    return;
+                }
+
+                if (ctx.Patch.TryGetValue("Fallout4.exe", out var p) && p.IsPatched)
+                {
+                    if (!(await ctx.RequestAsync<bool>("confirm", "Your Fallout4.exe is already version " + p.Version.FileVersion + "\nDo you still wish to download all depots and downgrade again?")))
+                    {
+                        ctx.Success("Downgrade aborted as Fallout 4 has already been downgraded.");
+                        return;
+                    }
+                }
+
+
                 //// step 2.5: Handle user settings
                 //// before we start, we should request settings changes that the user may want
                 //// such as language, whether or not it should try to download all dlcs and/or hd textures pack.
@@ -94,7 +110,7 @@ namespace FO4Down
                 }
                 else
                 {
-                    ctx.Notify("Your Fallout 4 installation has been downgraded without any problems. Enjoy!\nYou may now close this application.");
+                    ctx.Success("Your Fallout 4 installation has been downgraded without any problems. Enjoy!\nYou may now close this application.");
                 }
 
             }
@@ -114,7 +130,13 @@ namespace FO4Down
 
         private async Task<bool> HandlePatchAsync(ApplicationContext ctx)
         {
-            if (!ctx.CanPatch)
+            // wew only want to download depots, do not patch
+            if (ctx.Settings.DownloadDepots)
+            {
+                return false;
+            }
+
+            if (!ctx.CanPatch && !ctx.Settings.PatchFiles)
             {
                 if (ctx.Settings.InstallPlugins)
                 {
@@ -136,14 +158,42 @@ namespace FO4Down
                 if (!shouldPatch) return false;
             }
 
+            var fo4 = ctx.Patch["Fallout4.exe"];
+            var sApi = ctx.Patch["steam_api64.dll"];
+            var launcher = ctx.Patch["Fallout4Launcher.exe"];
+
+            if (ctx.Settings.PatchFiles && !ctx.CanPatch)
+            {
+                var v = fo4.Version;
+
+                if (fo4.IsPatched)
+                {
+                    if (ctx.Settings.InstallPlugins)
+                    {
+                        ctx.Success("All plugins installed! Your Fallout 4 installation is ready!");
+                    }
+                    else
+                    {
+                        ctx.Success("Your Fallout 4 installation has already been downgraded to v" + v.FileVersion);
+                    }
+                }
+                else
+                {
+                    ctx.Error("Your Fallout 4 is an unexpected v" + v.FileVersion);
+                }
+
+                return true;
+            }
+
+
             ctx.Notify("Patching Fallout4.exe...");
-            Patch(ctx.Patch["Fallout4.exe"]);
+            Patch(fo4);
 
             ctx.Notify("Patching steam_api64.dll...");
-            Patch(ctx.Patch["steam_api64.dll"]);
+            Patch(sApi);
 
             ctx.Notify("Patching Fallout4Launcher.exe...");
-            Patch(ctx.Patch["Fallout4Launcher.exe"]);
+            Patch(launcher);
 
 
             ctx.Step = FO4DowngraderStep.Finished;
@@ -167,11 +217,11 @@ namespace FO4Down
 
             if (helperText.Length > 0)
             {
-                ctx.Notify("All files patched! Your Fallout 4 installation has been downgraded!\nDon't forget to install the following plugins if you have not already:\n" + helperText);
+                ctx.Success("All files patched! Your Fallout 4 installation has been downgraded!\nDon't forget to install the following plugins if you have not already:\n" + helperText);
             }
             else
             {
-                ctx.Notify("All files patched! Your Fallout 4 installation has been downgraded!\nHappy Modding!");
+                ctx.Success("All files patched! Your Fallout 4 installation has been downgraded!\nHappy Modding!");
             }
 
 
@@ -199,7 +249,7 @@ namespace FO4Down
         public static async Task InstallBASSAsync(ApplicationContext ctx)
         {
             ctx.Notify("Installing F4SE Plugin: BASS...");
-            var zip = "Downloads/baas.zip";
+            var zip = "Assets\\Downloads\\baas.zip";
             if (!File.Exists(zip))
             {
                 if (ctx.HttpClient == null)
@@ -208,7 +258,7 @@ namespace FO4Down
             }
 
             var targetDirectory = System.IO.Path.Combine(ctx.Fallout4.Path);
-            using (var archive = SharpCompress.Archives.Zip.ZipArchive.Open("Downloads/baas.zip"))
+            using (var archive = SharpCompress.Archives.Zip.ZipArchive.Open("Assets\\Downloads\\baas.zip"))
             {
                 ExtractToDirectory(archive, targetDirectory);
             }
@@ -218,7 +268,7 @@ namespace FO4Down
         public static async Task InstallAddressLibraryPluginAsync(ApplicationContext ctx)
         {
             ctx.Notify("Installing F4SE Plugin: Address Library...");
-            var zip = "Downloads/address.library.zip";
+            var zip = "Assets\\Downloads\\address.library.zip";
             if (!File.Exists(zip))
             {
                 if (ctx.HttpClient == null)
@@ -226,7 +276,7 @@ namespace FO4Down
                 await DownloadFileAsync(ctx.HttpClient, "https://github.com/zerratar/fallout4-downgrader/releases/download/v1.0.5.2/Addres.Library-47327-1-10-163-0-1599728753.zip", zip);
             }
             var targetDirectory = Path.Combine(ctx.Fallout4.Path, "Data\\");
-            using (var archive = SharpCompress.Archives.Zip.ZipArchive.Open("Downloads/address.library.zip"))
+            using (var archive = SharpCompress.Archives.Zip.ZipArchive.Open("Assets\\Downloads\\address.library.zip"))
             {
                 ExtractToDirectory(archive, targetDirectory);
             }
@@ -236,7 +286,7 @@ namespace FO4Down
         public static async Task InstallF4SEAsync(ApplicationContext ctx)
         {
             ctx.Notify("Installing F4SE...");
-            var zip = "Downloads/f4se.zip";
+            var zip = "Assets\\Downloads\\f4se.zip";
             if (!File.Exists(zip))
             {
                 if (ctx.HttpClient == null)
@@ -244,7 +294,7 @@ namespace FO4Down
                 await DownloadFileAsync(ctx.HttpClient, "https://github.com/zerratar/fallout4-downgrader/releases/download/v1.0.5.2/f4se.zip", zip);
             }
             var targetDirectory = Path.Combine(ctx.Fallout4.Path);
-            using (var archive = SharpCompress.Archives.Zip.ZipArchive.Open("Downloads/f4se.zip"))
+            using (var archive = SharpCompress.Archives.Zip.ZipArchive.Open("Assets\\Downloads\\f4se.zip"))
             {
                 ExtractToDirectory(archive, targetDirectory);
             }
@@ -353,14 +403,18 @@ namespace FO4Down
             var fo4Exe = Path.Combine(ctx.Fallout4.Path, "Fallout4.exe");
             var steamApi = Path.Combine(ctx.Fallout4.Path, "steam_api64.dll");
             var launcher = Path.Combine(ctx.Fallout4.Path, "Fallout4Launcher.exe");
+            // run all separately as they mutates the ctx Patch and add details regarding the patch file
+            var canPatchFo4 = CanPatch(ctx, fo4Exe, "1.10.163.0");
+            var canPatchSteamApi = CanPatch(ctx, steamApi, "2.89.45.4");
+            var canPatchLauncher = CanPatch(ctx, launcher, "1.3.22.0");
 
-            if (CanPatch(ctx, fo4Exe) && CanPatch(ctx, steamApi) && CanPatch(ctx, launcher))
+            if (canPatchFo4 && canPatchSteamApi && canPatchLauncher)
             {
                 ctx.CanPatch = true;
             }
         }
 
-        private static bool CanPatch(ApplicationContext ctx, string file)
+        private static bool CanPatch(ApplicationContext ctx, string file, string patchedVersion)
         {
             var id = Crc64.HashToUInt64(File.ReadAllBytes(file));
             byte[] hash = null;
@@ -368,11 +422,15 @@ namespace FO4Down
             {
                 hash = GetChecksumBuffered(read);
             }
+
+            var version = FileVersionInfo.GetVersionInfo(file);
             var pi = ctx.Patch[Path.GetFileName(file)] = new PatchInfo
             {
                 Id = id,
                 Hash = hash,
+                IsPatched = version.FileVersion == patchedVersion,
                 Target = file,
+                Version = version,
                 Files = GetPatches(id),
             };
             return pi.Files.Length > 0;
@@ -381,12 +439,17 @@ namespace FO4Down
         private static string[] GetPatches(ulong id)
         {
             return Directory
-                .GetFiles("Patch", id + "_*.patch")
+                .GetFiles("Assets\\Patch", id + "_*.patch")
                 .OrderBy(x => int.Parse(x.Split('_')[1].Split('.')[0])).ToArray();
         }
 
         private static void Patch(PatchInfo pi)
         {
+            if (pi.IsPatched)
+            {
+                return;
+            }
+
             string fileToBeReplaced = pi.Target;
             ulong id = pi.Id;
             byte[] hash = pi.Hash;
@@ -553,7 +616,23 @@ namespace FO4Down
             {
                 // will contain subfolder
                 foreach (var folder in Directory.GetDirectories(depotFolder, "*"))
-                    CopyFiles(ctx, folder, fo4.Path);
+                {
+                    // check if we should copy this depot
+                    var allGood = false;
+                    foreach (var d in ctx.Depots)
+                    {
+                        if (folder.Contains(d.Id.ToString()))
+                        {
+                            allGood = true;
+                            break;
+                        }
+                    }
+
+                    if (allGood)
+                    {
+                        CopyFiles(ctx, folder, fo4.Path);
+                    }
+                }
 
                 if (deleteAfterCopy)
                 {
@@ -617,6 +696,8 @@ namespace FO4Down
             var dataFolder = System.IO.Path.Combine(fo4.Path, "Data");
             var filesToDelete = new List<string>
             {
+                "ccBGSFO4044-HellfirePowerArmor - Main.ba2",
+                "ccBGSFO4044-HellfirePowerArmor - Textures.ba2",
                 "ccBGSFO4006-PipBoy(Chrome) - Main.ba2",
                 "ccFSVFO4002-MidCenturyModern - Textures.ba2",
                 "ccFRSFO4001-HandmadeShotgun - Textures.ba2",
@@ -767,6 +848,8 @@ namespace FO4Down
             //ctx.Notify("Downloading ")
             ctx.TotalDepotsToDownload = totalDepotsToDownload;
             ctx.Step = FO4DowngraderStep.DownloadGameDepotFiles;
+            ctx.Depots = depots.ToList();
+
             await ContentDownloader.DownloadAppAsync(
                 f4AppId, depots.Select(x => x.AsTuple()).ToList(), "public", "windows", "64",
                 settings.Language,
@@ -783,6 +866,8 @@ namespace FO4Down
                     ckAppId, depots.Select(x => x.AsTuple()).ToList(),
                     "public", "windows", "64",
                     settings.Language, false, false, ctx);
+
+                ctx.Depots.AddRange(depots);
             }
 
             ctx.Notify();
@@ -990,7 +1075,14 @@ namespace FO4Down
 
         private static AppSettings LoadSettings(ApplicationContext ctx)
         {
-            var p = Params.FromArgs(Environment.GetCommandLineArgs());
+            var args =
+#if DEBUG
+                Program.CommandLineArguments ?? Environment.GetCommandLineArgs();
+#else
+                Environment.GetCommandLineArgs();
+#endif
+
+            var p = Params.FromArgs(args);
             var settings = AppSettings.FromParams(p);
             var c = ContentDownloader.Config;
             // c.Logger = new ConsoleLogger();

@@ -27,6 +27,8 @@
         public bool DeleteEnglishLanguageFiles { get; internal set; }
         public bool InstallPlugins { get; set; }
         public bool InstallHelperEnabled { get; internal set; }
+        public bool PatchFiles { get; private set; }
+        public bool DownloadDepots { get; private set; }
 
         public static AppSettings FromParams(Params p)
         {
@@ -36,6 +38,8 @@
                 InstallPlugins = p.Contains("-install-plugins"),
                 InstallHelperEnabled = p.Contains("-install-helper"),
                 KeepDepotFiles = p.Contains("-keep-depot"),
+                PatchFiles = p.Contains("-patch-files"),
+                DownloadDepots = p.Contains("-download-depots"),
                 DownloadCreationKit = p.Contains("-creation-kit") || p.Contains("-ck"),
                 Username = p.Get<string>("-username") ?? p.Get<string>("-user"),
                 Password = p.Get<string>("-password") ?? p.Get<string>("-pass"),

@@ -13,6 +13,10 @@ namespace Fallout4Downgrader
             return "Fallout 4 Downgrader";
         }
 
+#if DEBUG
+        public static string[] CommandLineArguments; // only during debug so we can manipulate
+#endif
+
         static async Task Main(string[] args)
         {
             //var s = Fallout4IniSettings.FromIni(@"G:\SteamLibrary\steamapps\common\Fallout 4\Fallout4_Default.ini");
@@ -25,15 +29,18 @@ namespace Fallout4Downgrader
             //    props[archives.Key]
             //}
 
-            //args = ["-qr"];
-            var settings = LoadSettingsFromArgs(args);
+//#if DEBUG
+//            CommandLineArguments = ["-download-depots"];
+//#endif
+
 
             if (args.Contains("-help") || args.Contains("-h") || args.Contains("/?") || args.Contains("-?"))
             {
                 Console.WriteLine("Fallout 4 Downgrader - v" + Assembly.GetExecutingAssembly().GetName().Version);
                 Console.WriteLine("Usage: FO4Down.exe (optional: arguments)");
-                Console.WriteLine("  -install-plugins\tAutomatically install needed plugins into Fallout 4\\Data\\ folder");
-                Console.WriteLine("  -install-helper\tAllow for selecting downgrade and help installing plugins");
+                Console.WriteLine("  -install-plugins\tAutomatically install needed plugins into Fallout 4\\Data\\ folder necessary for patched exe to work.");
+                Console.WriteLine("  -patch-files\tForces the application to start downgrade by Patching files");
+                Console.WriteLine("  -download-depots\tForces the application to start downgrade by downloading depots");
                 Console.WriteLine("  -user or -username <steam user>");
                 Console.WriteLine("  -pass or -password <steam pass>");
                 Console.WriteLine("  -qr\t\t\tLogin using QR code instead");
@@ -47,17 +54,6 @@ namespace Fallout4Downgrader
 
             Application.Run<MainWindow>();
             Application.Shutdown();
-        }
-
-        private static AppSettings LoadSettingsFromArgs(params string[] args)
-        {
-            var p = Params.FromArgs(args);
-            var settings = AppSettings.FromParams(p);
-            var c = ContentDownloader.Config;
-            c.Logger = new ConsoleLogger();
-            c.UseQrCode = settings.UseQrCode;
-            c.DownloadAllLanguages = settings.DownloadAllLanguages;
-            return settings;
         }
     }
 }

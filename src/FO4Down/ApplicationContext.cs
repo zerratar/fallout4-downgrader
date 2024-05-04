@@ -2,7 +2,7 @@
 using FO4Down.Steam;
 using FO4Down.Steam.DepotDownloader;
 using SteamKit2.Authentication;
-using SteamKit2.Internal;
+using System.Diagnostics;
 using System.Globalization;
 using System.Reflection;
 using System.Text;
@@ -14,6 +14,7 @@ namespace FO4Down
         public FO4DowngraderStep Step { get; set; }
         public string Version { get; set; }
         public bool IsError { get; set; }
+        public bool IsSuccess { get; set; }
         public bool IsWarning { get; set; }
         public bool Continue { get; set; }
         public bool ReportToDeveloper { get; set; }
@@ -48,6 +49,7 @@ namespace FO4Down
         public bool IsF4SEAddressLibraryInstalled { get; internal set; }
         public bool IsF4SEBASSInstalled { get; internal set; }
         public HttpClient HttpClient { get; internal set; }
+        public List<Depot> Depots { get; internal set; }
 
         public CultureInfo GetTargetCultureInfo()
         {
@@ -105,6 +107,7 @@ namespace FO4Down
         {
             try
             {
+                IsSuccess = false;
                 var msg = args != null && args.Length > 0 ? string.Format(message, args) : message;
                 if (msg != Message)
                 {
@@ -124,7 +127,7 @@ namespace FO4Down
         public void Progress(string message, float fraction)
         {
             Fraction = fraction;
-
+            IsSuccess = false;
             if (!string.IsNullOrEmpty(message) && message != Message)
             {
                 Message = message;
@@ -135,10 +138,28 @@ namespace FO4Down
                 this.OnStepUpdate(this);
         }
 
+        public void Success(string message, params object[] args)
+        {
+            var msg = args != null && args.Length > 0 ? string.Format(message, args) : message;
+            IsSuccess = true;
+            IsError = false;
+            Continue = true;
+            ReportToDeveloper = false;
 
+            if (msg != message)
+            {
+                log.AppendLine(msg);
+            }
+
+            Message = msg;
+
+            if (OnStepUpdate != null)
+                this.OnStepUpdate(this);
+        }
         public void Error(string message, params object[] args)
         {
             var msg = args != null && args.Length > 0 ? string.Format(message, args) : message;
+            IsSuccess = false;
             IsError = true;
             Continue = true;
             ReportToDeveloper = false;
@@ -157,6 +178,7 @@ namespace FO4Down
 
         public void Error(Exception exc)
         {
+            IsSuccess = false;
             IsError = true;
             Continue = false;
             Message = exc.Message;
@@ -170,6 +192,7 @@ namespace FO4Down
 
         public void WarnAndReport(string message)
         {
+            IsSuccess = false;
             IsError = false;
             IsWarning = true;
             Continue = false;
@@ -184,6 +207,7 @@ namespace FO4Down
 
         public void Warn(string message)
         {
+            IsSuccess = false;
             IsError = false;
             IsWarning = true;
             Continue = true;
@@ -197,6 +221,7 @@ namespace FO4Down
 
         public void Report(Exception exc)
         {
+            IsSuccess = false;
             IsError = true;
             Continue = false;
             ReportToDeveloper = true;
@@ -341,5 +366,7 @@ namespace FO4Down
         public string Target { get; set; }
         public string[] Files { get; set; }
         public byte[] Hash { get; set; }
+        public FileVersionInfo Version { get; set; }
+        public bool IsPatched { get; set; }
     }
 }

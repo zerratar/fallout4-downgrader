@@ -5,8 +5,8 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <AssemblyVersion>1.0.6.1</AssemblyVersion>
-    <FileVersion>1.0.6.2</FileVersion>
+    <AssemblyVersion>1.0.6.3</AssemblyVersion>
+    <FileVersion>1.0.6.3</FileVersion>
     <PackageIcon>icon-128.png</PackageIcon>
     <ApplicationIcon>icon.ico</ApplicationIcon>
   </PropertyGroup>
@@ -22,7 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Patch\" />
+    <Folder Include="Assets\Patch\" />
     <Folder Include="Steam\SteamKit2\" />
   </ItemGroup>
 
@@ -34,22 +34,28 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="Patch\11608682506410180907_0.patch">
+    <None Update="Assets\icon.ico">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Patch\11608682506410180907_1.patch">
+    <None Update="Assets\icon.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Patch\11608682506410180907_2.patch">
+    <None Update="Assets\Patch\11608682506410180907_0.patch">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Patch\11608682506410180907_3.patch">
+    <None Update="Assets\Patch\11608682506410180907_1.patch">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Patch\12022264289638961809_0.patch">
+    <None Update="Assets\Patch\11608682506410180907_2.patch">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Patch\17651205152082834658_0.patch">
+    <None Update="Assets\Patch\11608682506410180907_3.patch">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\Patch\12022264289638961809_0.patch">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\Patch\17651205152082834658_0.patch">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

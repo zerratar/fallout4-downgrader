@@ -1,0 +1,19 @@
+{
+  "profiles": {
+    "WSL": {
+      "commandName": "WSL2",
+      "distributionName": ""
+    },
+    "Download Depots": {
+      "commandName": "Project",
+      "commandLineArgs": "-download-depots"
+    },
+    "Patch Files": {
+      "commandName": "Project",
+      "commandLineArgs": "-patch-files"
+    },
+    "Default": {
+      "commandName": "Project"
+    }
+  }
+}

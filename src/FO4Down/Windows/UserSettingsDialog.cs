@@ -161,14 +161,7 @@ namespace FO4Down.Windows
 
         private void OnLanguageChanged(ComboBox box, int itemIndex, string itemValue)
         {
-            if (itemIndex == 0)
-            {
-                Settings.Language = null; // null is all languages
-            }
-            else
-            {
-                Settings.Language = itemValue.ToLower();
-            }
+            Settings.Language = itemValue.ToLower();
 
             if (cbEnglishFiles != null)
             {
