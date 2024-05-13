@@ -206,7 +206,7 @@ namespace FO4Down
                 }
                 else
                 {
-                    ctx.Error("Your Fallout 4 is an unexpected v" + v.FileVersion);
+                    ctx.Error("Your Fallout 4 is an unexpected version " + v.FileVersion);
                 }
 
                 return true;
@@ -435,7 +435,7 @@ namespace FO4Down
             var canPatchSteamApi = CanPatch(ctx, steamApi, "2.89.45.4");
             var canPatchLauncher = CanPatch(ctx, launcher, "1.3.22.0");
 
-            if (canPatchFo4 && canPatchSteamApi && canPatchLauncher)
+            if (canPatchFo4 || canPatchSteamApi || canPatchLauncher || ctx.Settings.ForcePatch)
             {
                 ctx.CanPatch = true;
             }
@@ -842,69 +842,73 @@ namespace FO4Down
             if (settings.DownloadAllLanguages)
                 language = null;
 
-            // verify whether or not we are downloading the correct language.
-            if (!settings.DownloadAllLanguages)
+            if (!ctx.Settings.DowngradeCreationKitOnly)
             {
-                var targetLanguage = ctx.GetTargetCultureInfo();
-                if (!targetLanguage.EnglishName.Equals(language, StringComparison.OrdinalIgnoreCase))
+                // verify whether or not we are downloading the correct language.
+                if (!settings.DownloadAllLanguages)
                 {
-                    ctx.Message = "Preparing for download...";
-                    if (await ctx.RequestAsync<bool>("confirm",
-                        "You are about to download English version of the game\n" +
-                        "but your current Fallout 4 installation is in \"" + targetLanguage.EnglishName + "\".\n" +
-                        "Do you want to download " + targetLanguage.EnglishName + " instead?"))
+                    var targetLanguage = ctx.GetTargetCultureInfo();
+                    if (!targetLanguage.EnglishName.Equals(language, StringComparison.OrdinalIgnoreCase))
                     {
-                        language = targetLanguage.EnglishName.ToLower();
+                        ctx.Message = "Preparing for download...";
+                        if (await ctx.RequestAsync<bool>("confirm",
+                            "You are about to download English version of the game\n" +
+                            "but your current Fallout 4 installation is in \"" + targetLanguage.EnglishName + "\".\n" +
+                            "Do you want to download " + targetLanguage.EnglishName + " instead?"))
+                        {
+                            language = targetLanguage.EnglishName.ToLower();
+                        }
                     }
                 }
+
+                depots.AddRange(DepotManager.GetLanguageNeutral(DepotTarget.Game));
+                depots.AddRange(DepotManager.GetLanguageNeutral(DepotTarget.RequiredDlc));
+
+                depots.AddRange(DepotManager.Get(DepotTarget.Game, language));
+                depots.AddRange(DepotManager.Get(DepotTarget.RequiredDlc, language));
+
+                if (ctx.Settings.DownloadAllDLCs)
+                {
+                    depots.AddRange(DepotManager.GetLanguageNeutral(DepotTarget.AllDlc));
+                    depots.AddRange(DepotManager.Get(DepotTarget.AllDlc, language));
+                }
+
+                if (ctx.Settings.DownloadHDTextures)
+                {
+                    // <HD Textures>
+                    depots.Add(DepotManager.GetHDTextures());
+                }
+
+                var totalDepotsToDownload = depots.Count + (downloadCreationKit ? 2 : 0);
+
+                ContentDownloader.Config.MaxDownloads = depots.Count;
+
+                uint f4AppId = 377160;
+
+                //ctx.Notify("Downloading ")
+                ctx.TotalDepotsToDownload = totalDepotsToDownload;
+                ctx.Step = FO4DowngraderStep.DownloadGameDepotFiles;
+                ctx.Depots = depots.ToList();
+
+                await ContentDownloader.DownloadAppAsync(
+                    f4AppId, depots.Select(x => x.AsTuple()).ToList(), "public", "windows", "64",
+                    language,
+                    false, false, ctx);
             }
-
-            depots.AddRange(DepotManager.GetLanguageNeutral(DepotTarget.Game));
-            depots.AddRange(DepotManager.GetLanguageNeutral(DepotTarget.RequiredDlc));
-
-            depots.AddRange(DepotManager.Get(DepotTarget.Game, language));
-            depots.AddRange(DepotManager.Get(DepotTarget.RequiredDlc, language));
-
-            if (ctx.Settings.DownloadAllDLCs)
-            {
-                depots.AddRange(DepotManager.GetLanguageNeutral(DepotTarget.AllDlc));
-                depots.AddRange(DepotManager.Get(DepotTarget.AllDlc, language));
-            }
-
-            if (ctx.Settings.DownloadHDTextures)
-            {
-                // <HD Textures>
-                depots.Add(DepotManager.GetHDTextures());
-            }
-
-            var totalDepotsToDownload = depots.Count + (downloadCreationKit ? 2 : 0);
-
-            ContentDownloader.Config.MaxDownloads = depots.Count;
-
-            uint f4AppId = 377160;
-            uint ckAppId = 1946160;
-
-            //ctx.Notify("Downloading ")
-            ctx.TotalDepotsToDownload = totalDepotsToDownload;
-            ctx.Step = FO4DowngraderStep.DownloadGameDepotFiles;
-            ctx.Depots = depots.ToList();
-
-            await ContentDownloader.DownloadAppAsync(
-                f4AppId, depots.Select(x => x.AsTuple()).ToList(), "public", "windows", "64",
-                settings.Language,
-                false, false, ctx);
 
             // check if creation kit is available, if so, download and replace those as well.
 
-            if (downloadCreationKit)
+            if (downloadCreationKit || ctx.Settings.DowngradeCreationKitOnly)
             {
+                uint ckAppId = 1946160;
+
                 ctx.Step = FO4DowngraderStep.DownloadCreationKitDepotFiles;
                 depots.Clear();
                 depots.AddRange(DepotManager.GetCreationKit());
                 await ContentDownloader.DownloadAppAsync(
                     ckAppId, depots.Select(x => x.AsTuple()).ToList(),
                     "public", "windows", "64",
-                    settings.Language, false, false, ctx);
+                    language, false, false, ctx);
 
                 ctx.Depots.AddRange(depots);
             }

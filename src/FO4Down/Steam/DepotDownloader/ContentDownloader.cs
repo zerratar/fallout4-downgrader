@@ -1177,7 +1177,7 @@ namespace FO4Down.Steam.DepotDownloader
                         break;
                     }
 
-                    Config.Logger.Error("Encountered error downloading chunk {0}: {1}", chunkID, e.StatusCode);
+                    Config.Logger.Warning("Encountered error downloading chunk {0}: {1}. Retrying", chunkID, e.StatusCode);
                 }
                 catch (OperationCanceledException)
                 {
@@ -1186,7 +1186,7 @@ namespace FO4Down.Steam.DepotDownloader
                 catch (Exception e)
                 {
                     cdnPool.ReturnBrokenConnection(connection);
-                    Config.Logger.Error("Encountered unexpected error downloading chunk {0}: {1}", chunkID, e.Message);
+                    Config.Logger.Warning("Encountered unexpected error downloading chunk {0}: {1}. Retrying", chunkID, e.Message);
                 }
             } while (chunkData == null);
 

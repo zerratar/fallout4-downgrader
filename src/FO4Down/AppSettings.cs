@@ -29,6 +29,8 @@
         public bool InstallHelperEnabled { get; internal set; }
         public bool PatchFiles { get; private set; }
         public bool DownloadDepots { get; private set; }
+        public bool ForcePatch { get; internal set; }
+        public bool DowngradeCreationKitOnly { get; private set; }
 
         public static AppSettings FromParams(Params p)
         {
@@ -39,8 +41,10 @@
                 InstallHelperEnabled = p.Contains("-install-helper"),
                 KeepDepotFiles = p.Contains("-keep-depot"),
                 PatchFiles = p.Contains("-patch-files"),
+                ForcePatch = p.Contains("-force-patch"),
                 DownloadDepots = p.Contains("-download-depots"),
                 DownloadCreationKit = p.Contains("-creation-kit") || p.Contains("-ck"),
+                DowngradeCreationKitOnly = p.Contains("-creation-kit-only"),
                 Username = p.Get<string>("-username") ?? p.Get<string>("-user"),
                 Password = p.Get<string>("-password") ?? p.Get<string>("-pass"),
                 DownloadAllLanguages = p.Contains("-all-languages"),
