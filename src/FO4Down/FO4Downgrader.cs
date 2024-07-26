@@ -104,6 +104,8 @@ namespace FO4Down
 
                 VerifyFileVersions(ctx);
 
+                MakeManifestReadOnly(ctx);
+
                 ctx.Step = FO4DowngraderStep.Finished;
 
                 if (ctx.LoggedErrors.Count > 0)
@@ -127,6 +129,30 @@ namespace FO4Down
             finally
             {
                 ctx.SaveLog();
+            }
+        }
+
+        private void MakeManifestReadOnly(ApplicationContext ctx)
+        {
+            try
+            {
+                var fallout4Path = new DirectoryInfo(ctx.Fallout4.Path);
+                // ..\..\
+                var steamapps = fallout4Path.Parent.Parent;
+                var manifest = Path.Combine(steamapps.FullName, "appmanifest_" + Fallout4_AppId + ".acf");
+                // make the manifest file read only
+                if (File.Exists(manifest))
+                {
+                    var attr = File.GetAttributes(manifest);
+                    if ((attr & FileAttributes.ReadOnly) != FileAttributes.ReadOnly)
+                    {
+                        File.SetAttributes(manifest, attr | FileAttributes.ReadOnly);
+                    }
+                }
+            }
+            catch (Exception exc)
+            {
+                ctx.Warn("Failed to make manifest file read only: " + exc.Message);
             }
         }
 

@@ -6,7 +6,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <AssemblyVersion>1.10.6.3</AssemblyVersion>
-    <FileVersion>1.10.6.3</FileVersion>
+    <FileVersion>1.2</FileVersion>
     <PackageIcon>icon-128.png</PackageIcon>
     <ApplicationIcon>icon.ico</ApplicationIcon>
   </PropertyGroup>

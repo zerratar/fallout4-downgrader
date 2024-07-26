@@ -10,7 +10,7 @@
     },
     "Patch Files": {
       "commandName": "Project",
-      "commandLineArgs": "-patch-files"
+      "commandLineArgs": "-folon"
     },
     "Default": {
       "commandName": "Project"
