@@ -45,6 +45,8 @@ namespace FO4Down
 
                 CheckIfF4SEBAASIsInstalled(ctx);
 
+                await DownloadPatchFilesIfNecessaryAsync(ctx);
+
                 CheckIfPatchIsPossible(ctx);
 
                 if (await HandlePatchAsync(ctx))
@@ -130,6 +132,76 @@ namespace FO4Down
             {
                 ctx.SaveLog();
             }
+        }
+
+        private async Task DownloadPatchFilesIfNecessaryAsync(ApplicationContext ctx)
+        {
+            if (!ctx.Settings.PatchFiles && !ctx.Settings.ForcePatch)
+            {
+                return;
+            }
+
+            const string zip = "Assets\\Downloads\\patch_files.zip";
+            const string patchFolder = "Assets\\Patch";
+
+            var patchFiles = GetPatches();
+
+            string[] expectedFiles = [
+                "11608682506410180907_0.patch",
+                "11608682506410180907_1.patch",
+                "11608682506410180907_2.patch",
+                "11608682506410180907_3.patch",
+                "12022264289638961809_0.patch",
+                "17651205152082834658_0.patch"
+            ];
+
+            //var toDownload = new List<Tuple<string, string>>();
+            var hasMissingPatchFiles = false;
+
+            if (!Directory.Exists(patchFolder))
+            {
+                Directory.CreateDirectory(patchFolder);
+                hasMissingPatchFiles = true;
+            }
+            else
+            {
+                foreach (var file in expectedFiles)
+                {
+
+                    var patchFile = Path.Combine(patchFolder, file);
+                    if (!File.Exists(file))
+                    {
+                        hasMissingPatchFiles = true;
+                        break;
+                        //toDownload.Add(new Tuple<string, string>("https://github.com/zerratar/fallout4-downgrader/releases/download/v1.2/" + file, patchFile));
+                    }
+                }
+            }
+            ctx.Step = FO4DowngraderStep.DownloadPatchFiles;
+
+            ctx.Progress("Downloading patch files..", 0);
+            if (!File.Exists(zip))
+            {
+                if (ctx.HttpClient == null)
+                    ctx.HttpClient = new HttpClient();
+                await DownloadFileAsync(ctx.HttpClient, "https://github.com/zerratar/fallout4-downgrader/releases/download/v1.2/patch_files.zip", zip);
+            }
+
+            ctx.Progress("Extracting patch files..", 0.5f);
+            var targetDirectory = System.IO.Path.Combine(ctx.Fallout4.Path);
+            using (var archive = SharpCompress.Archives.Zip.ZipArchive.Open(zip))
+            {
+                ExtractToDirectory(archive, patchFolder);
+            }
+
+            //var index = 0;
+            //foreach (var dl in toDownload)
+            //{
+            //    ctx.Progress("Downloading patch files...", (index / (float)toDownload.Count));
+            //    await DownloadFileAsync(ctx.HttpClient, dl.Item1, dl.Item2);
+            //}
+
+            ctx.Progress("Patch files downloaded and extracted.", 1);
         }
 
         private void MakeManifestReadOnly(ApplicationContext ctx)
@@ -451,6 +523,7 @@ namespace FO4Down
 
         private void CheckIfPatchIsPossible(ApplicationContext ctx)
         {
+
             // check if the patch is possible
             // get the hash of the fallout4 exe to determine
             var fo4Exe = Path.Combine(ctx.Fallout4.Path, "Fallout4.exe");
@@ -501,8 +574,15 @@ namespace FO4Down
             return pi.Files.Length > 0;
         }
 
-        private static string[] GetPatches(ulong id)
+        private static string[] GetPatches(ulong id = 0)
         {
+            if (id <= 0)
+            {
+                return Directory
+                .GetFiles("Assets\\Patch", "*_*.patch")
+                .OrderBy(x => int.Parse(x.Split('_')[1].Split('.')[0])).ToArray();
+            }
+
             return Directory
                 .GetFiles("Assets\\Patch", id + "_*.patch")
                 .OrderBy(x => int.Parse(x.Split('_')[1].Split('.')[0])).ToArray();

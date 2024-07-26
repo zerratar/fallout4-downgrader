@@ -344,12 +344,13 @@ namespace FO4Down.Windows
                             break;
                         case FO4DowngraderStep.DownloadCreationKitDepotFiles:
                         case FO4DowngraderStep.DownloadGameDepotFiles:
-
                             progressBar.Visible = context.Fraction > 0.0;
                             lblProgress.Visible = progressBar.Visible;
                             lblProgress.Text = $"{(context.Fraction * 100):00.00}%\n\n" + "Processing depot " + (context.DepotsDownloaded + 1) + " out of " + context.TotalDepotsToDownload + ".\nThis will take a while! Do not worry if nothing happens for a while.";// + context.GetAverageDownloadSpeed();
                             progressBar.Fraction = context.Fraction;
                             break;
+                        
+                        case FO4DowngraderStep.DownloadPatchFiles:
                         case FO4DowngraderStep.CopyDepotFiles:
                         case FO4DowngraderStep.DeleteNextGenFiles:
                             progressBar.Visible = true;

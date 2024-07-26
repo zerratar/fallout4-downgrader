@@ -5,6 +5,7 @@
         LookingForFallout4Path,
         UserSettings,
         LoginToSteam,
+        DownloadPatchFiles,
         DownloadDepotFiles,
         DownloadGameDepotFiles,
         DownloadCreationKitDepotFiles,
