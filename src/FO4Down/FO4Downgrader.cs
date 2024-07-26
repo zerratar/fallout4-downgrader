@@ -576,6 +576,11 @@ namespace FO4Down
 
         private static string[] GetPatches(ulong id = 0)
         {
+            if (!Directory.Exists("Assets\\Patch"))
+            {
+                Directory.CreateDirectory("Assets\\Patch");
+            }
+
             if (id <= 0)
             {
                 return Directory
