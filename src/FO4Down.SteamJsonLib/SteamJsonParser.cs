@@ -1,7 +1,6 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿
 
-namespace FO4Down.Steam
+namespace FO4Down.SteamJson
 {
     public static class SteamJsonParser
     {
@@ -29,7 +28,31 @@ namespace FO4Down.Steam
                 ++index;
             }
 
-            return BuildObject(nodes);
+            return Compress(BuildObject(nodes));
+        }
+
+        private static SteamJsonObject Compress(SteamJsonObject obj)
+        {
+            // search down the tree for children without identifier, then merge it with their parent
+            // do this recursively
+
+            var children = obj.Children.ToList();
+
+            for (int i = 0; i < children.Count; i++)
+            {
+                var child = children[i];
+                children[i] = Compress(child);
+            }
+
+            if (obj.Identifier == null)
+            {
+                obj.MergeWithParent();
+            }
+
+            // remove empty children
+            obj.Children.RemoveAll(x => x.Identifier == null);
+
+            return obj;
         }
 
         private static Node Parse(
@@ -160,40 +183,6 @@ namespace FO4Down.Steam
             public override string ToString()
             {
                 return "StringNode: " + Value;
-            }
-        }
-
-        public class SteamJsonObject
-        {
-            private Dictionary<string, string> _values = new Dictionary<string, string>();
-            private List<string> strings = new List<string>();
-
-            public string this[string key]
-            {
-                get => _values[key];
-                set => _values[key] = value;
-            }
-
-            public IReadOnlyList<string> Strings => strings;
-
-            public string Identifier { get; set; }
-
-            public List<SteamJsonObject> Children { get; set; } = new List<SteamJsonObject>();
-            public SteamJsonObject Parent { get; set; }
-
-            public void AddString(string value)
-            {
-                strings.Add(value);
-
-                // rebuild values dictionary if strings count is % 2 == 0
-                if (strings.Count % 2 == 0)
-                {
-                    _values.Clear();
-                    for (var i = 0; i < strings.Count; i += 2)
-                    {
-                        _values[strings[i]] = strings[i + 1];
-                    }
-                }
             }
         }
     }

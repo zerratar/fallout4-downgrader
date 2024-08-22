@@ -2,6 +2,7 @@
 using SteamKit2.WebUI.Internal;
 using System.Collections.Concurrent;
 using System.Text.RegularExpressions;
+using FO4Down.SteamJson;
 
 namespace FO4Down.Steam
 {
@@ -21,10 +22,39 @@ namespace FO4Down.Steam
             var vdfPath = path.EndsWith(".vdf") ? path : Path.Combine(path, @"steamapps\libraryfolders.vdf");
             if (File.Exists(vdfPath))
             {
-                ctx.LibraryFolders.AddRange(SteamJson.ParseSteamFolders(vdfPath));
+                ctx.LibraryFolders.AddRange(ParseSteamFolders(vdfPath));
             }
         }
 
+        public static IReadOnlyList<SteamLibFolder> ParseSteamFolders(string path)
+        {
+            var obj = SteamJsonParser.Parse(File.ReadAllText(path));
+            var list = new List<SteamLibFolder>();
+
+            foreach (var folder in obj.Children)
+            {
+                list.Add(ParseSteamFolder(folder));
+            }
+
+            return list;
+        }
+
+        private static SteamLibFolder ParseSteamFolder(SteamJsonObject folder)
+        {
+            var appsChild = folder.Children.First(x => x.Identifier == "apps");
+            var apps = appsChild.Strings.ToArray();
+
+            return new SteamLibFolder
+            {
+                Path = folder["path"],
+                Label = folder["label"],
+                ContentId = folder["contentid"],
+                TotalSize = folder["totalsize"],
+                UpdateCleanBytesTally = folder["update_clean_bytes_tally"],
+                TimeLastUpdateCorruption = folder["time_last_update_corruption"],
+                Apps = apps
+            };
+        }
 
         public static void GetInstalledGames(ApplicationContext ctx)
         {
@@ -62,6 +92,7 @@ namespace FO4Down.Steam
                 foreach (var apps in acfFiles)
                 {
                     var gameName = ExtractGameNameFromAcf(ctx, apps);
+                    var appId = Path.GetFileNameWithoutExtension(apps).Split('_').LastOrDefault();
                     if (string.IsNullOrEmpty(gameName))
                         continue;
 
@@ -69,7 +100,7 @@ namespace FO4Down.Steam
                     {
                         Name = gameName,
                         Path = Path.Combine(folder.Path, "steamapps", "common", gameName),
-                        AppId = apps
+                        AppId = appId
                     };
 
                     installedGames[gameName] = game; // Safe update of ConcurrentDictionary

@@ -1,7 +1,6 @@
-﻿using System.Collections.Generic;
-using System.Text;
+﻿using System.Text;
 
-namespace FO4Down.Steam
+namespace FO4Down.SteamJson
 {
     public static class Tokenizer
     {
