@@ -8,7 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
-using System.Linq;
+using System.Text;
 using SteamKit2.Internal;
 
 namespace SteamKit2
@@ -146,13 +146,19 @@ namespace SteamKit2
             public ReadOnlyCollection<License> LicenseList { get; private set; }
 
 
-            internal LicenseListCallback( CMsgClientLicenseList msg )
+            internal LicenseListCallback( IPacketMsg packetMsg )
             {
+                var licenseList = new ClientMsgProtobuf<CMsgClientLicenseList>( packetMsg );
+                var msg = licenseList.Body;
+
                 this.Result = ( EResult )msg.eresult;
 
-                var list = msg.licenses
-                    .Select( l => new License( l ) )
-                    .ToList();
+                var list = new License[ msg.licenses.Count ];
+
+                for ( var i = 0; i < list.Length; i++ )
+                {
+                    list[ i ] = new License( msg.licenses[ i ] );
+                }
 
                 this.LicenseList = new ReadOnlyCollection<License>( list );
             }
@@ -181,9 +187,12 @@ namespace SteamKit2
             /// <value>List of granted packages.</value>
             public ReadOnlyCollection<uint> GrantedPackages { get; private set; }
 
-            internal FreeLicenseCallback( JobID jobID, CMsgClientRequestFreeLicenseResponse msg )
+            internal FreeLicenseCallback( IPacketMsg packetMsg )
             {
-                this.JobID = jobID;
+                var grantedLicenses = new ClientMsgProtobuf<CMsgClientRequestFreeLicenseResponse>( packetMsg );
+                var msg = grantedLicenses.Body;
+
+                this.JobID = grantedLicenses.TargetJobID;
 
                 this.Result = ( EResult )msg.eresult;
 
@@ -211,10 +220,12 @@ namespace SteamKit2
             /// </summary>
             public byte[] Ticket { get; private set; }
 
-
-            internal AppOwnershipTicketCallback( JobID jobID, CMsgClientGetAppOwnershipTicketResponse msg )
+            internal AppOwnershipTicketCallback( IPacketMsg packetMsg )
             {
-                this.JobID = jobID;
+                var ticketResponse = new ClientMsgProtobuf<CMsgClientGetAppOwnershipTicketResponse>( packetMsg );
+                var msg = ticketResponse.Body;
+
+                this.JobID = ticketResponse.TargetJobID;
 
                 this.Result = ( EResult )msg.eresult;
                 this.AppID = msg.app_id;
@@ -223,7 +234,7 @@ namespace SteamKit2
         }
 
         /// <summary>
-        /// This callback is recieved in response to calling <see cref="SteamApps.GetDepotDecryptionKey"/>.
+        /// This callback is received in response to calling <see cref="SteamApps.GetDepotDecryptionKey"/>.
         /// </summary>
         public sealed class DepotKeyCallback : CallbackMsg
         {
@@ -242,9 +253,12 @@ namespace SteamKit2
             public byte[] DepotKey { get; private set; }
 
 
-            internal DepotKeyCallback( JobID jobID, CMsgClientGetDepotDecryptionKeyResponse msg )
+            internal DepotKeyCallback( IPacketMsg packetMsg )
             {
-                JobID = jobID;
+                var keyResponse = new ClientMsgProtobuf<CMsgClientGetDepotDecryptionKeyResponse>( packetMsg );
+                var msg = keyResponse.Body;
+
+                JobID = keyResponse.TargetJobID;
 
                 Result = ( EResult )msg.eresult;
                 DepotID = msg.depot_id;
@@ -270,15 +284,19 @@ namespace SteamKit2
             /// </summary>
             public string? Key { get; private set; }
 
-            internal LegacyGameKeyCallback( JobID jobID, MsgClientGetLegacyGameKeyResponse msg, byte[] payload )
+            internal LegacyGameKeyCallback( IPacketMsg packetMsg )
             {
-                JobID = jobID;
+                var keyResponse = new ClientMsg<MsgClientGetLegacyGameKeyResponse>( packetMsg );
+                var msg = keyResponse.Body;
+
+                JobID = keyResponse.TargetJobID;
                 AppID = msg.AppId;
                 Result = msg.Result;
 
                 if ( msg.Length > 0 )
                 {
                     var length = ( int )msg.Length - 1;
+                    var payload = keyResponse.Payload.ToArray();
                     Key = System.Text.Encoding.ASCII.GetString( payload, 0, length );
                 }
             }
@@ -299,8 +317,11 @@ namespace SteamKit2
             public ReadOnlyCollection<byte[]> Tokens { get; private set; }
 
 
-            internal GameConnectTokensCallback( CMsgClientGameConnectTokens msg )
+            internal GameConnectTokensCallback( IPacketMsg packetMsg )
             {
+                var gcTokens = new ClientMsgProtobuf<CMsgClientGameConnectTokens>( packetMsg );
+                var msg = gcTokens.Body;
+
                 TokensToKeep = msg.max_tokens_to_keep;
                 Tokens = new ReadOnlyCollection<byte[]>( msg.tokens );
             }
@@ -317,12 +338,14 @@ namespace SteamKit2
             public ReadOnlyCollection<uint> BannedApps { get; private set; }
 
 
-            internal VACStatusCallback( MsgClientVACBanStatus msg, byte[] payload )
+            internal VACStatusCallback( IPacketMsg packetMsg )
             {
+                var vacStatus = new ClientMsg<MsgClientVACBanStatus>( packetMsg );
+                var msg = vacStatus.Body;
+
                 var tempList = new List<uint>();
 
-                using var ms = new MemoryStream( payload );
-                using var br = new BinaryReader( ms );
+                using var br = new BinaryReader( vacStatus.Payload, Encoding.UTF8, leaveOpen: true );
                 for ( int x = 0; x < msg.NumBans; x++ )
                 {
                     tempList.Add( br.ReadUInt32() );
@@ -355,9 +378,12 @@ namespace SteamKit2
             public Dictionary<uint, ulong> AppTokens { get; private set; }
 
 
-            internal PICSTokensCallback( JobID jobID, CMsgClientPICSAccessTokenResponse msg )
+            internal PICSTokensCallback( IPacketMsg packetMsg )
             {
-                JobID = jobID;
+                var tokensResponse = new ClientMsgProtobuf<CMsgClientPICSAccessTokenResponse>( packetMsg );
+                var msg = tokensResponse.Body;
+
+                JobID = tokensResponse.TargetJobID;
 
                 PackageTokensDenied = new ReadOnlyCollection<uint>( msg.package_denied_tokens );
                 AppTokensDenied = new ReadOnlyCollection<uint>( msg.app_denied_tokens );
@@ -444,9 +470,12 @@ namespace SteamKit2
             public Dictionary<uint, PICSChangeData> AppChanges { get; private set; }
 
 
-            internal PICSChangesCallback( JobID jobID, CMsgClientPICSChangesSinceResponse msg )
+            internal PICSChangesCallback( IPacketMsg packetMsg )
             {
-                JobID = jobID;
+                var changesResponse = new ClientMsgProtobuf<CMsgClientPICSChangesSinceResponse>( packetMsg );
+                var msg = changesResponse.Body;
+
+                JobID = changesResponse.TargetJobID;
 
                 LastChangeNumber = msg.since_change_number;
                 CurrentChangeNumber = msg.current_change_number;
@@ -509,7 +538,23 @@ namespace SteamKit2
                 /// <summary>
                 /// For an app metadata-only request, returns the Uri for HTTP appinfo requests.
                 /// </summary>
-                public Uri? HttpUri { get; private set; }
+                public Uri? HttpUri
+                {
+                    get
+                    {
+                        // We should have all these fields set for the response to a metadata-only request, but guard here just in case.
+                        if ( !this.HasValidHttpUri )
+                        {
+                            return null;
+                        }
+
+                        var shaString = Convert.ToHexString( this.SHAHash! ).ToLowerInvariant();
+                        var uriString = string.Format( "http://{0}/appinfo/{1}/sha/{2}.txt.gz", this.HttpHost, this.ID, shaString );
+                        return new Uri( uriString );
+                    }
+                }
+                private string? HttpHost;
+                private bool HasValidHttpUri => this.SHAHash != null && this.SHAHash.Length > 0 && !string.IsNullOrEmpty( HttpHost );
 
                 internal PICSProductInfo( CMsgClientPICSProductInfoResponse parentResponse, CMsgClientPICSProductInfoResponse.AppInfo app_info )
                 {
@@ -528,18 +573,8 @@ namespace SteamKit2
                     }
 
                     this.OnlyPublic = app_info.only_public;
-
-                    // We should have all these fields set for the response to a metadata-only request, but guard here just in case.
-                    if ( this.SHAHash != null && this.SHAHash.Length > 0 && !string.IsNullOrEmpty( parentResponse.http_host ) )
-                    {
-                        var shaString = BitConverter.ToString( this.SHAHash )
-                            .Replace( "-", string.Empty )
-                            .ToLower();
-                        var uriString = string.Format( "http://{0}/appinfo/{1}/sha/{2}.txt.gz", parentResponse.http_host, this.ID, shaString );
-                        this.HttpUri = new Uri( uriString );
-                    }
-
-                    this.UseHttp = this.HttpUri != null && app_info.size >= parentResponse.http_min_size;
+                    this.HttpHost = parentResponse.http_host;
+                    this.UseHttp = this.HasValidHttpUri && app_info.size >= parentResponse.http_min_size;
                 }
 
                 internal PICSProductInfo( CMsgClientPICSProductInfoResponse.PackageInfo package_info )
@@ -591,16 +626,19 @@ namespace SteamKit2
             public Dictionary<uint, PICSProductInfo> Packages { get; private set; }
 
 
-            internal PICSProductInfoCallback( JobID jobID, CMsgClientPICSProductInfoResponse msg )
+            internal PICSProductInfoCallback( IPacketMsg packetMsg )
             {
-                JobID = jobID;
+                var productResponse = new ClientMsgProtobuf<CMsgClientPICSProductInfoResponse>( packetMsg );
+                var msg = productResponse.Body;
+
+                JobID = productResponse.TargetJobID;
 
                 MetaDataOnly = msg.meta_data_only;
                 ResponsePending = msg.response_pending;
                 UnknownPackages = new ReadOnlyCollection<uint>( msg.unknown_packageids );
                 UnknownApps = new ReadOnlyCollection<uint>( msg.unknown_appids );
-                Packages = [];
-                Apps = [];
+                Packages = new( msg.packages.Count );
+                Apps = new( msg.apps.Count );
 
                 foreach ( var package_info in msg.packages )
                 {
@@ -637,8 +675,11 @@ namespace SteamKit2
             public List<KeyValue> GuestPasses { get; set; }
 
 
-            internal GuestPassListCallback( MsgClientUpdateGuestPassesList msg, Stream payload )
+            internal GuestPassListCallback( IPacketMsg packetMsg )
             {
+                var guestPasses = new ClientMsg<MsgClientUpdateGuestPassesList>( packetMsg );
+                var msg = guestPasses.Body;
+
                 Result = msg.Result;
                 CountGuestPassesToGive = msg.CountGuestPassesToGive;
                 CountGuestPassesToRedeem = msg.CountGuestPassesToRedeem;
@@ -647,7 +688,7 @@ namespace SteamKit2
                 for ( int i = 0; i < CountGuestPassesToGive + CountGuestPassesToRedeem; i++ )
                 {
                     var kv = new KeyValue();
-                    kv.TryReadAsBinary( payload );
+                    kv.TryReadAsBinary( guestPasses.Payload );
                     GuestPasses.Add( kv );
                 }
             }
@@ -672,9 +713,12 @@ namespace SteamKit2
             public uint MustOwnAppID { get; set; }
 
 
-            internal RedeemGuestPassResponseCallback( JobID jobID, CMsgClientRedeemGuestPassResponse msg )
+            internal RedeemGuestPassResponseCallback( IPacketMsg packetMsg )
             {
-                JobID = jobID;
+                var redeemedGuestPass = new ClientMsgProtobuf<CMsgClientRedeemGuestPassResponse>( packetMsg );
+                var msg = redeemedGuestPass.Body;
+
+                JobID = redeemedGuestPass.TargetJobID;
                 Result = ( EResult )msg.eresult;
                 PackageID = msg.package_id;
                 MustOwnAppID = msg.must_own_appid;
@@ -700,9 +744,12 @@ namespace SteamKit2
             public KeyValue PurchaseReceiptInfo { get; set; }
 
 
-            internal PurchaseResponseCallback( JobID jobID, CMsgClientPurchaseResponse msg )
+            internal PurchaseResponseCallback( IPacketMsg packetMsg )
             {
-                JobID = jobID;
+                var purchaseResponse = new ClientMsgProtobuf<CMsgClientPurchaseResponse>( packetMsg );
+                var msg = purchaseResponse.Body;
+
+                JobID = purchaseResponse.TargetJobID;
                 Result = ( EResult )msg.eresult;
                 PurchaseResultDetail = ( EPurchaseResultDetail )msg.purchase_result_details;
                 PurchaseReceiptInfo = new KeyValue();
@@ -714,34 +761,6 @@ namespace SteamKit2
 
                 using var ms = new MemoryStream( msg.purchase_receipt_info );
                 PurchaseReceiptInfo.TryReadAsBinary( ms );
-            }
-        }
-
-        /// <summary>
-        /// This callback is received when a CDN auth token is received
-        /// </summary>
-        public sealed class CDNAuthTokenCallback : CallbackMsg
-        {
-            /// <summary>
-            /// Result of the operation
-            /// </summary>
-            public EResult Result { get; set; }
-            /// <summary>
-            /// CDN auth token
-            /// </summary>
-            public string Token { get; set; }
-            /// <summary>
-            /// Token expiration date
-            /// </summary>
-            public DateTime Expiration { get; set; }
-
-            internal CDNAuthTokenCallback( JobID jobID, CMsgClientGetCDNAuthTokenResponse msg )
-            {
-                JobID = jobID;
-
-                Result = ( EResult )msg.eresult;
-                Token = msg.token;
-                Expiration = DateUtils.DateTimeFromUnixTime( msg.expiration_time );
             }
         }
 
@@ -759,9 +778,12 @@ namespace SteamKit2
             /// </summary>
             public Dictionary<string, byte[]> BetaPasswords { get; private set; }
 
-            internal CheckAppBetaPasswordCallback( JobID jobID, CMsgClientCheckAppBetaPasswordResponse msg )
+            internal CheckAppBetaPasswordCallback( IPacketMsg packetMsg )
             {
-                JobID = jobID;
+                var response = new ClientMsgProtobuf<CMsgClientCheckAppBetaPasswordResponse>( packetMsg );
+                var msg = response.Body;
+
+                JobID = response.TargetJobID;
 
                 Result = ( EResult )msg.eresult;
                 BetaPasswords = [];
@@ -769,6 +791,40 @@ namespace SteamKit2
                 foreach ( var password in msg.betapasswords )
                 {
                     BetaPasswords[ password.betaname ] = Utils.DecodeHexString( password.betapassword );
+                }
+            }
+        }
+
+        /// <summary>
+        /// This callback is received when a private beta request has been completed
+        /// </summary>
+        public sealed class PrivateBetaCallback : CallbackMsg
+        {
+            /// <summary>
+            /// Result of the operation
+            /// </summary>
+            public EResult Result { get; set; }
+            /// <summary>
+            /// Gets the keyvalue info to be merged into main appinfo
+            /// </summary>
+            public KeyValue DepotSection { get; private set; }
+
+            internal PrivateBetaCallback( IPacketMsg packetMsg )
+            {
+                var response = new ClientMsgProtobuf<CMsgClientPICSPrivateBetaResponse>( packetMsg );
+                var msg = response.Body;
+
+                JobID = response.TargetJobID;
+
+                Result = ( EResult )msg.eresult;
+
+                this.DepotSection = new KeyValue();
+
+                if ( msg.depot_section != null && msg.depot_section.Length > 0 )
+                {
+                    // we don't want to read the trailing null byte
+                    using var ms = new MemoryStream( msg.depot_section, 0, msg.depot_section.Length - 1 );
+                    this.DepotSection.ReadAsText( ms );
                 }
             }
         }

@@ -5,7 +5,7 @@
 // </auto-generated>
 
 #region Designer generated code
-#pragma warning disable CS0612, CS0618, CS1591, CS3021, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
+#pragma warning disable CS0612, CS0618, CS1591, CS3021, CS8981, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
 namespace SteamKit2.Internal
 {
 
@@ -332,6 +332,36 @@ namespace SteamKit2.Internal
         public void Resetcell_id() => __pbn__cell_id = null;
         private uint? __pbn__cell_id;
 
+        [global::ProtoBuf.ProtoMember(23)]
+        public bool is_workshop
+        {
+            get => __pbn__is_workshop.GetValueOrDefault();
+            set => __pbn__is_workshop = value;
+        }
+        public bool ShouldSerializeis_workshop() => __pbn__is_workshop != null;
+        public void Resetis_workshop() => __pbn__is_workshop = null;
+        private bool? __pbn__is_workshop;
+
+        [global::ProtoBuf.ProtoMember(24)]
+        public bool is_shader
+        {
+            get => __pbn__is_shader.GetValueOrDefault();
+            set => __pbn__is_shader = value;
+        }
+        public bool ShouldSerializeis_shader() => __pbn__is_shader != null;
+        public void Resetis_shader() => __pbn__is_shader = null;
+        private bool? __pbn__is_shader;
+
+        [global::ProtoBuf.ProtoMember(25)]
+        public uint seconds_not_played
+        {
+            get => __pbn__seconds_not_played.GetValueOrDefault();
+            set => __pbn__seconds_not_played = value;
+        }
+        public bool ShouldSerializeseconds_not_played() => __pbn__seconds_not_played != null;
+        public void Resetseconds_not_played() => __pbn__seconds_not_played = null;
+        private uint? __pbn__seconds_not_played;
+
     }
 
     [global::ProtoBuf.ProtoContract()]
@@ -635,21 +665,90 @@ namespace SteamKit2.Internal
 
     }
 
-    public interface IDataPublisher
+    public class DataPublisher : SteamUnifiedMessages.UnifiedService
     {
-        NoResponse ClientContentCorruptionReport(CDataPublisher_ClientContentCorruptionReport_Notification request);
-        NoResponse ClientUpdateAppJobReport(CDataPublisher_ClientUpdateAppJob_Notification request);
-        CDataPublisher_GetVRDeviceInfo_Response GetVRDeviceInfo(CDataPublisher_GetVRDeviceInfo_Request request);
-        CDataPublisher_SetVRDeviceInfoAggregationReference_Response SetVRDeviceInfoAggregationReference(CDataPublisher_SetVRDeviceInfoAggregationReference_Request request);
-        CDataPublisher_AddVRDeviceInfo_Response AddVRDeviceInfo(CDataPublisher_AddVRDeviceInfo_Request request);
+        public override string ServiceName { get; } = "DataPublisher";
+
+        public void ClientContentCorruptionReport(CDataPublisher_ClientContentCorruptionReport_Notification request )
+        {
+            UnifiedMessages.SendNotification<CDataPublisher_ClientContentCorruptionReport_Notification>( "DataPublisher.ClientContentCorruptionReport#1", request );
+        }
+
+        public void ClientUpdateAppJobReport(CDataPublisher_ClientUpdateAppJob_Notification request )
+        {
+            UnifiedMessages.SendNotification<CDataPublisher_ClientUpdateAppJob_Notification>( "DataPublisher.ClientUpdateAppJobReport#1", request );
+        }
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CDataPublisher_GetVRDeviceInfo_Response>> GetVRDeviceInfo( CDataPublisher_GetVRDeviceInfo_Request request )
+        {
+            return UnifiedMessages.SendMessage<CDataPublisher_GetVRDeviceInfo_Request, CDataPublisher_GetVRDeviceInfo_Response>( "DataPublisher.GetVRDeviceInfo#1", request );
+        }
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CDataPublisher_SetVRDeviceInfoAggregationReference_Response>> SetVRDeviceInfoAggregationReference( CDataPublisher_SetVRDeviceInfoAggregationReference_Request request )
+        {
+            return UnifiedMessages.SendMessage<CDataPublisher_SetVRDeviceInfoAggregationReference_Request, CDataPublisher_SetVRDeviceInfoAggregationReference_Response>( "DataPublisher.SetVRDeviceInfoAggregationReference#1", request );
+        }
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CDataPublisher_AddVRDeviceInfo_Response>> AddVRDeviceInfo( CDataPublisher_AddVRDeviceInfo_Request request )
+        {
+            return UnifiedMessages.SendMessage<CDataPublisher_AddVRDeviceInfo_Request, CDataPublisher_AddVRDeviceInfo_Response>( "DataPublisher.AddVRDeviceInfo#1", request );
+        }
+
+        public override void HandleResponseMsg( string methodName, PacketClientMsgProtobuf packetMsg )
+        {
+            switch ( methodName )
+            {
+                case "GetVRDeviceInfo":
+                    PostResponseMsg<CDataPublisher_GetVRDeviceInfo_Response>( packetMsg );
+                    break;
+                case "SetVRDeviceInfoAggregationReference":
+                    PostResponseMsg<CDataPublisher_SetVRDeviceInfoAggregationReference_Response>( packetMsg );
+                    break;
+                case "AddVRDeviceInfo":
+                    PostResponseMsg<CDataPublisher_AddVRDeviceInfo_Response>( packetMsg );
+                    break;
+            }
+        }
+
+        public override void HandleNotificationMsg( string methodName, PacketClientMsgProtobuf packetMsg )
+        {
+            switch ( methodName )
+            {
+                case "ClientContentCorruptionReport":
+                    PostNotificationMsg<CDataPublisher_ClientContentCorruptionReport_Notification>( packetMsg );
+                    break;
+                case "ClientUpdateAppJobReport":
+                    PostNotificationMsg<CDataPublisher_ClientUpdateAppJob_Notification>( packetMsg );
+                    break;
+            }
+        }
     }
 
-    public interface IValveHWSurvey
+    public class ValveHWSurvey : SteamUnifiedMessages.UnifiedService
     {
-        CValveHWSurvey_GetSurveySchedule_Response GetSurveySchedule(CValveHWSurvey_GetSurveySchedule_Request request);
+        public override string ServiceName { get; } = "ValveHWSurvey";
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CValveHWSurvey_GetSurveySchedule_Response>> GetSurveySchedule( CValveHWSurvey_GetSurveySchedule_Request request )
+        {
+            return UnifiedMessages.SendMessage<CValveHWSurvey_GetSurveySchedule_Request, CValveHWSurvey_GetSurveySchedule_Response>( "ValveHWSurvey.GetSurveySchedule#1", request );
+        }
+
+        public override void HandleResponseMsg( string methodName, PacketClientMsgProtobuf packetMsg )
+        {
+            switch ( methodName )
+            {
+                case "GetSurveySchedule":
+                    PostResponseMsg<CValveHWSurvey_GetSurveySchedule_Response>( packetMsg );
+                    break;
+            }
+        }
+
+        public override void HandleNotificationMsg( string methodName, PacketClientMsgProtobuf packetMsg )
+        {
+        }
     }
 
 }
 
-#pragma warning restore CS0612, CS0618, CS1591, CS3021, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
+#pragma warning restore CS0612, CS0618, CS1591, CS3021, CS8981, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
 #endregion

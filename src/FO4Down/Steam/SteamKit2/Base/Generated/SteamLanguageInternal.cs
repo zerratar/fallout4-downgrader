@@ -349,7 +349,7 @@ namespace SteamKit2.Internal
 
 		public void Serialize(Stream stream)
 		{
-			MemoryStream msProto = new MemoryStream();
+			using MemoryStream msProto = new MemoryStream();
 			ProtoBuf.Serializer.Serialize<SteamKit2.Internal.CMsgProtoBufHeader>(msProto, Proto);
 			HeaderLength = (int)msProto.Length;
 			using BinaryWriter bw = new BinaryWriter( stream, Encoding.UTF8, leaveOpen: true );
@@ -358,7 +358,6 @@ namespace SteamKit2.Internal
 			bw.Write( HeaderLength );
 			bw.Write( msProto.ToArray() );
 
-			msProto.Dispose();
 		}
 
 		public void Deserialize( Stream stream )
@@ -367,8 +366,8 @@ namespace SteamKit2.Internal
 
 			Msg = (EMsg)MsgUtil.GetMsg( (uint)br.ReadInt32() );
 			HeaderLength = br.ReadInt32();
-			using( MemoryStream msProto = new MemoryStream( br.ReadBytes( HeaderLength ) ) )
-				Proto = ProtoBuf.Serializer.Deserialize<SteamKit2.Internal.CMsgProtoBufHeader>( msProto );
+			ArgumentOutOfRangeException.ThrowIfNegative( HeaderLength );
+			Proto = ProtoBuf.Serializer.Deserialize<SteamKit2.Internal.CMsgProtoBufHeader>( stream, length: HeaderLength );
 		}
 	}
 
@@ -393,7 +392,7 @@ namespace SteamKit2.Internal
 
 		public void Serialize(Stream stream)
 		{
-			MemoryStream msProto = new MemoryStream();
+			using MemoryStream msProto = new MemoryStream();
 			ProtoBuf.Serializer.Serialize<SteamKit2.GC.Internal.CMsgProtoBufHeader>(msProto, Proto);
 			HeaderLength = (int)msProto.Length;
 			using BinaryWriter bw = new BinaryWriter( stream, Encoding.UTF8, leaveOpen: true );
@@ -402,7 +401,6 @@ namespace SteamKit2.Internal
 			bw.Write( HeaderLength );
 			bw.Write( msProto.ToArray() );
 
-			msProto.Dispose();
 		}
 
 		public void Deserialize( Stream stream )
@@ -411,8 +409,8 @@ namespace SteamKit2.Internal
 
 			Msg = MsgUtil.GetGCMsg( (uint)br.ReadUInt32() );
 			HeaderLength = br.ReadInt32();
-			using( MemoryStream msProto = new MemoryStream( br.ReadBytes( HeaderLength ) ) )
-				Proto = ProtoBuf.Serializer.Deserialize<SteamKit2.GC.Internal.CMsgProtoBufHeader>( msProto );
+			ArgumentOutOfRangeException.ThrowIfNegative( HeaderLength );
+			Proto = ProtoBuf.Serializer.Deserialize<SteamKit2.GC.Internal.CMsgProtoBufHeader>( stream, length: HeaderLength );
 		}
 	}
 
@@ -604,7 +602,7 @@ namespace SteamKit2.Internal
 		public EMsg GetEMsg() { return EMsg.ClientLogon; }
 
 		public static readonly uint ObfuscationMask = 0xBAADF00D;
-		public static readonly uint CurrentProtocol = 65580;
+		public static readonly uint CurrentProtocol = 65581;
 		public static readonly uint ProtocolVerMajorMask = 0xFFFF0000;
 		public static readonly uint ProtocolVerMinorMask = 0xFFFF;
 		public static readonly ushort ProtocolVerMinorMinGameServers = 4;

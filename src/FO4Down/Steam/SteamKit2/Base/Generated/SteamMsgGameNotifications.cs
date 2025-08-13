@@ -5,7 +5,7 @@
 // </auto-generated>
 
 #region Designer generated code
-#pragma warning disable CS0612, CS0618, CS1591, CS3021, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
+#pragma warning disable CS0612, CS0618, CS1591, CS3021, CS8981, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
 namespace SteamKit2.Internal
 {
 
@@ -608,23 +608,103 @@ namespace SteamKit2.Internal
 
     }
 
-    public interface IGameNotifications
+    public class GameNotifications : SteamUnifiedMessages.UnifiedService
     {
-        CGameNotifications_CreateSession_Response UserCreateSession(CGameNotifications_CreateSession_Request request);
-        CGameNotifications_DeleteSession_Response UserDeleteSession(CGameNotifications_DeleteSession_Request request);
-        CGameNotifications_UpdateSession_Response UserUpdateSession(CGameNotifications_UpdateSession_Request request);
-        CGameNotifications_EnumerateSessions_Response EnumerateSessions(CGameNotifications_EnumerateSessions_Request request);
-        CGameNotifications_GetSessionDetails_Response GetSessionDetails(CGameNotifications_GetSessionDetails_Request request);
-        CGameNotifications_UpdateNotificationSettings_Response UpdateNotificationSettings(CGameNotifications_UpdateNotificationSettings_Request request);
+        public override string ServiceName { get; } = "GameNotifications";
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CGameNotifications_CreateSession_Response>> UserCreateSession( CGameNotifications_CreateSession_Request request )
+        {
+            return UnifiedMessages.SendMessage<CGameNotifications_CreateSession_Request, CGameNotifications_CreateSession_Response>( "GameNotifications.UserCreateSession#1", request );
+        }
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CGameNotifications_DeleteSession_Response>> UserDeleteSession( CGameNotifications_DeleteSession_Request request )
+        {
+            return UnifiedMessages.SendMessage<CGameNotifications_DeleteSession_Request, CGameNotifications_DeleteSession_Response>( "GameNotifications.UserDeleteSession#1", request );
+        }
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CGameNotifications_UpdateSession_Response>> UserUpdateSession( CGameNotifications_UpdateSession_Request request )
+        {
+            return UnifiedMessages.SendMessage<CGameNotifications_UpdateSession_Request, CGameNotifications_UpdateSession_Response>( "GameNotifications.UserUpdateSession#1", request );
+        }
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CGameNotifications_EnumerateSessions_Response>> EnumerateSessions( CGameNotifications_EnumerateSessions_Request request )
+        {
+            return UnifiedMessages.SendMessage<CGameNotifications_EnumerateSessions_Request, CGameNotifications_EnumerateSessions_Response>( "GameNotifications.EnumerateSessions#1", request );
+        }
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CGameNotifications_GetSessionDetails_Response>> GetSessionDetails( CGameNotifications_GetSessionDetails_Request request )
+        {
+            return UnifiedMessages.SendMessage<CGameNotifications_GetSessionDetails_Request, CGameNotifications_GetSessionDetails_Response>( "GameNotifications.GetSessionDetails#1", request );
+        }
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CGameNotifications_UpdateNotificationSettings_Response>> UpdateNotificationSettings( CGameNotifications_UpdateNotificationSettings_Request request )
+        {
+            return UnifiedMessages.SendMessage<CGameNotifications_UpdateNotificationSettings_Request, CGameNotifications_UpdateNotificationSettings_Response>( "GameNotifications.UpdateNotificationSettings#1", request );
+        }
+
+        public override void HandleResponseMsg( string methodName, PacketClientMsgProtobuf packetMsg )
+        {
+            switch ( methodName )
+            {
+                case "UserCreateSession":
+                    PostResponseMsg<CGameNotifications_CreateSession_Response>( packetMsg );
+                    break;
+                case "UserDeleteSession":
+                    PostResponseMsg<CGameNotifications_DeleteSession_Response>( packetMsg );
+                    break;
+                case "UserUpdateSession":
+                    PostResponseMsg<CGameNotifications_UpdateSession_Response>( packetMsg );
+                    break;
+                case "EnumerateSessions":
+                    PostResponseMsg<CGameNotifications_EnumerateSessions_Response>( packetMsg );
+                    break;
+                case "GetSessionDetails":
+                    PostResponseMsg<CGameNotifications_GetSessionDetails_Response>( packetMsg );
+                    break;
+                case "UpdateNotificationSettings":
+                    PostResponseMsg<CGameNotifications_UpdateNotificationSettings_Response>( packetMsg );
+                    break;
+            }
+        }
+
+        public override void HandleNotificationMsg( string methodName, PacketClientMsgProtobuf packetMsg )
+        {
+        }
     }
 
-    public interface IGameNotificationsClient
+    public class GameNotificationsClient : SteamUnifiedMessages.UnifiedService
     {
-        NoResponse OnNotificationsRequested(CGameNotifications_OnNotificationsRequested_Notification request);
-        NoResponse OnUserStatusChanged(CGameNotifications_OnUserStatusChanged_Notification request);
+        public override string ServiceName { get; } = "GameNotificationsClient";
+
+        public void OnNotificationsRequested(CGameNotifications_OnNotificationsRequested_Notification request )
+        {
+            UnifiedMessages.SendNotification<CGameNotifications_OnNotificationsRequested_Notification>( "GameNotificationsClient.OnNotificationsRequested#1", request );
+        }
+
+        public void OnUserStatusChanged(CGameNotifications_OnUserStatusChanged_Notification request )
+        {
+            UnifiedMessages.SendNotification<CGameNotifications_OnUserStatusChanged_Notification>( "GameNotificationsClient.OnUserStatusChanged#1", request );
+        }
+
+        public override void HandleResponseMsg( string methodName, PacketClientMsgProtobuf packetMsg )
+        {
+        }
+
+        public override void HandleNotificationMsg( string methodName, PacketClientMsgProtobuf packetMsg )
+        {
+            switch ( methodName )
+            {
+                case "OnNotificationsRequested":
+                    PostNotificationMsg<CGameNotifications_OnNotificationsRequested_Notification>( packetMsg );
+                    break;
+                case "OnUserStatusChanged":
+                    PostNotificationMsg<CGameNotifications_OnUserStatusChanged_Notification>( packetMsg );
+                    break;
+            }
+        }
     }
 
 }
 
-#pragma warning restore CS0612, CS0618, CS1591, CS3021, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
+#pragma warning restore CS0612, CS0618, CS1591, CS3021, CS8981, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
 #endregion

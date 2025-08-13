@@ -16,6 +16,32 @@ namespace SteamKit2
     public sealed class SteamContent : ClientMsgHandler
     {
         /// <summary>
+        /// This is received when a CDN auth token is received
+        /// </summary>
+        public sealed class CDNAuthToken
+        {
+            /// <summary>
+            /// Result of the operation
+            /// </summary>
+            public EResult Result { get; set; }
+            /// <summary>
+            /// CDN auth token
+            /// </summary>
+            public string Token { get; set; }
+            /// <summary>
+            /// Token expiration date
+            /// </summary>
+            public DateTime Expiration { get; set; }
+
+            internal CDNAuthToken( SteamUnifiedMessages.ServiceMethodResponse<CContentServerDirectory_GetCDNAuthToken_Response> message )
+            {
+                Result = message.Result;
+                Token = message.Body.token;
+                Expiration = DateUtils.DateTimeFromUnixTime( message.Body.expiration_time );
+            }
+        }
+
+        /// <summary>
         /// Load a list of servers from the Content Server Directory Service.
         /// This is an alternative to <see cref="o:ContentServerDirectoryService.LoadAsync"></see>.
         /// </summary>
@@ -43,11 +69,9 @@ namespace SteamKit2
             // SendMessage is an AsyncJob, but we want to deserialize it
             // can't really do HandleMsg because it requires parsing the service like its done in HandleServiceMethod
             var unifiedMessages = Client.GetHandler<SteamUnifiedMessages>()!;
-            var contentService = unifiedMessages.CreateService<IContentServerDirectory>();
-            var message = await contentService.SendMessage( api => api.GetServersForSteamPipe( request ) );
-            var response = message.GetDeserializedResponse<CContentServerDirectory_GetServersForSteamPipe_Response>();
-
-            return ContentServerDirectoryService.ConvertServerList( response );
+            var contentService = unifiedMessages.CreateService<ContentServerDirectory>();
+            var response = await contentService.GetServersForSteamPipe( request );
+            return ContentServerDirectoryService.ConvertServerList( response.Body );
         }
 
         /// <summary>
@@ -61,7 +85,7 @@ namespace SteamKit2
         /// <returns>Returns the manifest request code, it may be zero if it was not granted.</returns>
         public async Task<ulong> GetManifestRequestCode( uint depotId, uint appId, ulong manifestId, string? branch = null, string? branchPasswordHash = null )
         {
-            if ( string.Equals( branch, "public", StringComparison.InvariantCultureIgnoreCase ) )
+            if ( string.Equals( branch, "public", StringComparison.OrdinalIgnoreCase ) )
             {
                 branch = null;
                 branchPasswordHash = null;
@@ -84,11 +108,36 @@ namespace SteamKit2
             // SendMessage is an AsyncJob, but we want to deserialize it
             // can't really do HandleMsg because it requires parsing the service like its done in HandleServiceMethod
             var unifiedMessages = Client.GetHandler<SteamUnifiedMessages>()!;
-            var contentService = unifiedMessages.CreateService<IContentServerDirectory>();
-            var message = await contentService.SendMessage( api => api.GetManifestRequestCode( request ) );
-            var response = message.GetDeserializedResponse<CContentServerDirectory_GetManifestRequestCode_Response>();
+            var contentService = unifiedMessages.CreateService<ContentServerDirectory>();
+            var response = await contentService.GetManifestRequestCode( request );
+            return response.Body.manifest_request_code;
+        }
 
-            return response.manifest_request_code;
+        /// <summary>
+        /// Request product information for an app or package
+        /// Results are returned in a <see cref="CDNAuthToken"/>.
+        /// The returned <see cref="AsyncJob{T}"/> can also be awaited to retrieve the result.
+        /// </summary>
+        /// <param name="app">App id requested.</param>
+        /// <param name="depot">Depot id requested.</param>
+        /// <param name="host_name">CDN host name being requested.</param>
+        /// <returns>The Job ID of the request. This can be used to find the appropriate <see cref="CDNAuthToken"/>.</returns>
+        public async Task<CDNAuthToken> GetCDNAuthToken(uint app, uint depot, string host_name)
+        {
+            var request = new CContentServerDirectory_GetCDNAuthToken_Request
+            {
+                app_id = app,
+                depot_id = depot,
+                host_name = host_name,
+            };
+
+            // SendMessage is an AsyncJob, but we want to deserialize it
+            // can't really do HandleMsg because it requires parsing the service like its done in HandleServiceMethod
+            var unifiedMessages = Client.GetHandler<SteamUnifiedMessages>()!;
+            var contentService = unifiedMessages.CreateService<ContentServerDirectory>();
+            var result = await contentService.GetCDNAuthToken( request );
+
+            return new CDNAuthToken( result );
         }
 
         /// <summary>

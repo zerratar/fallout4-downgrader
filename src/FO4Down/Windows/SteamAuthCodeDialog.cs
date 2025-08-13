@@ -4,29 +4,26 @@ namespace FO4Down.Windows
 {
     internal class SteamAuthCodeDialog : SimpleDialog
     {
-        private ApplicationContext ctx;
         private TextField txtAuthCode;
         private Button btnLogin;
 
-        public SteamAuthCodeDialog(ApplicationContext ctx)
+        public SteamAuthCodeDialog()
             : base()
         {
-            this.ctx = ctx;
-
             Title = "Steam Login - Auth Code";
             Width = Dim.Percent(50);
             Height = 10;
 
-            txtAuthCode = Input(WordWrap(ctx.Request.Arguments?.FirstOrDefault()
+            txtAuthCode = Input(WordWrap(AppContext.Request.Arguments?.FirstOrDefault()
                 ?? "Please enter your auth code", (int)(ContentSize.Width * .5)));
 
             txtAuthCode.TextAlignment = TextAlignment.Centered;
 
             View view = txtAuthCode;
 
-            if (ctx != null && ctx.IsError)
+            if (AppContext.IsError)
             {
-                view = ErrorLbl(ctx.LastErrorMessage, txtAuthCode);
+                view = ErrorLbl(AppContext.LastErrorMessage, txtAuthCode);
             }
 
             btnLogin = Btn("OK", view, BtnLoginClicked);

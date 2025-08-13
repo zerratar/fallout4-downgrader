@@ -5,7 +5,7 @@
 // </auto-generated>
 
 #region Designer generated code
-#pragma warning disable CS0612, CS0618, CS1591, CS3021, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
+#pragma warning disable CS0612, CS0618, CS1591, CS3021, CS8981, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
 namespace SteamKit2.GC.Dota.Internal
 {
 
@@ -439,16 +439,6 @@ namespace SteamKit2.GC.Dota.Internal
         public void Resetsuggest_invite_to_lobby() => __pbn__suggest_invite_to_lobby = null;
         private bool? __pbn__suggest_invite_to_lobby;
 
-        [global::ProtoBuf.ProtoMember(12)]
-        public uint event_points
-        {
-            get => __pbn__event_points.GetValueOrDefault();
-            set => __pbn__event_points = value;
-        }
-        public bool ShouldSerializeevent_points() => __pbn__event_points != null;
-        public void Resetevent_points() => __pbn__event_points = null;
-        private uint? __pbn__event_points;
-
         [global::ProtoBuf.ProtoMember(13)]
         public bool coin_flip
         {
@@ -585,14 +575,14 @@ namespace SteamKit2.GC.Dota.Internal
         private uint? __pbn__badge_level;
 
         [global::ProtoBuf.ProtoMember(26)]
-        public uint suggest_pick_hero_id
+        public int suggest_pick_hero_id
         {
             get => __pbn__suggest_pick_hero_id.GetValueOrDefault();
             set => __pbn__suggest_pick_hero_id = value;
         }
         public bool ShouldSerializesuggest_pick_hero_id() => __pbn__suggest_pick_hero_id != null;
         public void Resetsuggest_pick_hero_id() => __pbn__suggest_pick_hero_id = null;
-        private uint? __pbn__suggest_pick_hero_id;
+        private int? __pbn__suggest_pick_hero_id;
 
         [global::ProtoBuf.ProtoMember(27)]
         [global::System.ComponentModel.DefaultValue("")]
@@ -606,14 +596,14 @@ namespace SteamKit2.GC.Dota.Internal
         private string __pbn__suggest_pick_hero_role;
 
         [global::ProtoBuf.ProtoMember(30)]
-        public uint suggest_ban_hero_id
+        public int suggest_ban_hero_id
         {
             get => __pbn__suggest_ban_hero_id.GetValueOrDefault();
             set => __pbn__suggest_ban_hero_id = value;
         }
         public bool ShouldSerializesuggest_ban_hero_id() => __pbn__suggest_ban_hero_id != null;
         public void Resetsuggest_ban_hero_id() => __pbn__suggest_ban_hero_id = null;
-        private uint? __pbn__suggest_ban_hero_id;
+        private int? __pbn__suggest_ban_hero_id;
 
         [global::ProtoBuf.ProtoMember(32)]
         public TriviaAnswered trivia_answer { get; set; }
@@ -695,6 +685,46 @@ namespace SteamKit2.GC.Dota.Internal
 
         [global::ProtoBuf.ProtoMember(41)]
         public ChatWheelMessage chat_wheel_message { get; set; }
+
+        [global::ProtoBuf.ProtoMember(42)]
+        public uint event_level
+        {
+            get => __pbn__event_level.GetValueOrDefault();
+            set => __pbn__event_level = value;
+        }
+        public bool ShouldSerializeevent_level() => __pbn__event_level != null;
+        public void Resetevent_level() => __pbn__event_level = null;
+        private uint? __pbn__event_level;
+
+        [global::ProtoBuf.ProtoMember(43)]
+        public uint suggest_pick_hero_facet
+        {
+            get => __pbn__suggest_pick_hero_facet.GetValueOrDefault();
+            set => __pbn__suggest_pick_hero_facet = value;
+        }
+        public bool ShouldSerializesuggest_pick_hero_facet() => __pbn__suggest_pick_hero_facet != null;
+        public void Resetsuggest_pick_hero_facet() => __pbn__suggest_pick_hero_facet = null;
+        private uint? __pbn__suggest_pick_hero_facet;
+
+        [global::ProtoBuf.ProtoMember(44)]
+        public int requested_hero_id
+        {
+            get => __pbn__requested_hero_id.GetValueOrDefault();
+            set => __pbn__requested_hero_id = value;
+        }
+        public bool ShouldSerializerequested_hero_id() => __pbn__requested_hero_id != null;
+        public void Resetrequested_hero_id() => __pbn__requested_hero_id = null;
+        private int? __pbn__requested_hero_id;
+
+        [global::ProtoBuf.ProtoMember(45)]
+        public ulong requested_hero_facet_key
+        {
+            get => __pbn__requested_hero_facet_key.GetValueOrDefault();
+            set => __pbn__requested_hero_facet_key = value;
+        }
+        public bool ShouldSerializerequested_hero_facet_key() => __pbn__requested_hero_facet_key != null;
+        public void Resetrequested_hero_facet_key() => __pbn__requested_hero_facet_key = null;
+        private ulong? __pbn__requested_hero_facet_key;
 
         [global::ProtoBuf.ProtoContract()]
         public partial class DiceRoll : global::ProtoBuf.IExtensible
@@ -1446,5 +1476,5 @@ namespace SteamKit2.GC.Dota.Internal
 
 }
 
-#pragma warning restore CS0612, CS0618, CS1591, CS3021, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
+#pragma warning restore CS0612, CS0618, CS1591, CS3021, CS8981, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
 #endregion

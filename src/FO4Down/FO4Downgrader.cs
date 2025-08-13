@@ -1,7 +1,7 @@
 ﻿using Fallout4Downgrader;
 using FO4Down.Core;
 using FO4Down.Steam;
-using FO4Down.Steam.DepotDownloader;
+using DepotDownloader;
 using SharpCompress;
 using SharpCompress.Archives;
 using SharpCompress.Common;
@@ -13,6 +13,7 @@ using System.IO.Hashing;
 using System.Net.Http;
 using System.Security.Cryptography;
 using ZstdSharp.Unsafe;
+using SteamKit2.GC.Dota.Internal;
 
 namespace FO4Down
 {
@@ -21,50 +22,49 @@ namespace FO4Down
         private const string Fallout4_AppId = "377160";
         private const string Fallout4_Name = "Fallout 4";
 
-        public async Task RunAsync(Action<ApplicationContext> onStepUpdate)
+        public async Task RunAsync(Action onStepUpdate)
         {
-            var ctx = new ApplicationContext();
-            ctx.OnStepUpdate = onStepUpdate;
-            ctx.Settings = LoadSettings(ctx);
+            AppContext.OnStepUpdate = onStepUpdate;
+            AppContext.Settings = LoadSettings();
 
             try
             {
 
                 Steam3Session.OnDisplayQrCode += (qrCode) =>
                 {
-                    ctx.QRCode = qrCode;
-                    ctx.Notify();
+                    AppContext.QRCode = qrCode;
+                    AppContext.Notify();
                 };
 
                 // step 1: Find out where or if Fallout 4 is installed
-                var fo4 = FindFallout4(ctx);
+                var fo4 = FindFallout4();
 
-                CheckIfF4SEIsInstalled(ctx);
+                CheckIfF4SEIsInstalled();
 
-                CheckIfF4SEAddressLibraryIsInstalled(ctx);
+                CheckIfF4SEAddressLibraryIsInstalled();
 
-                CheckIfF4SEBAASIsInstalled(ctx);
+                CheckIfF4SEBAASIsInstalled();
 
-                await DownloadPatchFilesIfNecessaryAsync(ctx);
+                await DownloadPatchFilesIfNecessaryAsync();
 
-                CheckIfPatchIsPossible(ctx);
+                CheckIfPatchIsPossible();
 
-                if (await HandlePatchAsync(ctx))
+                if (await HandlePatchAsync())
                 {
                     return;
                 }
 
                 // if we only wanted to patch files, do not continue
-                if (ctx.Settings.PatchFiles)
+                if (AppContext.Settings.PatchFiles)
                 {
                     return;
                 }
 
-                if (ctx.Patch.TryGetValue("Fallout4.exe", out var p) && p.IsPatched)
+                if (AppContext.Patch.TryGetValue("Fallout4.exe", out var p) && p.IsPatched)
                 {
-                    if (!(await ctx.RequestAsync<bool>("confirm", "Your Fallout4.exe is already version " + p.Version.FileVersion + "\nDo you still wish to download all depots and downgrade again?")))
+                    if (!(await AppContext.RequestAsync<bool>("confirm", "Your Fallout4.exe is already version " + p.Version.FileVersion + "\nDo you still wish to download all depots and downgrade again?")))
                     {
-                        ctx.Success("Downgrade aborted as Fallout 4 has already been downgraded.");
+                        AppContext.Success("Downgrade aborted as Fallout 4 has already been downgraded.");
                         return;
                     }
                 }
@@ -76,67 +76,67 @@ namespace FO4Down
                 //await HandleUserSettingsAsync(ctx);
 
                 // step 2: login to steam
-                while (!await LoginToSteamAsync(ctx))
+                while (!await LoginToSteamAsync())
                 {
-                    ctx.Error("Login failed. Invalid username or password.\nLogin using QR if problem persists");
+                    AppContext.Error("Login failed. Invalid username or password.\nLogin using QR if problem persists");
                 }
 
                 // step 2.5: Handle user settings
                 // before we start, we should request settings changes that the user may want
                 // such as language, whether or not it should try to download all dlcs and/or hd textures pack.
-                await HandleUserSettingsAsync(ctx);
+                await HandleUserSettingsAsync();
 
                 // step 3: Download all depot files into the /depots/ folder.
-                await DownloadDepotFilesAsync(ctx);
+                await DownloadDepotFilesAsync();
 
                 // step 4: Delete all next gen files before we start copying over our files from the depot, this ensures we don't delete files that should be there.
-                DeleteNextGenFiles(ctx);
+                DeleteNextGenFiles();
 
                 // step 5: copy all depot files from /depots/ to /fallout 4/ and then delete the /depots/ folder
-                CopyDepotFiles(ctx);
+                CopyDepotFiles();
 
                 // step 6: delete creation club data if needed.
-                if (ctx.Settings.DeleteCreationClubFiles)
+                if (AppContext.Settings.DeleteCreationClubFiles)
                 {
-                    DeleteCreationClubData(ctx);
+                    DeleteCreationClubData();
                 }
 
                 // 7. delete english language files if we selected a non-english language and update ini file
-                await ApplyLanguageAsync(ctx);
+                await ApplyLanguageAsync();
 
-                VerifyFileVersions(ctx);
+                VerifyFileVersions();
 
-                MakeManifestReadOnly(ctx);
+                MakeManifestReadOnly();
 
-                ctx.Step = FO4DowngraderStep.Finished;
+                AppContext.Step = FO4DowngraderStep.Finished;
 
-                if (ctx.LoggedErrors.Count > 0)
+                if (AppContext.LoggedErrors.Count > 0)
                 {
-                    ctx.WarnAndReport("Your Fallout 4 installation has been downgraded but with " + ctx.LoggedErrors.Count + " error(s) and may not work as expected.");
+                    AppContext.WarnAndReport("Your Fallout 4 installation has been downgraded but with " + AppContext.LoggedErrors.Count + " error(s) and may not work as expected.");
                 }
                 else
                 {
-                    ctx.Success("Your Fallout 4 installation has been downgraded without any problems. Enjoy!\nYou may now close this application.");
+                    AppContext.Success("Your Fallout 4 installation has been downgraded without any problems. Enjoy!\nYou may now close this application.");
                 }
 
             }
             catch (FileNotFoundException ex)
             {
-                ctx.Error(ex);
+                AppContext.Error(ex);
             }
             catch (Exception ex)
             {
-                ctx.Report(ex);
+                AppContext.Report(ex);
             }
             finally
             {
-                ctx.SaveLog();
+                AppContext.SaveLog();
             }
         }
 
-        private async Task DownloadPatchFilesIfNecessaryAsync(ApplicationContext ctx)
+        private async Task DownloadPatchFilesIfNecessaryAsync()
         {
-            if (!ctx.Settings.PatchFiles && !ctx.Settings.ForcePatch)
+            if (!AppContext.Settings.PatchFiles && !AppContext.Settings.ForcePatch)
             {
                 return;
             }
@@ -177,18 +177,18 @@ namespace FO4Down
                     }
                 }
             }
-            ctx.Step = FO4DowngraderStep.DownloadPatchFiles;
+            AppContext.Step = FO4DowngraderStep.DownloadPatchFiles;
 
-            ctx.Progress("Downloading patch files..", 0);
+            AppContext.Progress("Downloading patch files..", 0);
             if (!File.Exists(zip))
             {
-                if (ctx.HttpClient == null)
-                    ctx.HttpClient = new HttpClient();
-                await DownloadFileAsync(ctx.HttpClient, "https://github.com/zerratar/fallout4-downgrader/releases/download/v1.2/patch_files.zip", zip);
+                if (AppContext.HttpClient == null)
+                    AppContext.HttpClient = new HttpClient();
+                await DownloadFileAsync(AppContext.HttpClient, "https://github.com/zerratar/fallout4-downgrader/releases/download/v1.2/patch_files.zip", zip);
             }
 
-            ctx.Progress("Extracting patch files..", 0.5f);
-            var targetDirectory = System.IO.Path.Combine(ctx.Fallout4.Path);
+            AppContext.Progress("Extracting patch files..", 0.5f);
+            var targetDirectory = System.IO.Path.Combine(AppContext.Fallout4.Path);
             using (var archive = SharpCompress.Archives.Zip.ZipArchive.Open(zip))
             {
                 ExtractToDirectory(archive, patchFolder);
@@ -201,14 +201,14 @@ namespace FO4Down
             //    await DownloadFileAsync(ctx.HttpClient, dl.Item1, dl.Item2);
             //}
 
-            ctx.Progress("Patch files downloaded and extracted.", 1);
+            AppContext.Progress("Patch files downloaded and extracted.", 1);
         }
 
-        private void MakeManifestReadOnly(ApplicationContext ctx)
+        private void MakeManifestReadOnly()
         {
             try
             {
-                var fallout4Path = new DirectoryInfo(ctx.Fallout4.Path);
+                var fallout4Path = new DirectoryInfo(AppContext.Fallout4.Path);
                 // ..\..\
                 var steamapps = fallout4Path.Parent.Parent;
                 var manifest = Path.Combine(steamapps.FullName, "appmanifest_" + Fallout4_AppId + ".acf");
@@ -224,206 +224,206 @@ namespace FO4Down
             }
             catch (Exception exc)
             {
-                ctx.Warn("Failed to make manifest file read only: " + exc.Message);
+                AppContext.Warn("Failed to make manifest file read only: " + exc.Message);
             }
         }
 
-        private void VerifyFileVersions(ApplicationContext ctx)
+        private void VerifyFileVersions()
         {
             // update version numbering and details regarding the patched files.
-            CheckIfPatchIsPossible(ctx);
+            CheckIfPatchIsPossible();
 
             // if not correct verisons, patch!
-            var fo4p = ctx.Fallout4Patch;
+            var fo4p = AppContext.Fallout4Patch;
             if (!fo4p.IsPatched)
             {
                 Patch(fo4p);
             }
 
-            var lp = ctx.Fallout4LauncherPatch;
+            var lp = AppContext.Fallout4LauncherPatch;
             if (!lp.IsPatched)
             {
                 Patch(lp);
             }
 
-            var sp = ctx.SteamApi64Patch;
+            var sp = AppContext.SteamApi64Patch;
             if (!sp.IsPatched)
             {
                 Patch(sp);
             }
         }
 
-        private async Task<bool> HandlePatchAsync(ApplicationContext ctx)
+        private async Task<bool> HandlePatchAsync()
         {
             // wew only want to download depots, do not patch
-            if (ctx.Settings.DownloadDepots)
+            if (AppContext.Settings.DownloadDepots)
             {
                 return false;
             }
 
-            if (!ctx.CanPatch && !ctx.Settings.PatchFiles)
+            if (!AppContext.CanPatch && !AppContext.Settings.PatchFiles)
             {
-                if (ctx.Settings.InstallPlugins)
+                if (AppContext.Settings.InstallPlugins)
                 {
-                    await InstallPluginsAsync(ctx);
+                    await InstallPluginsAsync();
                 }
 
                 return false;
             }
 
-            ctx.Step = FO4DowngraderStep.Patch;
+            AppContext.Step = FO4DowngraderStep.Patch;
 
-            if (ctx.Settings.InstallPlugins)
+            if (AppContext.Settings.InstallPlugins)
             {
-                await InstallPluginsAsync(ctx);
+                await InstallPluginsAsync();
             }
-            else if (ctx.Settings.InstallHelperEnabled && (!ctx.IsF4SEInstalled || !ctx.IsF4SEAddressLibraryInstalled || !ctx.IsF4SEBASSInstalled))
+            else if (AppContext.Settings.InstallHelperEnabled && (!AppContext.IsF4SEInstalled || !AppContext.IsF4SEAddressLibraryInstalled || !AppContext.IsF4SEBASSInstalled))
             {
-                var shouldPatch = await ctx.RequestAsync<bool>("confirm");
+                var shouldPatch = await AppContext.RequestAsync<bool>("confirm");
                 if (!shouldPatch) return false;
             }
 
-            var fo4 = ctx.Fallout4Patch;
-            var launcher = ctx.Fallout4LauncherPatch;
-            var sApi = ctx.SteamApi64Patch;
+            var fo4 = AppContext.Fallout4Patch;
+            var launcher = AppContext.Fallout4LauncherPatch;
+            var sApi = AppContext.SteamApi64Patch;
 
-            if (ctx.Settings.PatchFiles && !ctx.CanPatch)
+            if (AppContext.Settings.PatchFiles && !AppContext.CanPatch)
             {
                 var v = fo4.Version;
 
                 if (fo4.IsPatched)
                 {
-                    if (ctx.Settings.InstallPlugins)
+                    if (AppContext.Settings.InstallPlugins)
                     {
-                        ctx.Success("All plugins installed! Your Fallout 4 installation is ready!");
+                        AppContext.Success("All plugins installed! Your Fallout 4 installation is ready!");
                     }
                     else
                     {
-                        ctx.Success("Your Fallout 4 installation has already been downgraded to v" + v.FileVersion);
+                        AppContext.Success("Your Fallout 4 installation has already been downgraded to v" + v.FileVersion);
                     }
                 }
                 else
                 {
-                    ctx.Error("Your Fallout 4 is an unexpected version " + v.FileVersion);
+                    AppContext.Error("Your Fallout 4 is an unexpected version " + v.FileVersion);
                 }
 
                 return true;
             }
 
 
-            ctx.Notify("Patching Fallout4.exe...");
+            AppContext.Notify("Patching Fallout4.exe...");
             Patch(fo4);
 
-            ctx.Notify("Patching steam_api64.dll...");
+            AppContext.Notify("Patching steam_api64.dll...");
             Patch(sApi);
 
-            ctx.Notify("Patching Fallout4Launcher.exe...");
+            AppContext.Notify("Patching Fallout4Launcher.exe...");
             Patch(launcher);
 
 
-            ctx.Step = FO4DowngraderStep.Finished;
+            AppContext.Step = FO4DowngraderStep.Finished;
 
             var helperText = "";
 
-            if (!ctx.IsF4SEInstalled)
+            if (!AppContext.IsF4SEInstalled)
             {
                 helperText += "\n* F4SE";
             }
 
-            if (!ctx.IsF4SEAddressLibraryInstalled)
+            if (!AppContext.IsF4SEAddressLibraryInstalled)
             {
                 helperText += "\n* F4SE - Address Library Plugin";
             }
 
-            if (!ctx.IsF4SEBASSInstalled)
+            if (!AppContext.IsF4SEBASSInstalled)
             {
                 helperText += "\n* F4SE - BASS Plugin";
             }
 
             if (helperText.Length > 0)
             {
-                ctx.Success("All files patched! Your Fallout 4 installation has been downgraded!\nDon't forget to install the following plugins if you have not already:\n" + helperText);
+                AppContext.Success("All files patched! Your Fallout 4 installation has been downgraded!\nDon't forget to install the following plugins if you have not already:\n" + helperText);
             }
             else
             {
-                ctx.Success("All files patched! Your Fallout 4 installation has been downgraded!\nHappy Modding!");
+                AppContext.Success("All files patched! Your Fallout 4 installation has been downgraded!\nHappy Modding!");
             }
 
 
             return true;
         }
 
-        private static async Task InstallPluginsAsync(ApplicationContext ctx)
+        private static async Task InstallPluginsAsync()
         {
-            if (!ctx.IsF4SEInstalled)
+            if (!AppContext.IsF4SEInstalled)
             {
-                await InstallF4SEAsync(ctx);
+                await InstallF4SEAsync();
             }
 
-            if (!ctx.IsF4SEAddressLibraryInstalled)
+            if (!AppContext.IsF4SEAddressLibraryInstalled)
             {
-                await InstallAddressLibraryPluginAsync(ctx);
+                await InstallAddressLibraryPluginAsync();
             }
 
-            if (!ctx.IsF4SEBASSInstalled)
+            if (!AppContext.IsF4SEBASSInstalled)
             {
-                await InstallBASSAsync(ctx);
+                await InstallBASSAsync();
             }
         }
 
-        public static async Task InstallBASSAsync(ApplicationContext ctx)
+        public static async Task InstallBASSAsync()
         {
-            ctx.Notify("Installing F4SE Plugin: BASS...");
+            AppContext.Notify("Installing F4SE Plugin: BASS...");
             var zip = "Assets\\Downloads\\baas.zip";
             if (!File.Exists(zip))
             {
-                if (ctx.HttpClient == null)
-                    ctx.HttpClient = new HttpClient();
-                await DownloadFileAsync(ctx.HttpClient, "https://github.com/zerratar/fallout4-downgrader/releases/download/v1.0.5.2/BackportedBA2Support-1_0-81859-1-0-1714516128.zip", zip);
+                if (AppContext.HttpClient == null)
+                    AppContext.HttpClient = new HttpClient();
+                await DownloadFileAsync(AppContext.HttpClient, "https://github.com/zerratar/fallout4-downgrader/releases/download/v1.0.5.2/BackportedBA2Support-1_0-81859-1-0-1714516128.zip", zip);
             }
 
-            var targetDirectory = System.IO.Path.Combine(ctx.Fallout4.Path);
+            var targetDirectory = System.IO.Path.Combine(AppContext.Fallout4.Path);
             using (var archive = SharpCompress.Archives.Zip.ZipArchive.Open("Assets\\Downloads\\baas.zip"))
             {
                 ExtractToDirectory(archive, targetDirectory);
             }
-            ctx.IsF4SEBASSInstalled = true;
+            AppContext.IsF4SEBASSInstalled = true;
         }
 
-        public static async Task InstallAddressLibraryPluginAsync(ApplicationContext ctx)
+        public static async Task InstallAddressLibraryPluginAsync()
         {
-            ctx.Notify("Installing F4SE Plugin: Address Library...");
+            AppContext.Notify("Installing F4SE Plugin: Address Library...");
             var zip = "Assets\\Downloads\\address.library.zip";
             if (!File.Exists(zip))
             {
-                if (ctx.HttpClient == null)
-                    ctx.HttpClient = new HttpClient();
-                await DownloadFileAsync(ctx.HttpClient, "https://github.com/zerratar/fallout4-downgrader/releases/download/v1.0.5.2/Addres.Library-47327-1-10-163-0-1599728753.zip", zip);
+                if (AppContext.HttpClient == null)
+                    AppContext.HttpClient = new HttpClient();
+                await DownloadFileAsync(AppContext.HttpClient, "https://github.com/zerratar/fallout4-downgrader/releases/download/v1.0.5.2/Addres.Library-47327-1-10-163-0-1599728753.zip", zip);
             }
-            var targetDirectory = Path.Combine(ctx.Fallout4.Path, "Data\\");
+            var targetDirectory = Path.Combine(AppContext.Fallout4.Path, "Data\\");
             using (var archive = SharpCompress.Archives.Zip.ZipArchive.Open("Assets\\Downloads\\address.library.zip"))
             {
                 ExtractToDirectory(archive, targetDirectory);
             }
-            ctx.IsF4SEAddressLibraryInstalled = true;
+            AppContext.IsF4SEAddressLibraryInstalled = true;
         }
 
-        public static async Task InstallF4SEAsync(ApplicationContext ctx)
+        public static async Task InstallF4SEAsync()
         {
-            ctx.Notify("Installing F4SE...");
+            AppContext.Notify("Installing F4SE...");
             var zip = "Assets\\Downloads\\f4se.zip";
             if (!File.Exists(zip))
             {
-                if (ctx.HttpClient == null)
-                    ctx.HttpClient = new HttpClient();
-                await DownloadFileAsync(ctx.HttpClient, "https://github.com/zerratar/fallout4-downgrader/releases/download/v1.0.5.2/f4se.zip", zip);
+                if (AppContext.HttpClient == null)
+                    AppContext.HttpClient = new HttpClient();
+                await DownloadFileAsync(AppContext.HttpClient, "https://github.com/zerratar/fallout4-downgrader/releases/download/v1.0.5.2/f4se.zip", zip);
             }
-            var targetDirectory = Path.Combine(ctx.Fallout4.Path);
+            var targetDirectory = Path.Combine(AppContext.Fallout4.Path);
             using (var archive = SharpCompress.Archives.Zip.ZipArchive.Open("Assets\\Downloads\\f4se.zip"))
             {
                 ExtractToDirectory(archive, targetDirectory);
             }
-            ctx.IsF4SEInstalled = true;
+            AppContext.IsF4SEInstalled = true;
         }
 
         public static async Task DownloadFileAsync(HttpClient client, string url, string destinationOnDisk)
@@ -460,7 +460,7 @@ namespace FO4Down
                 IEntry entry = reader.Entry;
                 if (!entry.IsDirectory)
                 {
-                    string text = Path.Combine(destination, entry.Key.NotNull("Entry Key is null"));
+                    string text = Path.Combine(destination, entry.Key ?? throw new System.ArgumentNullException("Entry Key is null"));
                     string directoryName = Path.GetDirectoryName(text);
                     if (directoryName != null && hashSet.Add(text))
                     {
@@ -478,69 +478,69 @@ namespace FO4Down
             }
         }
 
-        public static void CheckIfF4SEAddressLibraryIsInstalled(ApplicationContext ctx)
+        public static void CheckIfF4SEAddressLibraryIsInstalled()
         {
-            if (ctx.IsF4SEAddressLibraryInstalled) return;
-            if (!ctx.IsF4SEInstalled)
+            if (AppContext.IsF4SEAddressLibraryInstalled) return;
+            if (!AppContext.IsF4SEInstalled)
             {
                 return;
             }
 
             var f = "F4SE\\Plugins\\version-1-10-163-0.bin";
             if (//File.Exists(Path.Combine(ctx.Fallout4.Path, f)) || 
-                File.Exists(Path.Combine(ctx.Fallout4.Path, "Data", f)))
+                File.Exists(Path.Combine(AppContext.Fallout4.Path, "Data", f)))
             {
-                ctx.IsF4SEAddressLibraryInstalled = true;
+                AppContext.IsF4SEAddressLibraryInstalled = true;
             }
         }
 
-        public static void CheckIfF4SEBAASIsInstalled(ApplicationContext ctx)
+        public static void CheckIfF4SEBAASIsInstalled()
         {
-            if (ctx.IsF4SEBASSInstalled) return;
-            if (!ctx.IsF4SEInstalled)
+            if (AppContext.IsF4SEBASSInstalled) return;
+            if (!AppContext.IsF4SEInstalled)
             {
                 return;
             }
 
             var f = "F4SE\\Plugins\\BackportedBA2Support.dll";
             if (//File.Exists(Path.Combine(ctx.Fallout4.Path, f)) || 
-                File.Exists(Path.Combine(ctx.Fallout4.Path, "Data", f)))
+                File.Exists(Path.Combine(AppContext.Fallout4.Path, "Data", f)))
             {
-                ctx.IsF4SEBASSInstalled = true;
+                AppContext.IsF4SEBASSInstalled = true;
             }
         }
 
-        public static void CheckIfF4SEIsInstalled(ApplicationContext ctx)
+        public static void CheckIfF4SEIsInstalled()
         {
-            if (ctx.IsF4SEInstalled) return;
+            if (AppContext.IsF4SEInstalled) return;
 
-            var f4se = Path.Combine(ctx.Fallout4.Path, "f4se_loader.exe");
+            var f4se = Path.Combine(AppContext.Fallout4.Path, "f4se_loader.exe");
             if (File.Exists(f4se))
             {
-                ctx.IsF4SEInstalled = true;
+                AppContext.IsF4SEInstalled = true;
             }
         }
 
-        private void CheckIfPatchIsPossible(ApplicationContext ctx)
+        private void CheckIfPatchIsPossible()
         {
 
             // check if the patch is possible
             // get the hash of the fallout4 exe to determine
-            var fo4Exe = Path.Combine(ctx.Fallout4.Path, "Fallout4.exe");
-            var steamApi = Path.Combine(ctx.Fallout4.Path, "steam_api64.dll");
-            var launcher = Path.Combine(ctx.Fallout4.Path, "Fallout4Launcher.exe");
+            var fo4Exe = Path.Combine(AppContext.Fallout4.Path, "Fallout4.exe");
+            var steamApi = Path.Combine(AppContext.Fallout4.Path, "steam_api64.dll");
+            var launcher = Path.Combine(AppContext.Fallout4.Path, "Fallout4Launcher.exe");
             // run all separately as they mutates the ctx Patch and add details regarding the patch file
-            var canPatchFo4 = CanPatch(ctx, fo4Exe, "1.10.163.0");
-            var canPatchSteamApi = CanPatch(ctx, steamApi, "2.89.45.4");
-            var canPatchLauncher = CanPatch(ctx, launcher, "1.3.22.0");
+            var canPatchFo4 = CanPatch(fo4Exe, "1.10.163.0");
+            var canPatchSteamApi = CanPatch(steamApi, "2.89.45.4");
+            var canPatchLauncher = CanPatch(launcher, "1.3.22.0");
 
-            if (canPatchFo4 || canPatchSteamApi || canPatchLauncher || ctx.Settings.ForcePatch)
+            if (canPatchFo4 || canPatchSteamApi || canPatchLauncher || AppContext.Settings.ForcePatch)
             {
-                ctx.CanPatch = true;
+                AppContext.CanPatch = true;
             }
         }
 
-        private static bool CanPatch(ApplicationContext ctx, string file, string patchedVersion)
+        private static bool CanPatch(string file, string patchedVersion)
         {
             string keyFile = "Assets\\Keys\\" + Path.GetFileName(file) + ".key";
             ulong id;
@@ -562,7 +562,7 @@ namespace FO4Down
             }
 
             var version = FileVersionInfo.GetVersionInfo(file);
-            var pi = ctx.Patch[Path.GetFileName(file)] = new PatchInfo
+            var pi = AppContext.Patch[Path.GetFileName(file)] = new PatchInfo
             {
                 Id = id,
                 Hash = hash,
@@ -667,14 +667,14 @@ namespace FO4Down
             }
         }
 
-        private static async Task ApplyLanguageAsync(ApplicationContext ctx)
+        private static async Task ApplyLanguageAsync()
         {
-            ctx.Step = FO4DowngraderStep.ApplyLanguage;
+            AppContext.Step = FO4DowngraderStep.ApplyLanguage;
 
-            var fo4 = ctx.Fallout4;
-            var targetCulture = ctx.GetTargetCultureInfo();
+            var fo4 = AppContext.Fallout4;
+            var targetCulture = AppContext.GetTargetCultureInfo();
             var targetLanguage = targetCulture.EnglishName;
-            if (!ctx.Settings.DownloadAllLanguages && targetLanguage.IndexOf("english", StringComparison.OrdinalIgnoreCase) == -1)
+            if (!AppContext.Settings.DownloadAllLanguages && targetLanguage.IndexOf("english", StringComparison.OrdinalIgnoreCase) == -1)
             {
                 var fallout4Files = Directory.GetFiles(fo4.Path, "*_" + targetCulture.TwoLetterISOLanguageName + ".*", SearchOption.AllDirectories);
                 var englishFilesToDelete = new List<string>();
@@ -691,8 +691,8 @@ namespace FO4Down
 
                 if (englishFilesToDelete.Count > 0)
                 {
-                    var result = ctx.Settings.DeleteEnglishLanguageFiles ||
-                        await ctx.RequestAsync<bool>("confirm", englishFilesToDelete.Count + " English archives have been found in your Data folder.\nThis will most likely prevent your selected language \"" + targetLanguage + "\" from working.\nDo you want to delete these?");
+                    var result = AppContext.Settings.DeleteEnglishLanguageFiles ||
+                        await AppContext.RequestAsync<bool>("confirm", englishFilesToDelete.Count + " English archives have been found in your Data folder.\nThis will most likely prevent your selected language \"" + targetLanguage + "\" from working.\nDo you want to delete these?");
                     if (result)
                     {
                         foreach (var f in englishFilesToDelete)
@@ -703,9 +703,9 @@ namespace FO4Down
                 }
 
                 // only update fallout 4 ini if it exists. as default one will be replaced
-                if (ctx.Fallout4Ini != null)
+                if (AppContext.Fallout4Ini != null)
                 {
-                    var ini = ctx.Fallout4Ini;
+                    var ini = AppContext.Fallout4Ini;
                     var langCode = targetCulture.TwoLetterISOLanguageName.ToLower();
                     var general = ini["General"];
                     var existingLanguageSettings = general["sLanguage"];
@@ -731,10 +731,10 @@ namespace FO4Down
             return values[System.Random.Shared.Next(values.Length)];
         }
 
-        private async Task HandleUserSettingsAsync(ApplicationContext ctx)
+        private async Task HandleUserSettingsAsync()
         {
-            ctx.Step = FO4DowngraderStep.UserSettings;
-            ctx.Message = Random([
+            AppContext.Step = FO4DowngraderStep.UserSettings;
+            AppContext.Message = Random([
                 "Fine-tune your survival kit.",
                 "Adjust your settings before venturing out into the Commonwealth.",
                 "Customize your experience, wastelander.",
@@ -742,19 +742,19 @@ namespace FO4Down
                 "Choose your gear wisely.",
             ]);
 
-            var userSettings = await ctx.RequestAsync<UserProvidedSettings>("settings");
+            var userSettings = await AppContext.RequestAsync<UserProvidedSettings>("settings");
             if (userSettings != null)
             {
-                ctx.Merge(userSettings);
+                AppContext.Merge(userSettings);
             }
         }
 
-        private static void CopyDepotFiles(ApplicationContext ctx)
+        private static void CopyDepotFiles()
         {
-            ctx.Step = FO4DowngraderStep.CopyDepotFiles;
+            AppContext.Step = FO4DowngraderStep.CopyDepotFiles;
 
-            AppSettings settings = ctx.Settings;
-            SteamGame fo4 = ctx.Fallout4;
+            AppSettings settings = AppContext.Settings;
+            SteamGame fo4 = AppContext.Fallout4;
 
             var deleteAfterCopy = !settings.KeepDepotFiles && !Debugger.IsAttached;//Console.ReadKey().Key == ConsoleKey.Y;
             var depotFolders = System.IO.Directory
@@ -769,7 +769,7 @@ namespace FO4Down
                 {
                     // check if we should copy this depot
                     var allGood = false;
-                    foreach (var d in ctx.Depots)
+                    foreach (var d in AppContext.Depots)
                     {
                         if (folder.Contains(d.Id.ToString()))
                         {
@@ -780,7 +780,7 @@ namespace FO4Down
 
                     if (allGood)
                     {
-                        CopyFiles(ctx, folder, fo4.Path);
+                        CopyFiles(folder, fo4.Path);
                     }
                 }
 
@@ -804,7 +804,7 @@ namespace FO4Down
             }
         }
 
-        private static void CopyFiles(ApplicationContext ctx, string srcDirectory, string dstDirectory)
+        private static void CopyFiles(string srcDirectory, string dstDirectory)
         {
             int copyCount = 0;
             var fileCount = 0;
@@ -820,7 +820,7 @@ namespace FO4Down
                 var newPath = file.Replace(srcDirectory, dstDirectory);
                 if (newPath == file)
                 {
-                    ctx.Error("Failed determine destination for file: " + file);
+                    AppContext.Error("Failed determine destination for file: " + file);
                     continue;
                 }
 
@@ -830,19 +830,19 @@ namespace FO4Down
                     Directory.CreateDirectory(dir);
                 }
 
-                ctx.Progress("Copying: " + file.Replace(srcDirectory, ""), copyCount / (float)fileCount);
+                AppContext.Progress("Copying: " + file.Replace(srcDirectory, ""), copyCount / (float)fileCount);
                 File.Copy(file, newPath, true);
                 copyCount++;
             }
 
-            ctx.Progress("All files copied.", 1);
+            AppContext.Progress("All files copied.", 1);
         }
 
-        private static void DeleteCreationClubData(ApplicationContext ctx)
+        private static void DeleteCreationClubData()
         {
-            ctx.Step = FO4DowngraderStep.DeleteCreationClubData;
-            var fo4 = ctx.Fallout4;
-            var deleteCreationClubData = ctx.Settings.DeleteCreationClubFiles;
+            AppContext.Step = FO4DowngraderStep.DeleteCreationClubData;
+            var fo4 = AppContext.Fallout4;
+            var deleteCreationClubData = AppContext.Settings.DeleteCreationClubFiles;
             var dataFolder = System.IO.Path.Combine(fo4.Path, "Data");
             var filesToDelete = new List<string>
             {
@@ -874,24 +874,24 @@ namespace FO4Down
                 "ccBGSFO4016-Prey - Main.ba2"
             };
 
-            ctx.Notify("Deleting Creation Club Content Files...");
+            AppContext.Notify("Deleting Creation Club Content Files...");
             var paths = filesToDelete.Select(x => Path.Combine(dataFolder, x)).ToArray();
             var existingFiles = paths.Where(x => File.Exists(x)).ToArray();
 
             for (int i = 0; i < existingFiles.Length; i++)
             {
                 string? file = existingFiles[i];
-                ctx.Progress("Deleting " + Path.GetFileName(file) + " (" + (i + 1) + "/" + existingFiles.Length + ")", (i / (float)existingFiles.Length));
+                AppContext.Progress("Deleting " + Path.GetFileName(file) + " (" + (i + 1) + "/" + existingFiles.Length + ")", (i / (float)existingFiles.Length));
                 File.Delete(file);
             }
-            ctx.Progress("All Creation Club files deleted.", 1f);
+            AppContext.Progress("All Creation Club files deleted.", 1f);
         }
 
-        private static void DeleteNextGenFiles(ApplicationContext ctx)
+        private static void DeleteNextGenFiles()
         {
-            ctx.Step = FO4DowngraderStep.DeleteNextGenFiles;
-            var fo4 = ctx.Fallout4;
-            var downloadCreationKit = ctx.DownloadCreationKit;
+            AppContext.Step = FO4DowngraderStep.DeleteNextGenFiles;
+            var fo4 = AppContext.Fallout4;
+            var downloadCreationKit = AppContext.DownloadCreationKit;
             var dataFolder = System.IO.Path.Combine(fo4.Path, "Data");
             // finally delete following files from the fallout 4 folder:
             var filesToDelete = new List<string>
@@ -925,25 +925,25 @@ namespace FO4Down
                     "ccSBJFO4003-Grenade.esl",
                 };
 
-            ctx.Notify("Deleting Next-Gen Content Files...");
+            AppContext.Notify("Deleting Next-Gen Content Files...");
             var paths = filesToDelete.Select(x => Path.Combine(dataFolder, x)).ToArray();
             var existingFiles = paths.Where(x => File.Exists(x)).ToArray();
 
             for (int i = 0; i < existingFiles.Length; i++)
             {
                 string? file = existingFiles[i];
-                ctx.Progress("Deleting " + Path.GetFileName(file) + " (" + (i + 1) + "/" + existingFiles.Length + ")", (i / (float)existingFiles.Length));
+                AppContext.Progress("Deleting " + Path.GetFileName(file) + " (" + (i + 1) + "/" + existingFiles.Length + ")", (i / (float)existingFiles.Length));
                 File.Delete(file);
             }
-            ctx.Progress("All Next-Gen Content Files deleted.", 1f);
+            AppContext.Progress("All Next-Gen Content Files deleted.", 1f);
         }
 
 
-        private static async Task DownloadDepotFilesAsync(ApplicationContext ctx)
+        private static async Task DownloadDepotFilesAsync()
         {
-            ctx.Step = FO4DowngraderStep.DownloadDepotFiles;
-            var settings = ctx.Settings;
-            var downloadCreationKit = ctx.DownloadCreationKit;
+            AppContext.Step = FO4DowngraderStep.DownloadDepotFiles;
+            var settings = AppContext.Settings;
+            var downloadCreationKit = AppContext.DownloadCreationKit;
 
             List<Depot> depots = new List<Depot>();
 
@@ -953,16 +953,16 @@ namespace FO4Down
             if (settings.DownloadAllLanguages)
                 language = null;
 
-            if (!ctx.Settings.DowngradeCreationKitOnly)
+            if (!AppContext.Settings.DowngradeCreationKitOnly)
             {
                 // verify whether or not we are downloading the correct language.
                 if (!settings.DownloadAllLanguages)
                 {
-                    var targetLanguage = ctx.GetTargetCultureInfo();
+                    var targetLanguage = AppContext.GetTargetCultureInfo();
                     if (!targetLanguage.EnglishName.Equals(language, StringComparison.OrdinalIgnoreCase))
                     {
-                        ctx.Message = "Preparing for download...";
-                        if (await ctx.RequestAsync<bool>("confirm",
+                        AppContext.Message = "Preparing for download...";
+                        if (await AppContext.RequestAsync<bool>("confirm",
                             "You are about to download English version of the game\n" +
                             "but your current Fallout 4 installation is in \"" + targetLanguage.EnglishName + "\".\n" +
                             "Do you want to download " + targetLanguage.EnglishName + " instead?"))
@@ -978,13 +978,13 @@ namespace FO4Down
                 depots.AddRange(DepotManager.Get(DepotTarget.Game, language));
                 depots.AddRange(DepotManager.Get(DepotTarget.RequiredDlc, language));
 
-                if (ctx.Settings.DownloadAllDLCs)
+                if (AppContext.Settings.DownloadAllDLCs)
                 {
                     depots.AddRange(DepotManager.GetLanguageNeutral(DepotTarget.AllDlc));
                     depots.AddRange(DepotManager.Get(DepotTarget.AllDlc, language));
                 }
 
-                if (ctx.Settings.DownloadHDTextures)
+                if (AppContext.Settings.DownloadHDTextures)
                 {
                     // <HD Textures>
                     depots.Add(DepotManager.GetHDTextures());
@@ -997,47 +997,52 @@ namespace FO4Down
                 uint f4AppId = 377160;
 
                 //ctx.Notify("Downloading ")
-                ctx.TotalDepotsToDownload = totalDepotsToDownload;
-                ctx.Step = FO4DowngraderStep.DownloadGameDepotFiles;
-                ctx.Depots = depots.ToList();
+                AppContext.TotalDepotsToDownload = totalDepotsToDownload;
+                AppContext.Step = FO4DowngraderStep.DownloadGameDepotFiles;
+                AppContext.Depots = depots.ToList();
 
                 await ContentDownloader.DownloadAppAsync(
-                    f4AppId, depots.Select(x => x.AsTuple()).ToList(), "public", "windows", "64",
+                    f4AppId,
+                    depots.Select(x => x.AsTuple()).ToList(),
+                    "public",
+                    "windows",
+                    "64",
                     language,
-                    false, false, ctx);
+                    false,
+                    false);
             }
 
             // check if creation kit is available, if so, download and replace those as well.
 
-            if (downloadCreationKit || ctx.Settings.DowngradeCreationKitOnly)
+            if (downloadCreationKit || AppContext.Settings.DowngradeCreationKitOnly)
             {
                 uint ckAppId = 1946160;
 
-                ctx.Step = FO4DowngraderStep.DownloadCreationKitDepotFiles;
+                AppContext.Step = FO4DowngraderStep.DownloadCreationKitDepotFiles;
                 depots.Clear();
                 depots.AddRange(DepotManager.GetCreationKit());
                 await ContentDownloader.DownloadAppAsync(
                     ckAppId, depots.Select(x => x.AsTuple()).ToList(),
                     "public", "windows", "64",
-                    language, false, false, ctx);
+                    language, false, false);
 
-                ctx.Depots.AddRange(depots);
+                AppContext.Depots.AddRange(depots);
             }
 
-            ctx.Notify();
+            AppContext.Notify();
         }
 
-        private static SteamGame FindFallout4(ApplicationContext ctx)
+        private static SteamGame FindFallout4()
         {
-            ctx.Step = FO4DowngraderStep.LookingForFallout4Path;
-            ctx.Notify("Searching the wasteland to find your installation of Fallout 4");
+            AppContext.Step = FO4DowngraderStep.LookingForFallout4Path;
+            AppContext.Notify("Searching the wasteland to find your installation of Fallout 4");
 
-            var fo4 = TryFindFalloutInCurrentPath(ctx);
+            var fo4 = TryFindFalloutInCurrentPath();
 
             if (fo4 == null)
             {
                 // try finding the game path based on standard paths that the game may have
-                fo4 = FindFallout4ByKnownPaths(ctx, fo4);
+                fo4 = FindFallout4ByKnownPaths(fo4);
             }
 
             if (fo4 == null)
@@ -1049,41 +1054,41 @@ namespace FO4Down
                 }
 
                 //steamPath = "G:\\GitHub\\fallout4-downgrader\\publish\\Self-contained\\libraryfolders.vdf";
-                SteamGameLocator.GetLibraryFolders(ctx, steamPath);
-                SteamGameLocator.GetInstalledGames(ctx);
+                SteamGameLocator.GetLibraryFolders(steamPath);
+                SteamGameLocator.GetInstalledGames();
 
-                if (!ctx.InstalledGames.TryGetValue("Fallout 4", out fo4))
+                if (!AppContext.InstalledGames.TryGetValue("Fallout 4", out fo4))
                 {
                     //add fallback to find fallout 4 folder in parent folder or same folder.look for manifest
 
                     throw new FileNotFoundException("Fallout 4 is not installed.");
                 }
 
-                ctx.Fallout4 = fo4;
+                AppContext.Fallout4 = fo4;
             }
 
 
-            ctx.DownloadCreationKit = Directory.Exists(Path.Combine(fo4.Path, "Tools"))
+            AppContext.DownloadCreationKit = Directory.Exists(Path.Combine(fo4.Path, "Tools"))
                     || Directory.Exists(Path.Combine(fo4.Path, "Papyrus Compiler"))
-                    || ctx.Settings.DownloadCreationKit;
+                    || AppContext.Settings.DownloadCreationKit;
 
             var defaultIni = Path.Combine(fo4.Path, "Fallout4_Default.ini");
             if (System.IO.File.Exists(defaultIni))
             {
-                ctx.Fallout4DefaultIni = Fallout4IniSettings.FromIni(defaultIni);
+                AppContext.Fallout4DefaultIni = Fallout4IniSettings.FromIni(defaultIni);
             }
 
             var ini = Path.Combine(fo4.Path, "Fallout4.ini");
             if (System.IO.File.Exists(ini))
             {
-                ctx.Fallout4Ini = Fallout4IniSettings.FromIni(ini);
+                AppContext.Fallout4Ini = Fallout4IniSettings.FromIni(ini);
             }
 
-            ctx.Notify();
+            AppContext.Notify();
             return fo4;
         }
 
-        private static SteamGame? TryFindFalloutInCurrentPath(ApplicationContext ctx)
+        private static SteamGame? TryFindFalloutInCurrentPath()
         {
             SteamGame? fo4 = null;
 
@@ -1099,7 +1104,7 @@ namespace FO4Down
             {
                 if (isFallout4Folder && File.Exists(Path.Combine(currentPath, "Fallout4.exe")))
                 {
-                    fo4 = ctx.Fallout4 = new SteamGame
+                    fo4 = AppContext.Fallout4 = new SteamGame
                     {
                         AppId = Fallout4_AppId,
                         Name = Fallout4_Name,
@@ -1118,7 +1123,7 @@ namespace FO4Down
                         var fo4Path = Path.Combine(currentPath, "Fallout4.exe");
                         if (info.Name.Equals("Fallout 4", StringComparison.OrdinalIgnoreCase) && File.Exists(fo4Path))
                         {
-                            fo4 = ctx.Fallout4 = new SteamGame
+                            fo4 = AppContext.Fallout4 = new SteamGame
                             {
                                 AppId = Fallout4_AppId,
                                 Name = Fallout4_Name,
@@ -1133,7 +1138,7 @@ namespace FO4Down
             return fo4;
         }
 
-        private static SteamGame? FindFallout4ByKnownPaths(ApplicationContext ctx, SteamGame? fo4)
+        private static SteamGame? FindFallout4ByKnownPaths(SteamGame? fo4)
         {
             if (TryGetDrives(out var drives))
             {
@@ -1151,7 +1156,7 @@ namespace FO4Down
                         var f4exe = System.IO.Path.Combine(libraryPath, "Fallout4.exe");
                         if (Path.Exists(f4exe))
                         {
-                            fo4 = ctx.Fallout4 = new SteamGame
+                            fo4 = AppContext.Fallout4 = new SteamGame
                             {
                                 AppId = Fallout4_AppId,
                                 Name = Fallout4_Name,
@@ -1181,14 +1186,14 @@ namespace FO4Down
             return false;
         }
 
-        private static async Task<bool> LoginToSteamAsync(ApplicationContext ctx)
+        private static async Task<bool> LoginToSteamAsync()
         {
-            ctx.Step = FO4DowngraderStep.LoginToSteam;
+            AppContext.Step = FO4DowngraderStep.LoginToSteam;
 
             if (!AccountSettingsStore.Loaded)
                 AccountSettingsStore.LoadFromFile("account.config");
 
-            var settings = ctx.Settings;
+            var settings = AppContext.Settings;
             string username = null;
             string password = null;
 
@@ -1209,25 +1214,25 @@ namespace FO4Down
 
                 if (noUser || noPass)
                 {
-                    (username, password) = await ctx.RequestAsync<(string, string)>("credentials");
+                    (username, password) = await AppContext.RequestAsync<(string, string)>("credentials");
 
-                    if (ctx.Settings.UseQrCode)
+                    if (AppContext.Settings.UseQrCode)
                     {
                         ContentDownloader.Config.UseQrCode = true;
                     }
                 }
             }
 
-            var result = ContentDownloader.InitializeSteam3(username, password, ctx);
+            var result = ContentDownloader.InitializeSteam3(username, password);
             if (result)
             {
-                ctx.Notify();
+                AppContext.Notify();
             }
 
             return result;
         }
 
-        private static AppSettings LoadSettings(ApplicationContext ctx)
+        private static AppSettings LoadSettings()
         {
             var args =
 #if DEBUG
@@ -1245,13 +1250,13 @@ namespace FO4Down
                 switch (severity)
                 {
                     case LogSeverity.Error:
-                        ctx.Error(format, args);
+                        AppContext.Error(format, args);
                         break;
 
                     case LogSeverity.Debug:
                     case LogSeverity.Information:
                     case LogSeverity.Warning:
-                        ctx.Notify(format, args);
+                        AppContext.Notify(format, args);
                         break;
                 }
             });

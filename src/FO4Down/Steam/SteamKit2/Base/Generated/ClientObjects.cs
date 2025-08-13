@@ -5,7 +5,7 @@
 // </auto-generated>
 
 #region Designer generated code
-#pragma warning disable CS0612, CS0618, CS1591, CS3021, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
+#pragma warning disable CS0612, CS0618, CS1591, CS3021, CS8981, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
 namespace SteamKit2.Internal
 {
 
@@ -952,6 +952,26 @@ namespace SteamKit2.Internal
         public void Resettime_last_updated() => __pbn__time_last_updated = null;
         private uint? __pbn__time_last_updated;
 
+        [global::ProtoBuf.ProtoMember(5)]
+        public int os_type
+        {
+            get => __pbn__os_type.GetValueOrDefault();
+            set => __pbn__os_type = value;
+        }
+        public bool ShouldSerializeos_type() => __pbn__os_type != null;
+        public void Resetos_type() => __pbn__os_type = null;
+        private int? __pbn__os_type;
+
+        [global::ProtoBuf.ProtoMember(6)]
+        public int device_type
+        {
+            get => __pbn__device_type.GetValueOrDefault();
+            set => __pbn__device_type = value;
+        }
+        public bool ShouldSerializedevice_type() => __pbn__device_type != null;
+        public void Resetdevice_type() => __pbn__device_type = null;
+        private int? __pbn__device_type;
+
     }
 
     [global::ProtoBuf.ProtoContract()]
@@ -1135,6 +1155,36 @@ namespace SteamKit2.Internal
             public bool ShouldSerializestrength_raw() => __pbn__strength_raw != null;
             public void Resetstrength_raw() => __pbn__strength_raw = null;
             private int? __pbn__strength_raw;
+
+            [global::ProtoBuf.ProtoMember(9)]
+            public bool wake_allowed
+            {
+                get => __pbn__wake_allowed.GetValueOrDefault();
+                set => __pbn__wake_allowed = value;
+            }
+            public bool ShouldSerializewake_allowed() => __pbn__wake_allowed != null;
+            public void Resetwake_allowed() => __pbn__wake_allowed = null;
+            private bool? __pbn__wake_allowed;
+
+            [global::ProtoBuf.ProtoMember(10)]
+            public bool wake_allowed_supported
+            {
+                get => __pbn__wake_allowed_supported.GetValueOrDefault();
+                set => __pbn__wake_allowed_supported = value;
+            }
+            public bool ShouldSerializewake_allowed_supported() => __pbn__wake_allowed_supported != null;
+            public void Resetwake_allowed_supported() => __pbn__wake_allowed_supported = null;
+            private bool? __pbn__wake_allowed_supported;
+
+            [global::ProtoBuf.ProtoMember(11)]
+            public int battery_percent
+            {
+                get => __pbn__battery_percent.GetValueOrDefault();
+                set => __pbn__battery_percent = value;
+            }
+            public bool ShouldSerializebattery_percent() => __pbn__battery_percent != null;
+            public void Resetbattery_percent() => __pbn__battery_percent = null;
+            private int? __pbn__battery_percent;
 
         }
 
@@ -1428,36 +1478,6 @@ namespace SteamKit2.Internal
         public void Resettdp_limit_max() => __pbn__tdp_limit_max = null;
         private int? __pbn__tdp_limit_max;
 
-        [global::ProtoBuf.ProtoMember(16)]
-        public bool is_nis_supported
-        {
-            get => __pbn__is_nis_supported.GetValueOrDefault();
-            set => __pbn__is_nis_supported = value;
-        }
-        public bool ShouldSerializeis_nis_supported() => __pbn__is_nis_supported != null;
-        public void Resetis_nis_supported() => __pbn__is_nis_supported = null;
-        private bool? __pbn__is_nis_supported;
-
-        [global::ProtoBuf.ProtoMember(17)]
-        public int nis_sharpness_min
-        {
-            get => __pbn__nis_sharpness_min.GetValueOrDefault();
-            set => __pbn__nis_sharpness_min = value;
-        }
-        public bool ShouldSerializenis_sharpness_min() => __pbn__nis_sharpness_min != null;
-        public void Resetnis_sharpness_min() => __pbn__nis_sharpness_min = null;
-        private int? __pbn__nis_sharpness_min;
-
-        [global::ProtoBuf.ProtoMember(18)]
-        public int nis_sharpness_max
-        {
-            get => __pbn__nis_sharpness_max.GetValueOrDefault();
-            set => __pbn__nis_sharpness_max = value;
-        }
-        public bool ShouldSerializenis_sharpness_max() => __pbn__nis_sharpness_max != null;
-        public void Resetnis_sharpness_max() => __pbn__nis_sharpness_max = null;
-        private int? __pbn__nis_sharpness_max;
-
         [global::ProtoBuf.ProtoMember(19)]
         public int display_external_refresh_manual_hz_min
         {
@@ -1481,16 +1501,6 @@ namespace SteamKit2.Internal
         [global::ProtoBuf.ProtoMember(21)]
         public global::System.Collections.Generic.List<int> fps_limit_options_external { get; } = new global::System.Collections.Generic.List<int>();
 
-        [global::ProtoBuf.ProtoMember(22)]
-        public bool is_tearing_supported
-        {
-            get => __pbn__is_tearing_supported.GetValueOrDefault();
-            set => __pbn__is_tearing_supported = value;
-        }
-        public bool ShouldSerializeis_tearing_supported() => __pbn__is_tearing_supported != null;
-        public void Resetis_tearing_supported() => __pbn__is_tearing_supported = null;
-        private bool? __pbn__is_tearing_supported;
-
         [global::ProtoBuf.ProtoMember(23)]
         public bool is_vrr_supported
         {
@@ -1511,41 +1521,11 @@ namespace SteamKit2.Internal
         public void Resetis_dynamic_refresh_rate_in_steam_supported() => __pbn__is_dynamic_refresh_rate_in_steam_supported = null;
         private bool? __pbn__is_dynamic_refresh_rate_in_steam_supported;
 
-        [global::ProtoBuf.ProtoMember(25)]
-        public bool is_split_scaling_and_filtering_supported
-        {
-            get => __pbn__is_split_scaling_and_filtering_supported.GetValueOrDefault();
-            set => __pbn__is_split_scaling_and_filtering_supported = value;
-        }
-        public bool ShouldSerializeis_split_scaling_and_filtering_supported() => __pbn__is_split_scaling_and_filtering_supported != null;
-        public void Resetis_split_scaling_and_filtering_supported() => __pbn__is_split_scaling_and_filtering_supported = null;
-        private bool? __pbn__is_split_scaling_and_filtering_supported;
-
         [global::ProtoBuf.ProtoMember(26)]
         public global::System.Collections.Generic.List<ESplitScalingFilter> split_scaling_filters_available { get; } = new global::System.Collections.Generic.List<ESplitScalingFilter>();
 
         [global::ProtoBuf.ProtoMember(27)]
         public global::System.Collections.Generic.List<ESplitScalingScaler> split_scaling_scalers_available { get; } = new global::System.Collections.Generic.List<ESplitScalingScaler>();
-
-        [global::ProtoBuf.ProtoMember(28)]
-        public bool is_hdr_supported
-        {
-            get => __pbn__is_hdr_supported.GetValueOrDefault();
-            set => __pbn__is_hdr_supported = value;
-        }
-        public bool ShouldSerializeis_hdr_supported() => __pbn__is_hdr_supported != null;
-        public void Resetis_hdr_supported() => __pbn__is_hdr_supported = null;
-        private bool? __pbn__is_hdr_supported;
-
-        [global::ProtoBuf.ProtoMember(29)]
-        public int display_refresh_manual_hz_oc_max
-        {
-            get => __pbn__display_refresh_manual_hz_oc_max.GetValueOrDefault();
-            set => __pbn__display_refresh_manual_hz_oc_max = value;
-        }
-        public bool ShouldSerializedisplay_refresh_manual_hz_oc_max() => __pbn__display_refresh_manual_hz_oc_max != null;
-        public void Resetdisplay_refresh_manual_hz_oc_max() => __pbn__display_refresh_manual_hz_oc_max = null;
-        private int? __pbn__display_refresh_manual_hz_oc_max;
 
         [global::ProtoBuf.ProtoMember(30)]
         public bool disable_refresh_rate_management
@@ -1650,16 +1630,6 @@ namespace SteamKit2.Internal
         public void Resetallow_external_display_refresh_control() => __pbn__allow_external_display_refresh_control = null;
         private bool? __pbn__allow_external_display_refresh_control;
 
-        [global::ProtoBuf.ProtoMember(9)]
-        public bool is_hdr_enabled
-        {
-            get => __pbn__is_hdr_enabled.GetValueOrDefault();
-            set => __pbn__is_hdr_enabled = value;
-        }
-        public bool ShouldSerializeis_hdr_enabled() => __pbn__is_hdr_enabled != null;
-        public void Resetis_hdr_enabled() => __pbn__is_hdr_enabled = null;
-        private bool? __pbn__is_hdr_enabled;
-
         [global::ProtoBuf.ProtoMember(12)]
         [global::System.ComponentModel.DefaultValue(EHDRToneMapOperator.k_EHDRToneMapOperator_Invalid)]
         public EHDRToneMapOperator hdr_on_sdr_tonemap_operator
@@ -1692,16 +1662,6 @@ namespace SteamKit2.Internal
         public void Resetforce_hdr_wide_gammut_for_sdr() => __pbn__force_hdr_wide_gammut_for_sdr = null;
         private bool? __pbn__force_hdr_wide_gammut_for_sdr;
 
-        [global::ProtoBuf.ProtoMember(16)]
-        public bool allow_experimental_hdr
-        {
-            get => __pbn__allow_experimental_hdr.GetValueOrDefault();
-            set => __pbn__allow_experimental_hdr = value;
-        }
-        public bool ShouldSerializeallow_experimental_hdr() => __pbn__allow_experimental_hdr != null;
-        public void Resetallow_experimental_hdr() => __pbn__allow_experimental_hdr = null;
-        private bool? __pbn__allow_experimental_hdr;
-
         [global::ProtoBuf.ProtoMember(22)]
         public float sdr_to_hdr_brightness
         {
@@ -1711,36 +1671,6 @@ namespace SteamKit2.Internal
         public bool ShouldSerializesdr_to_hdr_brightness() => __pbn__sdr_to_hdr_brightness != null;
         public void Resetsdr_to_hdr_brightness() => __pbn__sdr_to_hdr_brightness = null;
         private float? __pbn__sdr_to_hdr_brightness;
-
-        [global::ProtoBuf.ProtoMember(18)]
-        public bool debug_force_hdr_support
-        {
-            get => __pbn__debug_force_hdr_support.GetValueOrDefault();
-            set => __pbn__debug_force_hdr_support = value;
-        }
-        public bool ShouldSerializedebug_force_hdr_support() => __pbn__debug_force_hdr_support != null;
-        public void Resetdebug_force_hdr_support() => __pbn__debug_force_hdr_support = null;
-        private bool? __pbn__debug_force_hdr_support;
-
-        [global::ProtoBuf.ProtoMember(19)]
-        public bool force_hdr_10pq_output_debug
-        {
-            get => __pbn__force_hdr_10pq_output_debug.GetValueOrDefault();
-            set => __pbn__force_hdr_10pq_output_debug = value;
-        }
-        public bool ShouldSerializeforce_hdr_10pq_output_debug() => __pbn__force_hdr_10pq_output_debug != null;
-        public void Resetforce_hdr_10pq_output_debug() => __pbn__force_hdr_10pq_output_debug = null;
-        private bool? __pbn__force_hdr_10pq_output_debug;
-
-        [global::ProtoBuf.ProtoMember(20)]
-        public bool is_display_oc_enabled
-        {
-            get => __pbn__is_display_oc_enabled.GetValueOrDefault();
-            set => __pbn__is_display_oc_enabled = value;
-        }
-        public bool ShouldSerializeis_display_oc_enabled() => __pbn__is_display_oc_enabled != null;
-        public void Resetis_display_oc_enabled() => __pbn__is_display_oc_enabled = null;
-        private bool? __pbn__is_display_oc_enabled;
 
         [global::ProtoBuf.ProtoMember(21)]
         public bool is_color_management_enabled
@@ -1913,16 +1843,6 @@ namespace SteamKit2.Internal
         public void Resetgpu_performance_level() => __pbn__gpu_performance_level = null;
         private EGPUPerformanceLevel? __pbn__gpu_performance_level;
 
-        [global::ProtoBuf.ProtoMember(16)]
-        public int nis_sharpness
-        {
-            get => __pbn__nis_sharpness.GetValueOrDefault();
-            set => __pbn__nis_sharpness = value;
-        }
-        public bool ShouldSerializenis_sharpness() => __pbn__nis_sharpness != null;
-        public void Resetnis_sharpness() => __pbn__nis_sharpness = null;
-        private int? __pbn__nis_sharpness;
-
         [global::ProtoBuf.ProtoMember(17)]
         public int display_external_refresh_manual_hz
         {
@@ -1962,26 +1882,6 @@ namespace SteamKit2.Internal
         public bool ShouldSerializeis_vrr_enabled() => __pbn__is_vrr_enabled != null;
         public void Resetis_vrr_enabled() => __pbn__is_vrr_enabled = null;
         private bool? __pbn__is_vrr_enabled;
-
-        [global::ProtoBuf.ProtoMember(21)]
-        public bool is_composite_debug_enabled
-        {
-            get => __pbn__is_composite_debug_enabled.GetValueOrDefault();
-            set => __pbn__is_composite_debug_enabled = value;
-        }
-        public bool ShouldSerializeis_composite_debug_enabled() => __pbn__is_composite_debug_enabled != null;
-        public void Resetis_composite_debug_enabled() => __pbn__is_composite_debug_enabled = null;
-        private bool? __pbn__is_composite_debug_enabled;
-
-        [global::ProtoBuf.ProtoMember(22)]
-        public bool force_composite
-        {
-            get => __pbn__force_composite.GetValueOrDefault();
-            set => __pbn__force_composite = value;
-        }
-        public bool ShouldSerializeforce_composite() => __pbn__force_composite != null;
-        public void Resetforce_composite() => __pbn__force_composite = null;
-        private bool? __pbn__force_composite;
 
         [global::ProtoBuf.ProtoMember(23)]
         public bool use_dynamic_refresh_rate_in_steam
@@ -2338,6 +2238,43 @@ namespace SteamKit2.Internal
         }
         public bool ShouldSerializesettings_delta() => __pbn__update.Is(3);
         public void Resetsettings_delta() => global::ProtoBuf.DiscriminatedUnion32Object.Reset(ref __pbn__update, 3);
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class CMsgSystemPerfLegacySettingEntry : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1)]
+        public ulong profile_game_id
+        {
+            get => __pbn__profile_game_id.GetValueOrDefault();
+            set => __pbn__profile_game_id = value;
+        }
+        public bool ShouldSerializeprofile_game_id() => __pbn__profile_game_id != null;
+        public void Resetprofile_game_id() => __pbn__profile_game_id = null;
+        private ulong? __pbn__profile_game_id;
+
+        [global::ProtoBuf.ProtoMember(2)]
+        public CMsgSystemPerfSettingsPerApp settings { get; set; }
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class CMsgSystemPerfLegacySettings : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1)]
+        public CMsgSystemPerfSettingsGlobal global { get; set; }
+
+        [global::ProtoBuf.ProtoMember(2)]
+        public global::System.Collections.Generic.List<CMsgSystemPerfLegacySettingEntry> per_app_settings { get; } = new global::System.Collections.Generic.List<CMsgSystemPerfLegacySettingEntry>();
 
     }
 
@@ -3082,14 +3019,14 @@ namespace SteamKit2.Internal
         private bool? __pbn__is_vrr_capable;
 
         [global::ProtoBuf.ProtoMember(15)]
-        public bool is_vrr_enabled
+        public bool is_vrr_output_active
         {
-            get => __pbn__is_vrr_enabled.GetValueOrDefault();
-            set => __pbn__is_vrr_enabled = value;
+            get => __pbn__is_vrr_output_active.GetValueOrDefault();
+            set => __pbn__is_vrr_output_active = value;
         }
-        public bool ShouldSerializeis_vrr_enabled() => __pbn__is_vrr_enabled != null;
-        public void Resetis_vrr_enabled() => __pbn__is_vrr_enabled = null;
-        private bool? __pbn__is_vrr_enabled;
+        public bool ShouldSerializeis_vrr_output_active() => __pbn__is_vrr_output_active != null;
+        public void Resetis_vrr_output_active() => __pbn__is_vrr_output_active = null;
+        private bool? __pbn__is_vrr_output_active;
 
         [global::ProtoBuf.ProtoMember(16)]
         public bool is_hdr_capable
@@ -3102,14 +3039,14 @@ namespace SteamKit2.Internal
         private bool? __pbn__is_hdr_capable;
 
         [global::ProtoBuf.ProtoMember(17)]
-        public bool is_hdr_enabled
+        public bool is_hdr_output_active
         {
-            get => __pbn__is_hdr_enabled.GetValueOrDefault();
-            set => __pbn__is_hdr_enabled = value;
+            get => __pbn__is_hdr_output_active.GetValueOrDefault();
+            set => __pbn__is_hdr_output_active = value;
         }
-        public bool ShouldSerializeis_hdr_enabled() => __pbn__is_hdr_enabled != null;
-        public void Resetis_hdr_enabled() => __pbn__is_hdr_enabled = null;
-        private bool? __pbn__is_hdr_enabled;
+        public bool ShouldSerializeis_hdr_output_active() => __pbn__is_hdr_output_active != null;
+        public void Resetis_hdr_output_active() => __pbn__is_hdr_output_active = null;
+        private bool? __pbn__is_hdr_output_active;
 
         [global::ProtoBuf.ProtoMember(18)]
         public global::System.Collections.Generic.List<int> supported_refresh_rates { get; } = new global::System.Collections.Generic.List<int>();
@@ -3975,14 +3912,14 @@ namespace SteamKit2.Internal
         public global::System.Collections.Generic.List<string> tags { get; } = new global::System.Collections.Generic.List<string>();
 
         [global::ProtoBuf.ProtoMember(11)]
-        public bool is_remote
+        public ulong remote_client_id
         {
-            get => __pbn__is_remote.GetValueOrDefault();
-            set => __pbn__is_remote = value;
+            get => __pbn__remote_client_id.GetValueOrDefault();
+            set => __pbn__remote_client_id = value;
         }
-        public bool ShouldSerializeis_remote() => __pbn__is_remote != null;
-        public void Resetis_remote() => __pbn__is_remote = null;
-        private bool? __pbn__is_remote;
+        public bool ShouldSerializeremote_client_id() => __pbn__remote_client_id != null;
+        public void Resetremote_client_id() => __pbn__remote_client_id = null;
+        private ulong? __pbn__remote_client_id;
 
         [global::ProtoBuf.ProtoMember(12)]
         public bool is_hidden
@@ -4064,6 +4001,39 @@ namespace SteamKit2.Internal
         public bool ShouldSerializedevkit_gameid() => __pbn__devkit_gameid != null;
         public void Resetdevkit_gameid() => __pbn__devkit_gameid = null;
         private string __pbn__devkit_gameid;
+
+        [global::ProtoBuf.ProtoMember(20)]
+        public bool remote_launch_available
+        {
+            get => __pbn__remote_launch_available.GetValueOrDefault();
+            set => __pbn__remote_launch_available = value;
+        }
+        public bool ShouldSerializeremote_launch_available() => __pbn__remote_launch_available != null;
+        public void Resetremote_launch_available() => __pbn__remote_launch_available = null;
+        private bool? __pbn__remote_launch_available;
+
+        [global::ProtoBuf.ProtoMember(21)]
+        [global::System.ComponentModel.DefaultValue("")]
+        public string sortas
+        {
+            get => __pbn__sortas ?? "";
+            set => __pbn__sortas = value;
+        }
+        public bool ShouldSerializesortas() => __pbn__sortas != null;
+        public void Resetsortas() => __pbn__sortas = null;
+        private string __pbn__sortas;
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class CMsgShortcutInfos : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1)]
+        public global::System.Collections.Generic.List<CMsgShortcutInfo> shorcuts { get; } = new global::System.Collections.Generic.List<CMsgShortcutInfo>();
 
     }
 
@@ -4156,6 +4126,25 @@ namespace SteamKit2.Internal
         public bool ShouldSerializeauth_key() => __pbn__auth_key != null;
         public void Resetauth_key() => __pbn__auth_key = null;
         private string __pbn__auth_key;
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class CMsgWebUITransportFailure : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1)]
+        public uint connect_count
+        {
+            get => __pbn__connect_count.GetValueOrDefault();
+            set => __pbn__connect_count = value;
+        }
+        public bool ShouldSerializeconnect_count() => __pbn__connect_count != null;
+        public void Resetconnect_count() => __pbn__connect_count = null;
+        private uint? __pbn__connect_count;
 
     }
 
@@ -4263,5 +4252,5 @@ namespace SteamKit2.Internal
 
 }
 
-#pragma warning restore CS0612, CS0618, CS1591, CS3021, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
+#pragma warning restore CS0612, CS0618, CS1591, CS3021, CS8981, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
 #endregion

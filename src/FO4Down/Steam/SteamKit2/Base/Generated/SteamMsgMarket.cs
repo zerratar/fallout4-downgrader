@@ -5,7 +5,7 @@
 // </auto-generated>
 
 #region Designer generated code
-#pragma warning disable CS0612, CS0618, CS1591, CS3021, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
+#pragma warning disable CS0612, CS0618, CS1591, CS3021, CS8981, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
 namespace SteamKit2.Internal
 {
 
@@ -108,12 +108,31 @@ namespace SteamKit2.Internal
 
     }
 
-    public interface IEconMarket
+    public class EconMarket : SteamUnifiedMessages.UnifiedService
     {
-        CEconMarket_IsMarketplaceAllowed_Response IsMarketplaceAllowed(CEconMarket_IsMarketplaceAllowed_Request request);
+        public override string ServiceName { get; } = "EconMarket";
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CEconMarket_IsMarketplaceAllowed_Response>> IsMarketplaceAllowed( CEconMarket_IsMarketplaceAllowed_Request request )
+        {
+            return UnifiedMessages.SendMessage<CEconMarket_IsMarketplaceAllowed_Request, CEconMarket_IsMarketplaceAllowed_Response>( "EconMarket.IsMarketplaceAllowed#1", request );
+        }
+
+        public override void HandleResponseMsg( string methodName, PacketClientMsgProtobuf packetMsg )
+        {
+            switch ( methodName )
+            {
+                case "IsMarketplaceAllowed":
+                    PostResponseMsg<CEconMarket_IsMarketplaceAllowed_Response>( packetMsg );
+                    break;
+            }
+        }
+
+        public override void HandleNotificationMsg( string methodName, PacketClientMsgProtobuf packetMsg )
+        {
+        }
     }
 
 }
 
-#pragma warning restore CS0612, CS0618, CS1591, CS3021, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
+#pragma warning restore CS0612, CS0618, CS1591, CS3021, CS8981, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
 #endregion

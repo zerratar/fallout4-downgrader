@@ -22,7 +22,7 @@ namespace SteamKit2
             {
                 public byte[]? ChunkGID { get; set; } // sha1 hash for this chunk
 
-                public byte[]? Checksum { get; set; }
+                public uint Checksum { get; set; }
                 public ulong Offset { get; set; }
 
                 public uint DecompressedSize { get; set; }
@@ -33,7 +33,7 @@ namespace SteamKit2
                 {
                     ChunkGID = ds.ReadBytes( 20 );
 
-                    Checksum = ds.ReadBytes( 4 );
+                    Checksum = ds.ReadUInt32();
 
                     Offset = ds.ReadUInt64();
 
@@ -110,35 +110,24 @@ namespace SteamKit2
         [NotNull]
         public List<FileMapping>? Mapping { get; private set; }
 
-        public Steam3Manifest(byte[] data)
+        internal void Deserialize( BinaryReader ds )
         {
-            ArgumentNullException.ThrowIfNull( data );
-
-            Deserialize(data);
-        }
-
-        internal Steam3Manifest(BinaryReader data)
-        {
-            Deserialize(data);
-        }
-
-        void Deserialize(byte[] data)
-        {
-            using var ms = new MemoryStream( data );
-            using var br = new BinaryReader( ms );
-            Deserialize( br );
-        }
-
-        void Deserialize( BinaryReader ds )
-        {
+            /*
+            // The magic is verified by DepotManifest.InternalDeserialize, not checked here to avoid seeking
             Magic = ds.ReadUInt32();
 
             if (Magic != MAGIC)
             {
                 throw new InvalidDataException("data is not a valid steam3 manifest: incorrect magic.");
             }
+            */
 
             Version = ds.ReadUInt32();
+
+            if ( Version != CURRENT_VERSION )
+            {
+                throw new NotImplementedException( $"Only version {CURRENT_VERSION} is supported." );
+            }
 
             DepotID = ds.ReadUInt32();
 

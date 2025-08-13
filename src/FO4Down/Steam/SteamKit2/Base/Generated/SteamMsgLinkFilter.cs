@@ -5,7 +5,7 @@
 // </auto-generated>
 
 #region Designer generated code
-#pragma warning disable CS0612, CS0618, CS1591, CS3021, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
+#pragma warning disable CS0612, CS0618, CS1591, CS3021, CS8981, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
 namespace SteamKit2.Internal
 {
 
@@ -160,14 +160,47 @@ namespace SteamKit2.Internal
 
     }
 
-    public interface ICommunityLinkFilter
+    public class CommunityLinkFilter : SteamUnifiedMessages.UnifiedService
     {
-        CCommunity_GetLinkFilterHashPrefixes_Response GetLinkFilterHashPrefixes(CCommunity_GetLinkFilterHashPrefixes_Request request);
-        CCommunity_GetLinkFilterHashes_Response GetLinkFilterHashes(CCommunity_GetLinkFilterHashes_Request request);
-        CCommunity_GetLinkFilterListVersion_Response GetLinkFilterListVersion(CCommunity_GetLinkFilterListVersion_Request request);
+        public override string ServiceName { get; } = "CommunityLinkFilter";
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CCommunity_GetLinkFilterHashPrefixes_Response>> GetLinkFilterHashPrefixes( CCommunity_GetLinkFilterHashPrefixes_Request request )
+        {
+            return UnifiedMessages.SendMessage<CCommunity_GetLinkFilterHashPrefixes_Request, CCommunity_GetLinkFilterHashPrefixes_Response>( "CommunityLinkFilter.GetLinkFilterHashPrefixes#1", request );
+        }
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CCommunity_GetLinkFilterHashes_Response>> GetLinkFilterHashes( CCommunity_GetLinkFilterHashes_Request request )
+        {
+            return UnifiedMessages.SendMessage<CCommunity_GetLinkFilterHashes_Request, CCommunity_GetLinkFilterHashes_Response>( "CommunityLinkFilter.GetLinkFilterHashes#1", request );
+        }
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CCommunity_GetLinkFilterListVersion_Response>> GetLinkFilterListVersion( CCommunity_GetLinkFilterListVersion_Request request )
+        {
+            return UnifiedMessages.SendMessage<CCommunity_GetLinkFilterListVersion_Request, CCommunity_GetLinkFilterListVersion_Response>( "CommunityLinkFilter.GetLinkFilterListVersion#1", request );
+        }
+
+        public override void HandleResponseMsg( string methodName, PacketClientMsgProtobuf packetMsg )
+        {
+            switch ( methodName )
+            {
+                case "GetLinkFilterHashPrefixes":
+                    PostResponseMsg<CCommunity_GetLinkFilterHashPrefixes_Response>( packetMsg );
+                    break;
+                case "GetLinkFilterHashes":
+                    PostResponseMsg<CCommunity_GetLinkFilterHashes_Response>( packetMsg );
+                    break;
+                case "GetLinkFilterListVersion":
+                    PostResponseMsg<CCommunity_GetLinkFilterListVersion_Response>( packetMsg );
+                    break;
+            }
+        }
+
+        public override void HandleNotificationMsg( string methodName, PacketClientMsgProtobuf packetMsg )
+        {
+        }
     }
 
 }
 
-#pragma warning restore CS0612, CS0618, CS1591, CS3021, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
+#pragma warning restore CS0612, CS0618, CS1591, CS3021, CS8981, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
 #endregion

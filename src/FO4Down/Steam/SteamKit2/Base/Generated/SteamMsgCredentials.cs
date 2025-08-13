@@ -5,69 +5,9 @@
 // </auto-generated>
 
 #region Designer generated code
-#pragma warning disable CS0612, CS0618, CS1591, CS3021, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
+#pragma warning disable CS0612, CS0618, CS1591, CS3021, CS8981, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
 namespace SteamKit2.Internal
 {
-
-    [global::ProtoBuf.ProtoContract()]
-    public partial class CCredentials_TestAvailablePassword_Request : global::ProtoBuf.IExtensible
-    {
-        private global::ProtoBuf.IExtension __pbn__extensionData;
-        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
-
-        [global::ProtoBuf.ProtoMember(1)]
-        [global::System.ComponentModel.DefaultValue("")]
-        public string password
-        {
-            get => __pbn__password ?? "";
-            set => __pbn__password = value;
-        }
-        public bool ShouldSerializepassword() => __pbn__password != null;
-        public void Resetpassword() => __pbn__password = null;
-        private string __pbn__password;
-
-        [global::ProtoBuf.ProtoMember(2)]
-        public byte[] sha_digest_password
-        {
-            get => __pbn__sha_digest_password;
-            set => __pbn__sha_digest_password = value;
-        }
-        public bool ShouldSerializesha_digest_password() => __pbn__sha_digest_password != null;
-        public void Resetsha_digest_password() => __pbn__sha_digest_password = null;
-        private byte[] __pbn__sha_digest_password;
-
-        [global::ProtoBuf.ProtoMember(3)]
-        [global::System.ComponentModel.DefaultValue("")]
-        public string account_name
-        {
-            get => __pbn__account_name ?? "";
-            set => __pbn__account_name = value;
-        }
-        public bool ShouldSerializeaccount_name() => __pbn__account_name != null;
-        public void Resetaccount_name() => __pbn__account_name = null;
-        private string __pbn__account_name;
-
-    }
-
-    [global::ProtoBuf.ProtoContract()]
-    public partial class CCredentials_TestAvailablePassword_Response : global::ProtoBuf.IExtensible
-    {
-        private global::ProtoBuf.IExtension __pbn__extensionData;
-        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
-
-        [global::ProtoBuf.ProtoMember(3)]
-        public bool is_valid
-        {
-            get => __pbn__is_valid.GetValueOrDefault();
-            set => __pbn__is_valid = value;
-        }
-        public bool ShouldSerializeis_valid() => __pbn__is_valid != null;
-        public void Resetis_valid() => __pbn__is_valid = null;
-        private bool? __pbn__is_valid;
-
-    }
 
     [global::ProtoBuf.ProtoContract()]
     public partial class CCredentials_GetSteamGuardDetails_Request : global::ProtoBuf.IExtensible
@@ -570,17 +510,63 @@ namespace SteamKit2.Internal
 
     }
 
-    public interface ICredentials
+    public class Credentials : SteamUnifiedMessages.UnifiedService
     {
-        CCredentials_TestAvailablePassword_Response TestAvailablePassword(CCredentials_TestAvailablePassword_Request request);
-        CCredentials_GetSteamGuardDetails_Response GetSteamGuardDetails(CCredentials_GetSteamGuardDetails_Request request);
-        CCredentials_ValidateEmailAddress_Response ValidateEmailAddress(CCredentials_ValidateEmailAddress_Request request);
-        CCredentials_SteamGuardPhishingReport_Response SteamGuardPhishingReport(CCredentials_SteamGuardPhishingReport_Request request);
-        CCredentials_LastCredentialChangeTime_Response GetCredentialChangeTimeDetails(CCredentials_LastCredentialChangeTime_Request request);
-        CCredentials_GetAccountAuthSecret_Response GetAccountAuthSecret(CCredentials_GetAccountAuthSecret_Request request);
+        public override string ServiceName { get; } = "Credentials";
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CCredentials_GetSteamGuardDetails_Response>> GetSteamGuardDetails( CCredentials_GetSteamGuardDetails_Request request )
+        {
+            return UnifiedMessages.SendMessage<CCredentials_GetSteamGuardDetails_Request, CCredentials_GetSteamGuardDetails_Response>( "Credentials.GetSteamGuardDetails#1", request );
+        }
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CCredentials_ValidateEmailAddress_Response>> ValidateEmailAddress( CCredentials_ValidateEmailAddress_Request request )
+        {
+            return UnifiedMessages.SendMessage<CCredentials_ValidateEmailAddress_Request, CCredentials_ValidateEmailAddress_Response>( "Credentials.ValidateEmailAddress#1", request );
+        }
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CCredentials_SteamGuardPhishingReport_Response>> SteamGuardPhishingReport( CCredentials_SteamGuardPhishingReport_Request request )
+        {
+            return UnifiedMessages.SendMessage<CCredentials_SteamGuardPhishingReport_Request, CCredentials_SteamGuardPhishingReport_Response>( "Credentials.SteamGuardPhishingReport#1", request );
+        }
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CCredentials_LastCredentialChangeTime_Response>> GetCredentialChangeTimeDetails( CCredentials_LastCredentialChangeTime_Request request )
+        {
+            return UnifiedMessages.SendMessage<CCredentials_LastCredentialChangeTime_Request, CCredentials_LastCredentialChangeTime_Response>( "Credentials.GetCredentialChangeTimeDetails#1", request );
+        }
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CCredentials_GetAccountAuthSecret_Response>> GetAccountAuthSecret( CCredentials_GetAccountAuthSecret_Request request )
+        {
+            return UnifiedMessages.SendMessage<CCredentials_GetAccountAuthSecret_Request, CCredentials_GetAccountAuthSecret_Response>( "Credentials.GetAccountAuthSecret#1", request );
+        }
+
+        public override void HandleResponseMsg( string methodName, PacketClientMsgProtobuf packetMsg )
+        {
+            switch ( methodName )
+            {
+                case "GetSteamGuardDetails":
+                    PostResponseMsg<CCredentials_GetSteamGuardDetails_Response>( packetMsg );
+                    break;
+                case "ValidateEmailAddress":
+                    PostResponseMsg<CCredentials_ValidateEmailAddress_Response>( packetMsg );
+                    break;
+                case "SteamGuardPhishingReport":
+                    PostResponseMsg<CCredentials_SteamGuardPhishingReport_Response>( packetMsg );
+                    break;
+                case "GetCredentialChangeTimeDetails":
+                    PostResponseMsg<CCredentials_LastCredentialChangeTime_Response>( packetMsg );
+                    break;
+                case "GetAccountAuthSecret":
+                    PostResponseMsg<CCredentials_GetAccountAuthSecret_Response>( packetMsg );
+                    break;
+            }
+        }
+
+        public override void HandleNotificationMsg( string methodName, PacketClientMsgProtobuf packetMsg )
+        {
+        }
     }
 
 }
 
-#pragma warning restore CS0612, CS0618, CS1591, CS3021, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
+#pragma warning restore CS0612, CS0618, CS1591, CS3021, CS8981, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
 #endregion

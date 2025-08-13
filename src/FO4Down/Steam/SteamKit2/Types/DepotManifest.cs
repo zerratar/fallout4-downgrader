@@ -4,6 +4,7 @@
  */
 
 using System;
+using System.Buffers;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Hashing;
@@ -40,7 +41,7 @@ namespace SteamKit2
             /// <summary>
             /// Gets or sets the expected Adler32 checksum of this chunk.
             /// </summary>
-            public byte[]? Checksum { get; set; }
+            public uint Checksum { get; set; }
             /// <summary>
             /// Gets or sets the chunk offset.
             /// </summary>
@@ -63,7 +64,10 @@ namespace SteamKit2
             {
             }
 
-            internal ChunkData( byte[] id, byte[] checksum, ulong offset, uint comp_length, uint uncomp_length )
+            /// <summary>
+            /// Initializes a new instance of the <see cref="ChunkData"/> class with specified values.
+            /// </summary>
+            public ChunkData( byte[] id, uint checksum, ulong offset, uint comp_length, uint uncomp_length )
             {
                 this.ChunkID = id;
                 this.Checksum = checksum;
@@ -82,36 +86,49 @@ namespace SteamKit2
             /// <summary>
             /// Gets the name of the file.
             /// </summary>
-            public string FileName { get; internal set; }
+            public string FileName { get; set; }
             /// <summary>
             /// Gets SHA-1 hash of this file's name.
             /// </summary>
-            public byte[] FileNameHash { get; internal set; }
+            public byte[] FileNameHash { get; set; }
             /// <summary>
             /// Gets the chunks that this file is composed of.
             /// </summary>
-            public List<ChunkData> Chunks { get; private set; }
+            public List<ChunkData> Chunks { get; set; }
 
             /// <summary>
             /// Gets the file flags
             /// </summary>
-            public EDepotFileFlag Flags { get; private set; }
+            public EDepotFileFlag Flags { get; set; }
 
             /// <summary>
             /// Gets the total size of this file.
             /// </summary>
-            public ulong TotalSize { get; private set; }
+            public ulong TotalSize { get; set; }
             /// <summary>
             /// Gets SHA-1 hash of this file.
             /// </summary>
-            public byte[] FileHash { get; private set; }
+            public byte[] FileHash { get; set; }
             /// <summary>
             /// Gets symlink target of this file.
             /// </summary>
-            public string LinkTarget { get; private set; }
+            public string? LinkTarget { get; set; }
 
+            /// <summary>
+            /// Initializes a new instance of the <see cref="FileData"/> class.
+            /// </summary>
+            public FileData()
+            {
+                FileName = string.Empty;
+                FileNameHash = [];
+                Chunks = [];
+                FileHash = [];
+            }
 
-            internal FileData(string filename, byte[] filenameHash, EDepotFileFlag flag, ulong size, byte[] hash, string linkTarget, bool encrypted, int numChunks)
+            /// <summary>
+            /// Initializes a new instance of the <see cref="FileData"/> class with specified values.
+            /// </summary>
+            public FileData(string filename, byte[] filenameHash, EDepotFileFlag flag, ulong size, byte[] hash, string linkTarget, bool encrypted, int numChunks)
             {
                 if (encrypted)
                 {
@@ -134,43 +151,51 @@ namespace SteamKit2
         /// <summary>
         /// Gets the list of files within this manifest.
         /// </summary>
-        public List<FileData>? Files { get; private set; }
+        public List<FileData>? Files { get; set; }
         /// <summary>
         /// Gets a value indicating whether filenames within this depot are encrypted.
         /// </summary>
         /// <value>
         ///   <c>true</c> if the filenames are encrypted; otherwise, <c>false</c>.
         /// </value>
-        public bool FilenamesEncrypted { get; private set; }
+        public bool FilenamesEncrypted { get; set; }
         /// <summary>
         /// Gets the depot id.
         /// </summary>
-        public uint DepotID { get; private set; }
+        public uint DepotID { get; set; }
         /// <summary>
         /// Gets the manifest id.
         /// </summary>
-        public ulong ManifestGID { get; private set; }
+        public ulong ManifestGID { get; set; }
         /// <summary>
         /// Gets the depot creation time.
         /// </summary>
-        public DateTime CreationTime { get; private set; }
+        public DateTime CreationTime { get; set; }
         /// <summary>
         /// Gets the total uncompressed size of all files in this depot.
         /// </summary>
-        public ulong TotalUncompressedSize { get; private set; }
+        public ulong TotalUncompressedSize { get; set; }
         /// <summary>
         /// Gets the total compressed size of all files in this depot.
         /// </summary>
-        public ulong TotalCompressedSize { get; private set; }
+        public ulong TotalCompressedSize { get; set; }
         /// <summary>
         /// Gets CRC-32 checksum of encrypted manifest payload.
         /// </summary>
-        public uint EncryptedCRC { get; private set; }
+        public uint EncryptedCRC { get; set; }
 
-
-        internal DepotManifest(byte[] data)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DepotManifest"/> class.
+        /// Depot manifests may come from the Steam CDN or from Steam/depotcache/ manifest files.
+        /// </summary>
+        /// <param name="stream">Raw depot manifest stream to deserialize.</param>
+        /// <exception cref="InvalidDataException">Thrown if the given data is not something recognizable.</exception>
+        /// <exception cref="EndOfStreamException">Thrown if the given data is not complete.</exception>
+        public static DepotManifest Deserialize( Stream stream )
         {
-            InternalDeserialize(data);
+            var manifest = new DepotManifest();
+            manifest.InternalDeserialize( stream );
+            return manifest;
         }
 
         /// <summary>
@@ -179,7 +204,12 @@ namespace SteamKit2
         /// </summary>
         /// <param name="data">Raw depot manifest data to deserialize.</param>
         /// <exception cref="InvalidDataException">Thrown if the given data is not something recognizable.</exception>
-        public static DepotManifest Deserialize(byte[] data) => new(data);
+        /// <exception cref="EndOfStreamException">Thrown if the given data is not complete.</exception>
+        public static DepotManifest Deserialize( byte[] data )
+        {
+            using var ms = new MemoryStream( data );
+            return Deserialize( ms );
+        }
 
         /// <summary>
         /// Attempts to decrypts file names with the given encryption key.
@@ -194,21 +224,70 @@ namespace SteamKit2
             }
 
             DebugLog.Assert( Files != null, nameof( DepotManifest ), "Files was null when attempting to decrypt filenames." );
+            DebugLog.Assert( encryptionKey.Length == 32, nameof( DepotManifest ), $"Decrypt filnames used with non 32 byte key!" );
 
-            foreach (var file in Files)
+            // This was copypasted from <see cref="CryptoHelper.SymmetricDecrypt"/> to avoid allocating Aes instance for every filename
+            using var aes = Aes.Create();
+            aes.BlockSize = 128;
+            aes.KeySize = 256;
+            aes.Key = encryptionKey;
+
+            Span<byte> iv = stackalloc byte[ 16 ];
+            var filenameLength = 0;
+            var bufferDecoded = ArrayPool<byte>.Shared.Rent( 256 );
+            var bufferDecrypted = ArrayPool<byte>.Shared.Rent( 256 );
+
+            try
             {
-                byte[] enc_filename = Convert.FromBase64String(file.FileName);
-                byte[] filename;
-                try
+                foreach ( var file in Files )
                 {
-                    filename = CryptoHelper.SymmetricDecrypt(enc_filename, encryptionKey);
-                }
-                catch (Exception)
-                {
-                    return false;
-                }
+                    var decodedLength = file.FileName.Length / 4 * 3; // This may be higher due to padding
 
-                file.FileName = Encoding.UTF8.GetString( filename ).TrimEnd( '\0' ).Replace(altDirChar, Path.DirectorySeparatorChar);
+                    // Majority of filenames are short, even when they are encrypted and base64 encoded,
+                    // so this resize will be hit *very* rarely
+                    if ( decodedLength > bufferDecoded.Length )
+                    {
+                        ArrayPool<byte>.Shared.Return( bufferDecoded );
+                        bufferDecoded = ArrayPool<byte>.Shared.Rent( decodedLength );
+
+                        ArrayPool<byte>.Shared.Return( bufferDecrypted );
+                        bufferDecrypted = ArrayPool<byte>.Shared.Rent( decodedLength );
+                    }
+
+                    if ( !Convert.TryFromBase64Chars( file.FileName, bufferDecoded, out decodedLength ) )
+                    {
+                        DebugLog.Assert( false, nameof( DepotManifest ), "Failed to base64 decode the filename." );
+                        return false;
+                    }
+
+                    try
+                    {
+                        var encryptedFilename = bufferDecoded.AsSpan()[ ..decodedLength ];
+                        aes.DecryptEcb( encryptedFilename[ ..iv.Length ], iv, PaddingMode.None );
+                        filenameLength = aes.DecryptCbc( encryptedFilename[ iv.Length.. ], iv, bufferDecrypted, PaddingMode.PKCS7 );
+                    }
+                    catch ( Exception )
+                    {
+                        DebugLog.Assert( false, nameof( DepotManifest ), "Failed to decrypt the filename." );
+                        return false;
+                    }
+
+                    // Trim the ending null byte, safe for UTF-8
+                    if ( filenameLength > 0 && bufferDecrypted[ filenameLength ] == 0 )
+                    {
+                        filenameLength--;
+                    }
+
+                    // ASCII is subset of UTF-8, so it safe to replace the raw bytes here
+                    MemoryExtensions.Replace( bufferDecrypted.AsSpan(), ( byte )altDirChar, ( byte )Path.DirectorySeparatorChar );
+
+                    file.FileName = Encoding.UTF8.GetString( bufferDecrypted, 0, filenameLength );
+                }
+            }
+            finally
+            {
+                ArrayPool<byte>.Shared.Return( bufferDecoded );
+                ArrayPool<byte>.Shared.Return( bufferDecrypted );
             }
 
             // Sort file entries alphabetically because that's what Steam does
@@ -223,19 +302,10 @@ namespace SteamKit2
         /// Serializes depot manifest and saves the output to a file.
         /// </summary>
         /// <param name="filename">Output file name.</param>
-        /// <returns><c>true</c> if serialization was successful; otherwise, <c>false</c>.</returns>
-        public bool SaveToFile( string filename )
+        public void SaveToFile( string filename )
         {
             using var fs = File.Open( filename, FileMode.Create );
-            using var bw = new BinaryWriter( fs );
-            var data = Serialize();
-            if ( data != null )
-            {
-                bw.Write( data );
-                return true;
-            }
-
-            return false;
+            Serialize( fs );
         }
 
         /// <summary>
@@ -243,69 +313,66 @@ namespace SteamKit2
         /// </summary>
         /// <param name="filename">Input file name.</param>
         /// <returns><c>DepotManifest</c> object if deserialization was successful; otherwise, <c>null</c>.</returns>
+        /// <exception cref="InvalidDataException">Thrown if the given data is not something recognizable.</exception>
+        /// <exception cref="EndOfStreamException">Thrown if the given data is not complete.</exception>
         public static DepotManifest? LoadFromFile( string filename )
         {
             if ( !File.Exists( filename ) )
                 return null;
 
             using var fs = File.Open( filename, FileMode.Open );
-            using var ms = new MemoryStream();
-            fs.CopyTo( ms );
-            return Deserialize( ms.ToArray() );
+            return Deserialize( fs );
         }
 
-        void InternalDeserialize(byte[] data)
+        void InternalDeserialize( Stream stream )
         {
             ContentManifestPayload? payload = null;
             ContentManifestMetadata? metadata = null;
             ContentManifestSignature? signature = null;
 
-            using ( var ms = new MemoryStream( data ) )
-            using ( var br = new BinaryReader( ms ) )
+            using var br = new BinaryReader( stream, Encoding.UTF8, leaveOpen: true );
+
+            while ( true )
             {
-                while ( ( ms.Length - ms.Position ) > 0 )
+                uint magic = br.ReadUInt32();
+
+                if ( magic == DepotManifest.PROTOBUF_ENDOFMANIFEST_MAGIC )
                 {
-                    uint magic = br.ReadUInt32();
+                    break;
+                }
 
-                    switch ( magic )
-                    {
-                        case Steam3Manifest.MAGIC:
-                            ms.Seek(-4, SeekOrigin.Current);
-                            Steam3Manifest binaryManifest = new Steam3Manifest( br );
-                            ParseBinaryManifest( binaryManifest );
+                switch ( magic )
+                {
+                    case Steam3Manifest.MAGIC:
+                        Steam3Manifest binaryManifest = new Steam3Manifest();
+                        binaryManifest.Deserialize( br );
+                        ParseBinaryManifest( binaryManifest );
 
-                            uint marker = br.ReadUInt32();
-                            if ( marker != magic )
-                                throw new InvalidDataException( "Unable to find end of message marker for depot manifest" );
-                            break;
+                        uint marker = br.ReadUInt32();
+                        if ( marker != magic )
+                            throw new InvalidDataException( "Unable to find end of message marker for depot manifest" );
 
-                        case DepotManifest.PROTOBUF_PAYLOAD_MAGIC:
-                            uint payload_length = br.ReadUInt32();
-                            byte[] payload_bytes = br.ReadBytes( (int)payload_length );
-                            using ( var ms_payload = new MemoryStream( payload_bytes ) ) 
-                                payload = Serializer.Deserialize<ContentManifestPayload>( ms_payload );
-                            break;
+                        // This is an intentional return because v4 manifest does not have the separate sections
+                        // and it will be parsed by ParseBinaryManifest. If we get here, the entire buffer has been already processed.
+                        return;
 
-                        case DepotManifest.PROTOBUF_METADATA_MAGIC:
-                            uint metadata_length = br.ReadUInt32();
-                            byte[] metadata_bytes = br.ReadBytes( (int)metadata_length );
-                            using ( var ms_metadata = new MemoryStream( metadata_bytes ) )
-                                metadata = Serializer.Deserialize<ContentManifestMetadata>( ms_metadata );
-                            break;
+                    case DepotManifest.PROTOBUF_PAYLOAD_MAGIC:
+                        uint payload_length = br.ReadUInt32();
+                        payload = Serializer.Deserialize<ContentManifestPayload>( stream, length: payload_length );
+                        break;
 
-                        case DepotManifest.PROTOBUF_SIGNATURE_MAGIC:
-                            uint signature_length = br.ReadUInt32();
-                            byte[] signature_bytes = br.ReadBytes( (int)signature_length );
-                            using ( var ms_signature = new MemoryStream( signature_bytes ) )
-                                signature = Serializer.Deserialize<ContentManifestSignature>( ms_signature );
-                            break;
+                    case DepotManifest.PROTOBUF_METADATA_MAGIC:
+                        uint metadata_length = br.ReadUInt32();
+                        metadata = Serializer.Deserialize<ContentManifestMetadata>( stream, length: metadata_length );
+                        break;
 
-                        case DepotManifest.PROTOBUF_ENDOFMANIFEST_MAGIC:
-                            break;
+                    case DepotManifest.PROTOBUF_SIGNATURE_MAGIC:
+                        uint signature_length = br.ReadUInt32();
+                        signature = Serializer.Deserialize<ContentManifestSignature>( stream, length: signature_length );
+                        break;
 
-                        default:
-                            throw new InvalidDataException( $"Unrecognized magic value {magic:X} in depot manifest." );
-                    }
+                    default:
+                        throw new InvalidDataException( $"Unrecognized magic value {magic:X} in depot manifest." );
                 }
             }
 
@@ -329,6 +396,7 @@ namespace SteamKit2
             CreationTime = manifest.CreationTime;
             TotalUncompressedSize = manifest.TotalUncompressedSize;
             TotalCompressedSize = manifest.TotalCompressedSize;
+            EncryptedCRC = manifest.EncryptedCRC;
 
             foreach (var file_mapping in manifest.Mapping)
             {
@@ -336,7 +404,7 @@ namespace SteamKit2
 
                 foreach (var chunk in file_mapping.Chunks)
                 {
-                    filedata.Chunks.Add( new ChunkData( chunk.ChunkGID!, chunk.Checksum!, chunk.Offset, chunk.CompressedSize, chunk.DecompressedSize ) );
+                    filedata.Chunks.Add( new ChunkData( chunk.ChunkGID!, chunk.Checksum, chunk.Offset, chunk.CompressedSize, chunk.DecompressedSize ) );
                 }
 
                 Files.Add(filedata);
@@ -353,7 +421,7 @@ namespace SteamKit2
 
                 foreach (var chunk in file_mapping.chunks)
                 {
-                    filedata.Chunks.Add( new ChunkData( chunk.sha, BitConverter.GetBytes(chunk.crc), chunk.offset, chunk.cb_compressed, chunk.cb_original ) );
+                    filedata.Chunks.Add( new ChunkData( chunk.sha, chunk.crc, chunk.offset, chunk.cb_compressed, chunk.cb_original ) );
                 }
 
                 Files.Add(filedata);
@@ -371,27 +439,50 @@ namespace SteamKit2
             EncryptedCRC = metadata.crc_encrypted;
         }
 
-        byte[]? Serialize()
+        class ChunkIdComparer : IEqualityComparer<byte[]>
+        {
+            public bool Equals( byte[]? x, byte[]? y )
+            {
+                if ( ReferenceEquals( x, y ) ) return true;
+                if ( x == null || y == null ) return false;
+                return x.SequenceEqual( y );
+            }
+
+            public int GetHashCode( byte[] obj )
+            {
+                ArgumentNullException.ThrowIfNull( obj );
+
+                // ChunkID is SHA-1, so we can just use the first 4 bytes
+                return BitConverter.ToInt32( obj, 0 );
+            }
+        }
+
+        /// <summary>
+        /// Serializes the depot manifest into the provided output stream.
+        /// </summary>
+        /// <param name="output">The stream to which the serialized depot manifest will be written.</param>
+        public void Serialize( Stream output )
         {
             DebugLog.Assert( Files != null, nameof( DepotManifest ), "Files was null when attempting to serialize manifest." );
 
             var payload = new ContentManifestPayload();
-            var uniqueChunks = new List<byte[]>();
+            var uniqueChunks = new HashSet<byte[]>( new ChunkIdComparer() );
 
             foreach ( var file in Files )
             {
                 var protofile = new ContentManifestPayload.FileMapping();
-                protofile.filename = file.FileName.Replace( '/', '\\' );
                 protofile.size = file.TotalSize;
                 protofile.flags = ( uint )file.Flags;
                 if ( FilenamesEncrypted )
                 {
                     // Assume the name is unmodified
+                    protofile.filename = file.FileName;
                     protofile.sha_filename = file.FileNameHash;
                 }
                 else
                 {
-                    protofile.sha_filename = SHA1.HashData( Encoding.UTF8.GetBytes( file.FileName.Replace( '/', '\\' ).ToLower() ) );
+                    protofile.filename = file.FileName.Replace( '/', '\\' );
+                    protofile.sha_filename = SHA1.HashData( Encoding.UTF8.GetBytes( file.FileName.Replace( '/', '\\' ).ToLowerInvariant() ) );
                 }
                 protofile.sha_content = file.FileHash;
                 if ( !string.IsNullOrWhiteSpace( file.LinkTarget ) )
@@ -403,16 +494,13 @@ namespace SteamKit2
                 {
                     var protochunk = new ContentManifestPayload.FileMapping.ChunkData();
                     protochunk.sha = chunk.ChunkID;
-                    protochunk.crc = BitConverter.ToUInt32( chunk.Checksum!, 0 );
+                    protochunk.crc = chunk.Checksum;
                     protochunk.offset = chunk.Offset;
                     protochunk.cb_original = chunk.UncompressedLength;
                     protochunk.cb_compressed = chunk.CompressedLength;
 
                     protofile.chunks.Add( protochunk );
-                    if ( !uniqueChunks.Exists( x => x.SequenceEqual( chunk.ChunkID! ) ) )
-                    {
-                        uniqueChunks.Add( chunk.ChunkID! );
-                    }
+                    uniqueChunks.Add( chunk.ChunkID! );
                 }
 
                 payload.mappings.Add( protofile );
@@ -450,8 +538,7 @@ namespace SteamKit2
                 }
             }
 
-            using var ms = new MemoryStream();
-            using var bw = new BinaryWriter( ms );
+            using var bw = new BinaryWriter( output, Encoding.Default, true );
 
             // Write Protobuf payload
             using ( var ms_payload = new MemoryStream() )
@@ -459,7 +546,7 @@ namespace SteamKit2
                 Serializer.Serialize<ContentManifestPayload>( ms_payload, payload );
                 bw.Write( DepotManifest.PROTOBUF_PAYLOAD_MAGIC );
                 bw.Write( ( int )ms_payload.Length );
-                bw.Write( ms_payload.ToArray() );
+                bw.Write( ms_payload.GetBuffer().AsSpan( 0, ( int )ms_payload.Length ) );
             }
 
             // Write Protobuf metadata
@@ -468,7 +555,7 @@ namespace SteamKit2
                 Serializer.Serialize<ContentManifestMetadata>( ms_metadata, metadata );
                 bw.Write( DepotManifest.PROTOBUF_METADATA_MAGIC );
                 bw.Write( ( int )ms_metadata.Length );
-                bw.Write( ms_metadata.ToArray() );
+                bw.Write( ms_metadata.GetBuffer().AsSpan( 0, ( int )ms_metadata.Length ) );
             }
 
             // Write empty signature section
@@ -477,8 +564,6 @@ namespace SteamKit2
 
             // Write EOF marker
             bw.Write( DepotManifest.PROTOBUF_ENDOFMANIFEST_MAGIC );
-
-            return ms.ToArray();
         }
     }
 }

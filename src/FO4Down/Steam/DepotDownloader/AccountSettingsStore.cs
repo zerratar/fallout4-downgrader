@@ -1,3 +1,6 @@
+// This file is subject to the terms and conditions defined
+// in file 'LICENSE', which is part of this source code package.
+
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -6,10 +9,10 @@ using System.IO.Compression;
 using System.IO.IsolatedStorage;
 using ProtoBuf;
 
-namespace FO4Down.Steam.DepotDownloader
+namespace DepotDownloader
 {
     [ProtoContract]
-    public class AccountSettingsStore
+    class AccountSettingsStore
     {
         // Member 1 was a Dictionary<string, byte[]> for SentryData.
 
@@ -29,8 +32,8 @@ namespace FO4Down.Steam.DepotDownloader
         AccountSettingsStore()
         {
             ContentServerPenalty = new ConcurrentDictionary<string, int>();
-            LoginTokens = [];
-            GuardData = [];
+            LoginTokens = new(StringComparer.OrdinalIgnoreCase);
+            GuardData = new(StringComparer.OrdinalIgnoreCase);
         }
 
         public static bool Loaded

@@ -5,9 +5,46 @@
 // </auto-generated>
 
 #region Designer generated code
-#pragma warning disable CS0612, CS0618, CS1591, CS3021, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
+#pragma warning disable CS0612, CS0618, CS1591, CS3021, CS8981, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
 namespace SteamKit2.WebUI.Internal
 {
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class CCheckout_AddFreeLicense_Request : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1)]
+        public StoreItemID item_id { get; set; }
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class CCheckout_AddFreeLicense_Response : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1)]
+        public global::System.Collections.Generic.List<uint> packageids_added { get; } = new global::System.Collections.Generic.List<uint>();
+
+        [global::ProtoBuf.ProtoMember(2)]
+        public global::System.Collections.Generic.List<uint> appids_added { get; } = new global::System.Collections.Generic.List<uint>();
+
+        [global::ProtoBuf.ProtoMember(3)]
+        public uint purchase_result_detail
+        {
+            get => __pbn__purchase_result_detail.GetValueOrDefault();
+            set => __pbn__purchase_result_detail = value;
+        }
+        public bool ShouldSerializepurchase_result_detail() => __pbn__purchase_result_detail != null;
+        public void Resetpurchase_result_detail() => __pbn__purchase_result_detail = null;
+        private uint? __pbn__purchase_result_detail;
+
+    }
 
     [global::ProtoBuf.ProtoContract()]
     public partial class CCheckout_GetFriendOwnershipForGifting_Request : global::ProtoBuf.IExtensible
@@ -129,6 +166,16 @@ namespace SteamKit2.WebUI.Internal
         public void Resetgidreplayoftransid() => __pbn__gidreplayoftransid = null;
         private ulong? __pbn__gidreplayoftransid;
 
+        [global::ProtoBuf.ProtoMember(6)]
+        public bool for_init_purchase
+        {
+            get => __pbn__for_init_purchase.GetValueOrDefault();
+            set => __pbn__for_init_purchase = value;
+        }
+        public bool ShouldSerializefor_init_purchase() => __pbn__for_init_purchase != null;
+        public void Resetfor_init_purchase() => __pbn__for_init_purchase = null;
+        private bool? __pbn__for_init_purchase;
+
     }
 
     [global::ProtoBuf.ProtoContract()]
@@ -193,6 +240,26 @@ namespace SteamKit2.WebUI.Internal
         [global::ProtoBuf.ProtoMember(11)]
         public CartAmount coupon_discount { get; set; }
 
+        [global::ProtoBuf.ProtoMember(12)]
+        public bool can_purchase_as_gift
+        {
+            get => __pbn__can_purchase_as_gift.GetValueOrDefault();
+            set => __pbn__can_purchase_as_gift = value;
+        }
+        public bool ShouldSerializecan_purchase_as_gift() => __pbn__can_purchase_as_gift != null;
+        public void Resetcan_purchase_as_gift() => __pbn__can_purchase_as_gift = null;
+        private bool? __pbn__can_purchase_as_gift;
+
+        [global::ProtoBuf.ProtoMember(13)]
+        public bool restrict_add_additional_to_cart
+        {
+            get => __pbn__restrict_add_additional_to_cart.GetValueOrDefault();
+            set => __pbn__restrict_add_additional_to_cart = value;
+        }
+        public bool ShouldSerializerestrict_add_additional_to_cart() => __pbn__restrict_add_additional_to_cart != null;
+        public void Resetrestrict_add_additional_to_cart() => __pbn__restrict_add_additional_to_cart = null;
+        private bool? __pbn__restrict_add_additional_to_cart;
+
     }
 
     [global::ProtoBuf.ProtoContract()]
@@ -247,6 +314,49 @@ namespace SteamKit2.WebUI.Internal
         public bool ShouldSerializecoupon_exclusive_promo() => __pbn__coupon_exclusive_promo != null;
         public void Resetcoupon_exclusive_promo() => __pbn__coupon_exclusive_promo = null;
         private bool? __pbn__coupon_exclusive_promo;
+
+        [global::ProtoBuf.ProtoMember(7)]
+        public bool cannot_purchase_as_gift
+        {
+            get => __pbn__cannot_purchase_as_gift.GetValueOrDefault();
+            set => __pbn__cannot_purchase_as_gift = value;
+        }
+        public bool ShouldSerializecannot_purchase_as_gift() => __pbn__cannot_purchase_as_gift != null;
+        public void Resetcannot_purchase_as_gift() => __pbn__cannot_purchase_as_gift = null;
+        private bool? __pbn__cannot_purchase_as_gift;
+
+        [global::ProtoBuf.ProtoMember(8)]
+        public bool invalid_item
+        {
+            get => __pbn__invalid_item.GetValueOrDefault();
+            set => __pbn__invalid_item = value;
+        }
+        public bool ShouldSerializeinvalid_item() => __pbn__invalid_item != null;
+        public void Resetinvalid_item() => __pbn__invalid_item = null;
+        private bool? __pbn__invalid_item;
+
+        [global::ProtoBuf.ProtoMember(9)]
+        public bool too_many_in_cart
+        {
+            get => __pbn__too_many_in_cart.GetValueOrDefault();
+            set => __pbn__too_many_in_cart = value;
+        }
+        public bool ShouldSerializetoo_many_in_cart() => __pbn__too_many_in_cart != null;
+        public void Resettoo_many_in_cart() => __pbn__too_many_in_cart = null;
+        private bool? __pbn__too_many_in_cart;
+
+        [global::ProtoBuf.ProtoMember(10)]
+        public bool has_existing_billing_agreement
+        {
+            get => __pbn__has_existing_billing_agreement.GetValueOrDefault();
+            set => __pbn__has_existing_billing_agreement = value;
+        }
+        public bool ShouldSerializehas_existing_billing_agreement() => __pbn__has_existing_billing_agreement != null;
+        public void Resethas_existing_billing_agreement() => __pbn__has_existing_billing_agreement = null;
+        private bool? __pbn__has_existing_billing_agreement;
+
+        [global::ProtoBuf.ProtoMember(11)]
+        public global::System.Collections.Generic.List<int> missing_must_own_appids { get; } = new global::System.Collections.Generic.List<int>();
 
     }
 
@@ -338,13 +448,47 @@ namespace SteamKit2.WebUI.Internal
 
     }
 
-    public interface ICheckout
+    public class Checkout : SteamUnifiedMessages.UnifiedService
     {
-        CCheckout_GetFriendOwnershipForGifting_Response GetFriendOwnershipForGifting(CCheckout_GetFriendOwnershipForGifting_Request request);
-        CCheckout_ValidateCart_Response ValidateCart(CCheckout_ValidateCart_Request request);
+        public override string ServiceName { get; } = "Checkout";
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CCheckout_AddFreeLicense_Response>> AddFreeLicense( CCheckout_AddFreeLicense_Request request )
+        {
+            return UnifiedMessages.SendMessage<CCheckout_AddFreeLicense_Request, CCheckout_AddFreeLicense_Response>( "Checkout.AddFreeLicense#1", request );
+        }
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CCheckout_GetFriendOwnershipForGifting_Response>> GetFriendOwnershipForGifting( CCheckout_GetFriendOwnershipForGifting_Request request )
+        {
+            return UnifiedMessages.SendMessage<CCheckout_GetFriendOwnershipForGifting_Request, CCheckout_GetFriendOwnershipForGifting_Response>( "Checkout.GetFriendOwnershipForGifting#1", request );
+        }
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CCheckout_ValidateCart_Response>> ValidateCart( CCheckout_ValidateCart_Request request )
+        {
+            return UnifiedMessages.SendMessage<CCheckout_ValidateCart_Request, CCheckout_ValidateCart_Response>( "Checkout.ValidateCart#1", request );
+        }
+
+        public override void HandleResponseMsg( string methodName, PacketClientMsgProtobuf packetMsg )
+        {
+            switch ( methodName )
+            {
+                case "AddFreeLicense":
+                    PostResponseMsg<CCheckout_AddFreeLicense_Response>( packetMsg );
+                    break;
+                case "GetFriendOwnershipForGifting":
+                    PostResponseMsg<CCheckout_GetFriendOwnershipForGifting_Response>( packetMsg );
+                    break;
+                case "ValidateCart":
+                    PostResponseMsg<CCheckout_ValidateCart_Response>( packetMsg );
+                    break;
+            }
+        }
+
+        public override void HandleNotificationMsg( string methodName, PacketClientMsgProtobuf packetMsg )
+        {
+        }
     }
 
 }
 
-#pragma warning restore CS0612, CS0618, CS1591, CS3021, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
+#pragma warning restore CS0612, CS0618, CS1591, CS3021, CS8981, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
 #endregion

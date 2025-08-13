@@ -5,7 +5,7 @@
 // </auto-generated>
 
 #region Designer generated code
-#pragma warning disable CS0612, CS0618, CS1591, CS3021, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
+#pragma warning disable CS0612, CS0618, CS1591, CS3021, CS8981, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
 namespace SteamKit2.GC.Dota.Internal
 {
 
@@ -56,14 +56,14 @@ namespace SteamKit2.GC.Dota.Internal
             => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
         [global::ProtoBuf.ProtoMember(1)]
-        public uint hero_id
+        public int hero_id
         {
             get => __pbn__hero_id.GetValueOrDefault();
             set => __pbn__hero_id = value;
         }
         public bool ShouldSerializehero_id() => __pbn__hero_id != null;
         public void Resethero_id() => __pbn__hero_id = null;
-        private uint? __pbn__hero_id;
+        private int? __pbn__hero_id;
 
         [global::ProtoBuf.ProtoMember(2)]
         public uint kills
@@ -554,6 +554,16 @@ namespace SteamKit2.GC.Dota.Internal
         public void Resetitem5() => __pbn__item5 = null;
         private int? __pbn__item5;
 
+        [global::ProtoBuf.ProtoMember(51)]
+        public uint selected_facet
+        {
+            get => __pbn__selected_facet.GetValueOrDefault();
+            set => __pbn__selected_facet = value;
+        }
+        public bool ShouldSerializeselected_facet() => __pbn__selected_facet != null;
+        public void Resetselected_facet() => __pbn__selected_facet = null;
+        private uint? __pbn__selected_facet;
+
     }
 
     [global::ProtoBuf.ProtoContract()]
@@ -686,14 +696,14 @@ namespace SteamKit2.GC.Dota.Internal
             private float? __pbn__confidence;
 
             [global::ProtoBuf.ProtoMember(7)]
-            public uint hero_id
+            public int hero_id
             {
                 get => __pbn__hero_id.GetValueOrDefault();
                 set => __pbn__hero_id = value;
             }
             public bool ShouldSerializehero_id() => __pbn__hero_id != null;
             public void Resethero_id() => __pbn__hero_id = null;
-            private uint? __pbn__hero_id;
+            private int? __pbn__hero_id;
 
             [global::ProtoBuf.ProtoMember(8)]
             [global::System.ComponentModel.DefaultValue(CMsgBattleReport_Role.k_eUnknownRole)]
@@ -769,14 +779,14 @@ namespace SteamKit2.GC.Dota.Internal
         private bool? __pbn__acknowledged;
 
         [global::ProtoBuf.ProtoMember(4)]
-        public uint featured_hero_id
+        public int featured_hero_id
         {
             get => __pbn__featured_hero_id.GetValueOrDefault();
             set => __pbn__featured_hero_id = value;
         }
         public bool ShouldSerializefeatured_hero_id() => __pbn__featured_hero_id != null;
         public void Resetfeatured_hero_id() => __pbn__featured_hero_id = null;
-        private uint? __pbn__featured_hero_id;
+        private int? __pbn__featured_hero_id;
 
         [global::ProtoBuf.ProtoMember(5)]
         public uint featured_position
@@ -874,14 +884,14 @@ namespace SteamKit2.GC.Dota.Internal
                 => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
             [global::ProtoBuf.ProtoMember(1)]
-            public uint hero_id
+            public int hero_id
             {
                 get => __pbn__hero_id.GetValueOrDefault();
                 set => __pbn__hero_id = value;
             }
             public bool ShouldSerializehero_id() => __pbn__hero_id != null;
             public void Resethero_id() => __pbn__hero_id = null;
-            private uint? __pbn__hero_id;
+            private int? __pbn__hero_id;
 
             [global::ProtoBuf.ProtoMember(2)]
             public uint predicted_position
@@ -1108,14 +1118,14 @@ namespace SteamKit2.GC.Dota.Internal
                 => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
             [global::ProtoBuf.ProtoMember(1)]
-            public uint hero_id
+            public int hero_id
             {
                 get => __pbn__hero_id.GetValueOrDefault();
                 set => __pbn__hero_id = value;
             }
             public bool ShouldSerializehero_id() => __pbn__hero_id != null;
             public void Resethero_id() => __pbn__hero_id = null;
-            private uint? __pbn__hero_id;
+            private int? __pbn__hero_id;
 
             [global::ProtoBuf.ProtoMember(2)]
             public uint predicted_position
@@ -1516,5 +1526,5 @@ namespace SteamKit2.GC.Dota.Internal
 
 }
 
-#pragma warning restore CS0612, CS0618, CS1591, CS3021, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
+#pragma warning restore CS0612, CS0618, CS1591, CS3021, CS8981, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
 #endregion

@@ -5,7 +5,7 @@
 // </auto-generated>
 
 #region Designer generated code
-#pragma warning disable CS0612, CS0618, CS1591, CS3021, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
+#pragma warning disable CS0612, CS0618, CS1591, CS3021, CS8981, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
 namespace SteamKit2.Internal
 {
 
@@ -158,6 +158,58 @@ namespace SteamKit2.Internal
 
         [global::ProtoBuf.ProtoMember(1)]
         public global::System.Collections.Generic.List<CAccountHardware_QueryAccountsRegisteredToSerial_Accounts> accounts { get; } = new global::System.Collections.Generic.List<CAccountHardware_QueryAccountsRegisteredToSerial_Accounts>();
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class CAccountHardware_UpdateControllerUsageReport_Request : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1)]
+        public global::System.Collections.Generic.List<Controller> controllers { get; } = new global::System.Collections.Generic.List<Controller>();
+
+        [global::ProtoBuf.ProtoContract()]
+        public partial class Controller : global::ProtoBuf.IExtensible
+        {
+            private global::ProtoBuf.IExtension __pbn__extensionData;
+            global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+                => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+            [global::ProtoBuf.ProtoMember(1)]
+            [global::System.ComponentModel.DefaultValue("")]
+            public string serial_number
+            {
+                get => __pbn__serial_number ?? "";
+                set => __pbn__serial_number = value;
+            }
+            public bool ShouldSerializeserial_number() => __pbn__serial_number != null;
+            public void Resetserial_number() => __pbn__serial_number = null;
+            private string __pbn__serial_number;
+
+            [global::ProtoBuf.ProtoMember(2)]
+            [global::System.ComponentModel.DefaultValue("")]
+            public string controller_code
+            {
+                get => __pbn__controller_code ?? "";
+                set => __pbn__controller_code = value;
+            }
+            public bool ShouldSerializecontroller_code() => __pbn__controller_code != null;
+            public void Resetcontroller_code() => __pbn__controller_code = null;
+            private string __pbn__controller_code;
+
+        }
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class CAccountHardware_UpdateControllerUsageReport_Response : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     }
 
@@ -846,24 +898,124 @@ namespace SteamKit2.Internal
         k_EValveIndexComponentHMD = 1,
         k_EValveIndexComponentLeftKnuckle = 2,
         k_EValveIndexComponentRightKnuckle = 3,
+        k_ETempDTst1 = 4,
+        k_ETempDTst2 = 5,
+        k_ETempDTst3 = 6,
     }
 
-    public interface IAccountHardware
+    public class AccountHardware : SteamUnifiedMessages.UnifiedService
     {
-        CAccountHardware_RegisterSteamController_Response RegisterSteamController(CAccountHardware_RegisterSteamController_Request request);
-        CAccountHardware_CompleteSteamControllerRegistration_Response CompleteSteamControllerRegistration(CAccountHardware_CompleteSteamControllerRegistration_Request request);
-        CAccountHardware_QueryAccountsRegisteredToSerial_Response QueryAccountsRegisteredToController(CAccountHardware_QueryAccountsRegisteredToSerial_Request request);
-        CAccountHardware_SteamControllerSetConfig_Response SetDesiredControllerConfigForApp(CAccountHardware_SteamControllerSetConfig_Request request);
-        CAccountHardware_SteamControllerGetConfig_Response GetDesiredControllerConfigForApp(CAccountHardware_SteamControllerGetConfig_Request request);
-        CAccountHardware_DeRegisterSteamController_Response DeRegisterSteamController(CAccountHardware_DeRegisterSteamController_Request request);
-        CAccountHardware_SetPersonalizationFile_Response SetControllerPersonalizationFile(CAccountHardware_SetPersonalizationFile_Request request);
-        CAccountHardware_GetPersonalizationFile_Response GetControllerPersonalizationFile(CAccountHardware_GetPersonalizationFile_Request request);
-        CAccountHardware_VRCompatibilityCheck_Response VRCompatibilityCheck(CAccountHardware_VRCompatibilityCheck_Request request);
-        CAccountHardware_RegisterValveIndexComponent_Response RegisterValveIndexComponent(CAccountHardware_RegisterValveIndexComponent_Request request);
-        CAccountHardware_GetSteamDeckComponents_Response GetSteamDeckComponents(CAccountHardware_GetSteamDeckComponents_Request request);
+        public override string ServiceName { get; } = "AccountHardware";
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CAccountHardware_RegisterSteamController_Response>> RegisterSteamController( CAccountHardware_RegisterSteamController_Request request )
+        {
+            return UnifiedMessages.SendMessage<CAccountHardware_RegisterSteamController_Request, CAccountHardware_RegisterSteamController_Response>( "AccountHardware.RegisterSteamController#1", request );
+        }
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CAccountHardware_CompleteSteamControllerRegistration_Response>> CompleteSteamControllerRegistration( CAccountHardware_CompleteSteamControllerRegistration_Request request )
+        {
+            return UnifiedMessages.SendMessage<CAccountHardware_CompleteSteamControllerRegistration_Request, CAccountHardware_CompleteSteamControllerRegistration_Response>( "AccountHardware.CompleteSteamControllerRegistration#1", request );
+        }
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CAccountHardware_QueryAccountsRegisteredToSerial_Response>> QueryAccountsRegisteredToController( CAccountHardware_QueryAccountsRegisteredToSerial_Request request )
+        {
+            return UnifiedMessages.SendMessage<CAccountHardware_QueryAccountsRegisteredToSerial_Request, CAccountHardware_QueryAccountsRegisteredToSerial_Response>( "AccountHardware.QueryAccountsRegisteredToController#1", request );
+        }
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CAccountHardware_UpdateControllerUsageReport_Response>> UpdateControllerUsageReport( CAccountHardware_UpdateControllerUsageReport_Request request )
+        {
+            return UnifiedMessages.SendMessage<CAccountHardware_UpdateControllerUsageReport_Request, CAccountHardware_UpdateControllerUsageReport_Response>( "AccountHardware.UpdateControllerUsageReport#1", request );
+        }
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CAccountHardware_SteamControllerSetConfig_Response>> SetDesiredControllerConfigForApp( CAccountHardware_SteamControllerSetConfig_Request request )
+        {
+            return UnifiedMessages.SendMessage<CAccountHardware_SteamControllerSetConfig_Request, CAccountHardware_SteamControllerSetConfig_Response>( "AccountHardware.SetDesiredControllerConfigForApp#1", request );
+        }
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CAccountHardware_SteamControllerGetConfig_Response>> GetDesiredControllerConfigForApp( CAccountHardware_SteamControllerGetConfig_Request request )
+        {
+            return UnifiedMessages.SendMessage<CAccountHardware_SteamControllerGetConfig_Request, CAccountHardware_SteamControllerGetConfig_Response>( "AccountHardware.GetDesiredControllerConfigForApp#1", request );
+        }
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CAccountHardware_DeRegisterSteamController_Response>> DeRegisterSteamController( CAccountHardware_DeRegisterSteamController_Request request )
+        {
+            return UnifiedMessages.SendMessage<CAccountHardware_DeRegisterSteamController_Request, CAccountHardware_DeRegisterSteamController_Response>( "AccountHardware.DeRegisterSteamController#1", request );
+        }
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CAccountHardware_SetPersonalizationFile_Response>> SetControllerPersonalizationFile( CAccountHardware_SetPersonalizationFile_Request request )
+        {
+            return UnifiedMessages.SendMessage<CAccountHardware_SetPersonalizationFile_Request, CAccountHardware_SetPersonalizationFile_Response>( "AccountHardware.SetControllerPersonalizationFile#1", request );
+        }
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CAccountHardware_GetPersonalizationFile_Response>> GetControllerPersonalizationFile( CAccountHardware_GetPersonalizationFile_Request request )
+        {
+            return UnifiedMessages.SendMessage<CAccountHardware_GetPersonalizationFile_Request, CAccountHardware_GetPersonalizationFile_Response>( "AccountHardware.GetControllerPersonalizationFile#1", request );
+        }
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CAccountHardware_VRCompatibilityCheck_Response>> VRCompatibilityCheck( CAccountHardware_VRCompatibilityCheck_Request request )
+        {
+            return UnifiedMessages.SendMessage<CAccountHardware_VRCompatibilityCheck_Request, CAccountHardware_VRCompatibilityCheck_Response>( "AccountHardware.VRCompatibilityCheck#1", request );
+        }
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CAccountHardware_RegisterValveIndexComponent_Response>> RegisterValveIndexComponent( CAccountHardware_RegisterValveIndexComponent_Request request )
+        {
+            return UnifiedMessages.SendMessage<CAccountHardware_RegisterValveIndexComponent_Request, CAccountHardware_RegisterValveIndexComponent_Response>( "AccountHardware.RegisterValveIndexComponent#1", request );
+        }
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CAccountHardware_GetSteamDeckComponents_Response>> GetSteamDeckComponents( CAccountHardware_GetSteamDeckComponents_Request request )
+        {
+            return UnifiedMessages.SendMessage<CAccountHardware_GetSteamDeckComponents_Request, CAccountHardware_GetSteamDeckComponents_Response>( "AccountHardware.GetSteamDeckComponents#1", request );
+        }
+
+        public override void HandleResponseMsg( string methodName, PacketClientMsgProtobuf packetMsg )
+        {
+            switch ( methodName )
+            {
+                case "RegisterSteamController":
+                    PostResponseMsg<CAccountHardware_RegisterSteamController_Response>( packetMsg );
+                    break;
+                case "CompleteSteamControllerRegistration":
+                    PostResponseMsg<CAccountHardware_CompleteSteamControllerRegistration_Response>( packetMsg );
+                    break;
+                case "QueryAccountsRegisteredToController":
+                    PostResponseMsg<CAccountHardware_QueryAccountsRegisteredToSerial_Response>( packetMsg );
+                    break;
+                case "UpdateControllerUsageReport":
+                    PostResponseMsg<CAccountHardware_UpdateControllerUsageReport_Response>( packetMsg );
+                    break;
+                case "SetDesiredControllerConfigForApp":
+                    PostResponseMsg<CAccountHardware_SteamControllerSetConfig_Response>( packetMsg );
+                    break;
+                case "GetDesiredControllerConfigForApp":
+                    PostResponseMsg<CAccountHardware_SteamControllerGetConfig_Response>( packetMsg );
+                    break;
+                case "DeRegisterSteamController":
+                    PostResponseMsg<CAccountHardware_DeRegisterSteamController_Response>( packetMsg );
+                    break;
+                case "SetControllerPersonalizationFile":
+                    PostResponseMsg<CAccountHardware_SetPersonalizationFile_Response>( packetMsg );
+                    break;
+                case "GetControllerPersonalizationFile":
+                    PostResponseMsg<CAccountHardware_GetPersonalizationFile_Response>( packetMsg );
+                    break;
+                case "VRCompatibilityCheck":
+                    PostResponseMsg<CAccountHardware_VRCompatibilityCheck_Response>( packetMsg );
+                    break;
+                case "RegisterValveIndexComponent":
+                    PostResponseMsg<CAccountHardware_RegisterValveIndexComponent_Response>( packetMsg );
+                    break;
+                case "GetSteamDeckComponents":
+                    PostResponseMsg<CAccountHardware_GetSteamDeckComponents_Response>( packetMsg );
+                    break;
+            }
+        }
+
+        public override void HandleNotificationMsg( string methodName, PacketClientMsgProtobuf packetMsg )
+        {
+        }
     }
 
 }
 
-#pragma warning restore CS0612, CS0618, CS1591, CS3021, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
+#pragma warning restore CS0612, CS0618, CS1591, CS3021, CS8981, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
 #endregion

@@ -16,13 +16,13 @@ namespace FO4Down.Steam
             return (string)Registry.LocalMachine.OpenSubKey(keyPath)?.GetValue("InstallPath");
         }
 
-        public static void GetLibraryFolders(ApplicationContext ctx, string path)
+        public static void GetLibraryFolders(string path)
         {
-            ctx.LibraryFolders = new List<SteamLibFolder>();
+            AppContext.LibraryFolders = new List<SteamLibFolder>();
             var vdfPath = path.EndsWith(".vdf") ? path : Path.Combine(path, @"steamapps\libraryfolders.vdf");
             if (File.Exists(vdfPath))
             {
-                ctx.LibraryFolders.AddRange(ParseSteamFolders(vdfPath));
+                AppContext.LibraryFolders.AddRange(ParseSteamFolders(vdfPath));
             }
         }
 
@@ -56,9 +56,9 @@ namespace FO4Down.Steam
             };
         }
 
-        public static void GetInstalledGames(ApplicationContext ctx)
+        public static void GetInstalledGames()
         {
-            var libraryFolders = ctx.LibraryFolders;
+            var libraryFolders = AppContext.LibraryFolders;
             var installedGames = new ConcurrentDictionary<string, SteamGame>(); // Use thread-safe collection
 
             var start = DateTime.Now;
@@ -71,18 +71,18 @@ namespace FO4Down.Steam
 
                 if (elapsed > TimeSpan.FromSeconds(5) && Interlocked.CompareExchange(ref reportedSlowSearch, 1, 0) == 0)
                 {
-                    ctx.Warn("Looking for Fallout 4 installation is taking longer than expected\nJust keep the app running, it will find it eventually.");
+                    AppContext.Warn("Looking for Fallout 4 installation is taking longer than expected\nJust keep the app running, it will find it eventually.");
                 }
 
                 if (!TryGetAppManifests(folder, out string[] acfFiles, out var manifestError))
                 {
                     if (manifestError != null)
                     {
-                        ctx.Error("Error reading appmanifests in '" + folder.Path + "'\nError: " + manifestError.Message);
+                        AppContext.Error("Error reading appmanifests in '" + folder.Path + "'\nError: " + manifestError.Message);
                     }
                     else
                     {
-                        ctx.Warn("No appmanifest files found in '" + folder.Path + "'");
+                        AppContext.Warn("No appmanifest files found in '" + folder.Path + "'");
                     }
 
                     return;
@@ -91,7 +91,7 @@ namespace FO4Down.Steam
 
                 foreach (var apps in acfFiles)
                 {
-                    var gameName = ExtractGameNameFromAcf(ctx, apps);
+                    var gameName = ExtractGameNameFromAcf(apps);
                     var appId = Path.GetFileNameWithoutExtension(apps).Split('_').LastOrDefault();
                     if (string.IsNullOrEmpty(gameName))
                         continue;
@@ -107,7 +107,7 @@ namespace FO4Down.Steam
                 }
             });
 
-            ctx.InstalledGames = new Dictionary<string, SteamGame>(installedGames); // Convert back to standard dictionary if needed
+            AppContext.InstalledGames = new Dictionary<string, SteamGame>(installedGames); // Convert back to standard dictionary if needed
         }
 
         //public static void GetInstalledGames(DowngradeContext ctx)//List<SteamLibFolder> libraryFolders)
@@ -165,7 +165,7 @@ namespace FO4Down.Steam
             return false;
         }
 
-        private static string ExtractGameNameFromAcf(ApplicationContext ctx, string acfPath)
+        private static string ExtractGameNameFromAcf(string acfPath)
         {
             try
             {
@@ -182,7 +182,7 @@ namespace FO4Down.Steam
             }
             catch (Exception exc)
             {
-                ctx.Error("Failed to extract game name from acf '" + acfPath + "': " + exc.Message);
+                AppContext.Error("Failed to extract game name from acf '" + acfPath + "': " + exc.Message);
             }
             return null;
         }

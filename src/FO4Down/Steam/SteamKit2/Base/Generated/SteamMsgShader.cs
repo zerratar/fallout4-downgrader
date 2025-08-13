@@ -5,7 +5,7 @@
 // </auto-generated>
 
 #region Designer generated code
-#pragma warning disable CS0612, CS0618, CS1591, CS3021, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
+#pragma warning disable CS0612, CS0618, CS1591, CS3021, CS8981, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
 namespace SteamKit2.Internal
 {
 
@@ -466,17 +466,71 @@ namespace SteamKit2.Internal
 
     }
 
-    public interface IShader
+    public class Shader : SteamUnifiedMessages.UnifiedService
     {
-        CShader_GetShaderReportingCadence_Response GetShaderReportingCadence(CShader_GetShaderReportingCadence_Request request);
-        CShader_RegisterShader_Response RegisterShader(CShader_RegisterShader_Request request);
-        CShader_SendShader_Response SendShader(CShader_SendShader_Request request);
-        CShader_GetBucketManifest_Response GetBucketManifest(CShader_GetBucketManifest_Request request);
-        CShader_GetStaleBucket_Response GetStaleBucket(CShader_GetStaleBucket_Request request);
-        CShader_ReportExternalBuild_Response ReportExternalBuild(CShader_ReportExternalBuild_Request request);
+        public override string ServiceName { get; } = "Shader";
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CShader_GetShaderReportingCadence_Response>> GetShaderReportingCadence( CShader_GetShaderReportingCadence_Request request )
+        {
+            return UnifiedMessages.SendMessage<CShader_GetShaderReportingCadence_Request, CShader_GetShaderReportingCadence_Response>( "Shader.GetShaderReportingCadence#1", request );
+        }
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CShader_RegisterShader_Response>> RegisterShader( CShader_RegisterShader_Request request )
+        {
+            return UnifiedMessages.SendMessage<CShader_RegisterShader_Request, CShader_RegisterShader_Response>( "Shader.RegisterShader#1", request );
+        }
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CShader_SendShader_Response>> SendShader( CShader_SendShader_Request request )
+        {
+            return UnifiedMessages.SendMessage<CShader_SendShader_Request, CShader_SendShader_Response>( "Shader.SendShader#1", request );
+        }
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CShader_GetBucketManifest_Response>> GetBucketManifest( CShader_GetBucketManifest_Request request )
+        {
+            return UnifiedMessages.SendMessage<CShader_GetBucketManifest_Request, CShader_GetBucketManifest_Response>( "Shader.GetBucketManifest#1", request );
+        }
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CShader_GetStaleBucket_Response>> GetStaleBucket( CShader_GetStaleBucket_Request request )
+        {
+            return UnifiedMessages.SendMessage<CShader_GetStaleBucket_Request, CShader_GetStaleBucket_Response>( "Shader.GetStaleBucket#1", request );
+        }
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CShader_ReportExternalBuild_Response>> ReportExternalBuild( CShader_ReportExternalBuild_Request request )
+        {
+            return UnifiedMessages.SendMessage<CShader_ReportExternalBuild_Request, CShader_ReportExternalBuild_Response>( "Shader.ReportExternalBuild#1", request );
+        }
+
+        public override void HandleResponseMsg( string methodName, PacketClientMsgProtobuf packetMsg )
+        {
+            switch ( methodName )
+            {
+                case "GetShaderReportingCadence":
+                    PostResponseMsg<CShader_GetShaderReportingCadence_Response>( packetMsg );
+                    break;
+                case "RegisterShader":
+                    PostResponseMsg<CShader_RegisterShader_Response>( packetMsg );
+                    break;
+                case "SendShader":
+                    PostResponseMsg<CShader_SendShader_Response>( packetMsg );
+                    break;
+                case "GetBucketManifest":
+                    PostResponseMsg<CShader_GetBucketManifest_Response>( packetMsg );
+                    break;
+                case "GetStaleBucket":
+                    PostResponseMsg<CShader_GetStaleBucket_Response>( packetMsg );
+                    break;
+                case "ReportExternalBuild":
+                    PostResponseMsg<CShader_ReportExternalBuild_Response>( packetMsg );
+                    break;
+            }
+        }
+
+        public override void HandleNotificationMsg( string methodName, PacketClientMsgProtobuf packetMsg )
+        {
+        }
     }
 
 }
 
-#pragma warning restore CS0612, CS0618, CS1591, CS3021, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
+#pragma warning restore CS0612, CS0618, CS1591, CS3021, CS8981, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
 #endregion

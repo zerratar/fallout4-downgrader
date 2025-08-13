@@ -2,12 +2,10 @@
 {
     public class ChunkDownloadProgress
     {
-        private ApplicationContext stepContext;
         private DateTime startTime;
 
-        public ChunkDownloadProgress(ApplicationContext stepContext)
+        public ChunkDownloadProgress()
         {
-            this.stepContext = stepContext;
             this.startTime = DateTime.UtcNow;
         }
 

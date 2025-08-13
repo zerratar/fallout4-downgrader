@@ -166,7 +166,7 @@ namespace FO4Down.Windows
         }
 
         private int runningStepUpdate;
-        private void OnStepUpdate(ApplicationContext context)
+        private void OnStepUpdate()
         {
             Application.Invoke(() =>
             {
@@ -181,20 +181,20 @@ namespace FO4Down.Windows
                     progressBar.Visible = false;
                     lblProgress.Visible = false;
 
-                    if (context.IsError)
+                    if (AppContext.IsError)
                     {
                         lblStatus.ColorScheme = ErrorLabelColorScheme;
-                        lblStatus.Text = "Error: " + context.Message;
+                        lblStatus.Text = "Error: " + AppContext.Message;
                     }
-                    else if (context.IsWarning)
+                    else if (AppContext.IsWarning)
                     {
                         lblStatus.ColorScheme = WarningLabelColorScheme;
-                        lblStatus.Text = context.Message;
+                        lblStatus.Text = AppContext.Message;
                     }
-                    else if (context.IsSuccess)
+                    else if (AppContext.IsSuccess)
                     {
                         lblStatus.ColorScheme = SuccessLabelColorScheme;
-                        lblStatus.Text = context.Message;
+                        lblStatus.Text = AppContext.Message;
                     }
                     else
                     {
@@ -202,21 +202,21 @@ namespace FO4Down.Windows
                     }
 
 
-                    if (context.ReportToDeveloper)
+                    if (AppContext.ReportToDeveloper)
                     {
-                        File.WriteAllText("error.txt", BuildErrorReport(context));
-                        if (context.IsError)
+                        File.WriteAllText("error.txt", BuildErrorReport());
+                        if (AppContext.IsError)
                         {
-                            MessageBox.ErrorQuery("Unexpected Error", "An unexpected error occurred: " + context.Message + "\nA full report has been saved to error.txt\nPlease report this to zerratar", "OK");
+                            MessageBox.ErrorQuery("Unexpected Error", "An unexpected error occurred: " + AppContext.Message + "\nA full report has been saved to error.txt\nPlease report this to zerratar", "OK");
                         }
                         else
                         {
-                            MessageBox.ErrorQuery("Warning", context.Message + "\nA full report has been saved to error.txt\nPlease report this to zerratar if the game is not working as expected", "OK");
+                            MessageBox.ErrorQuery("Warning", AppContext.Message + "\nA full report has been saved to error.txt\nPlease report this to zerratar if the game is not working as expected", "OK");
                         }
 
                         try
                         {
-                            var dir = context.GetWorkingDirectory();
+                            var dir = AppContext.GetWorkingDirectory();
                             Shell32.OpenFolderAndSelectItem(dir, "error.txt");
                         }
                         catch { }
@@ -225,45 +225,45 @@ namespace FO4Down.Windows
                         return;
                     }
 
-                    if (context.IsError && !context.Continue)
+                    if (AppContext.IsError && !AppContext.Continue)
                     {
                         return;
                     }
 
-                    if (!string.IsNullOrEmpty(context.Message))
+                    if (!string.IsNullOrEmpty(AppContext.Message))
                     {
-                        lblStatus.Text = context.Message;
+                        lblStatus.Text = AppContext.Message;
                     }
 
-                    switch (context.Step)
+                    switch (AppContext.Step)
                     {
                         case FO4DowngraderStep.LookingForFallout4Path:
-                            if (context.Request != null)
+                            if (AppContext.Request != null)
                             {
-                                switch (context.Request.Name)
+                                switch (AppContext.Request.Name)
                                 {
                                     case "confirm":
-                                        var result = MessageBox.Query("Confirm", context.Request.Arguments[0], "Yes", "No") == 0;
-                                        context.Next(result);
+                                        var result = MessageBox.Query("Confirm", AppContext.Request.Arguments[0], "Yes", "No") == 0;
+                                        AppContext.Next(result);
                                         break;
                                 }
                             }
                             break;
                         case FO4DowngraderStep.Patch:
 
-                            if (context.Request != null)
+                            if (AppContext.Request != null)
                             {
-                                switch (context.Request.Name)
+                                switch (AppContext.Request.Name)
                                 {
                                     case "confirm":
-                                        var pd = new PatchDialog(context);
+                                        var pd = new PatchDialog();
                                         if (pd.ShowDialog())
                                         {
-                                            context.Next(true);
+                                            AppContext.Next(true);
                                         }
                                         else
                                         {
-                                            context.Next(false);
+                                            AppContext.Next(false);
                                         }
                                         break;
                                 }
@@ -271,83 +271,83 @@ namespace FO4Down.Windows
 
                             break;
                         case FO4DowngraderStep.ApplyLanguage:
-                            if (context.Request != null)
+                            if (AppContext.Request != null)
                             {
-                                switch (context.Request.Name)
+                                switch (AppContext.Request.Name)
                                 {
                                     case "confirm":
-                                        var result = MessageBox.Query("Confirm", context.Request.Arguments[0], "Yes", "No") == 0;
-                                        context.Next(result);
+                                        var result = MessageBox.Query("Confirm", AppContext.Request.Arguments[0], "Yes", "No") == 0;
+                                        AppContext.Next(result);
                                         break;
                                 }
                             }
                             break;
                         case FO4DowngraderStep.UserSettings:
-                            if (context.Request != null && context.Request.Name == "settings")
+                            if (AppContext.Request != null && AppContext.Request.Name == "settings")
                             {
-                                var userSettings = new UserSettingsDialog(context);
+                                var userSettings = new UserSettingsDialog();
                                 userSettings.ShowDialog();
-                                context.Next(userSettings.Settings);
+                                AppContext.Next(userSettings.Settings);
                             }
                             break;
                         case FO4DowngraderStep.LoginToSteam:
-                            if (context.Request != null)
+                            if (AppContext.Request != null)
                             {
-                                switch (context.Request.Name)
+                                switch (AppContext.Request.Name)
                                 {
                                     case "auth_code":
-                                        var auth = new SteamAuthCodeDialog(context);
+                                        var auth = new SteamAuthCodeDialog();
                                         if (auth.ShowDialog())
                                         {
-                                            context.Next(auth.AuthCode);
+                                            AppContext.Next(auth.AuthCode);
                                         }
                                         break;
                                     case "credentials":
-                                        var login = new SteamLoginDialog(context);
+                                        var login = new SteamLoginDialog();
                                         if (login.ShowDialog())
                                         {
                                             if (login.QR)
                                             {
-                                                context.Settings.UseQrCode = true;
-                                                context.Next(((string)null, (string)null));
+                                                AppContext.Settings.UseQrCode = true;
+                                                AppContext.Next(((string)null, (string)null));
                                             }
                                             else
                                             {
-                                                context.Next((login.Username, login.Password));
+                                                AppContext.Next((login.Username, login.Password));
                                             }
                                         }
                                         else
                                         {
-                                            context.Next(((string)null, (string)null));
+                                            AppContext.Next(((string)null, (string)null));
                                         }
                                         break;
                                 }
                                 // context.Next(("username", "password"));
                             }
-                            else if (!string.IsNullOrEmpty(context.QRCode))
+                            else if (!string.IsNullOrEmpty(AppContext.QRCode))
                             {
-                                lblQr.Text = context.QRCode;
+                                lblQr.Text = AppContext.QRCode;
                                 lblQr.Visible = true;
                             }
                             break;
                         case FO4DowngraderStep.DownloadDepotFiles:
-                            if (context.Request != null)
+                            if (AppContext.Request != null)
                             {
-                                switch (context.Request.Name)
+                                switch (AppContext.Request.Name)
                                 {
                                     case "confirm":
-                                        var result = MessageBox.Query("Confirm", context.Request.Arguments[0], "Yes", "No") == 0;
-                                        context.Next(result);
+                                        var result = MessageBox.Query("Confirm", AppContext.Request.Arguments[0], "Yes", "No") == 0;
+                                        AppContext.Next(result);
                                         break;
                                 }
                             }
                             break;
                         case FO4DowngraderStep.DownloadCreationKitDepotFiles:
                         case FO4DowngraderStep.DownloadGameDepotFiles:
-                            progressBar.Visible = context.Fraction > 0.0;
+                            progressBar.Visible = AppContext.Fraction > 0.0;
                             lblProgress.Visible = progressBar.Visible;
-                            lblProgress.Text = $"{(context.Fraction * 100):00.00}%\n\n" + "Processing depot " + (context.DepotsDownloaded + 1) + " out of " + context.TotalDepotsToDownload + ".\nThis will take a while! Do not worry if nothing happens for a while.";// + context.GetAverageDownloadSpeed();
-                            progressBar.Fraction = context.Fraction;
+                            lblProgress.Text = $"{(AppContext.Fraction * 100):0.00}%\n\n" + "Processing depot " + (AppContext.DepotsDownloaded + 1) + " out of " + AppContext.TotalDepotsToDownload + ".\nThis will take a while! Do not worry if nothing happens for a while.";// + context.GetAverageDownloadSpeed();
+                            progressBar.Fraction = AppContext.Fraction;
                             break;
                         
                         case FO4DowngraderStep.DownloadPatchFiles:
@@ -355,14 +355,14 @@ namespace FO4Down.Windows
                         case FO4DowngraderStep.DeleteNextGenFiles:
                             progressBar.Visible = true;
                             lblProgress.Visible = true;
-                            lblProgress.Text = $"{(context.Fraction * 100):00.00}%";
-                            progressBar.Fraction = context.Fraction;
+                            lblProgress.Text = $"{(AppContext.Fraction * 100):0.00}%";
+                            progressBar.Fraction = AppContext.Fraction;
                             break;
                     }
                 }
                 catch (Exception exc)
                 {
-                    context.Error(exc);
+                    AppContext.Error(exc);
                 }
                 finally
                 {
@@ -379,15 +379,15 @@ namespace FO4Down.Windows
             });
         }
 
-        private string? BuildErrorReport(ApplicationContext context)
+        private string? BuildErrorReport()
         {
             var sb = new StringBuilder();
-            var s = context.Settings;
+            var s = AppContext.Settings;
             sb.AppendLine("Version: " + GetVersion());
             sb.AppendLine();
             sb.AppendLine("[Settings]");
             sb.AppendLine("QR: " + s.UseQrCode);
-            sb.AppendLine("Authenticated: " + context.IsAuthenticated);
+            sb.AppendLine("Authenticated: " + AppContext.IsAuthenticated);
             sb.AppendLine("Language: " + (s.DownloadAllLanguages ? "All" : s.Language));
             sb.AppendLine("Downgrade Creation Kit: " + s.DownloadCreationKit);
             sb.AppendLine("Downgrade All DLCs: " + s.DownloadAllDLCs);
@@ -395,24 +395,24 @@ namespace FO4Down.Windows
             sb.AppendLine("Keep Depot: " + s.KeepDepotFiles);
             sb.AppendLine();
 
-            if (context.LoggedErrors.Count > 0)
+            if (AppContext.LoggedErrors.Count > 0)
             {
                 sb.AppendLine("[Previous Errors]");
-                for (var i = 0; i < context.LoggedErrors.Count; ++i)
+                for (var i = 0; i < AppContext.LoggedErrors.Count; ++i)
                 {
-                    var err = context.LoggedErrors[i];
+                    var err = AppContext.LoggedErrors[i];
                     sb.AppendLine("Error #" + (i + 1) + ": " + err);
                     sb.AppendLine();
                 }
             }
 
-            if (context.Exception != null)
+            if (AppContext.Exception != null)
             {
                 sb.AppendLine("[Crashing Error]");
             }
             else
             {
-                sb.AppendLine(context.LastErrorMessage);
+                sb.AppendLine(AppContext.LastErrorMessage);
             }
 
             return sb.ToString();

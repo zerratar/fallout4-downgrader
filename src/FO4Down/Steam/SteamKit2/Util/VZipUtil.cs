@@ -1,65 +1,88 @@
 ﻿using System;
+using System.Buffers;
 using System.IO;
 using System.IO.Hashing;
 
 namespace SteamKit2
 {
-    class VZipUtil
+    static class VZipUtil
     {
-        private static ushort VZipHeader = 0x5A56;
-        private static ushort VZipFooter = 0x767A;
-        private static int HeaderLength = 7;
-        private static int FooterLength = 10;
+        private const ushort VZipHeader = 0x5A56;
+        private const ushort VZipFooter = 0x767A;
+        private const int HeaderLength = 7; // magic + version + timestamp/crc
+        private const int FooterLength = 10; // crc + decompressed size + magic
 
-        private static char Version = 'a';
+        private const byte Version = (byte)'a';
 
-
-        public static byte[] Decompress(byte[] buffer)
+        public static int Decompress( MemoryStream ms, byte[] destination, bool verifyChecksum = true )
         {
-            using MemoryStream ms = new MemoryStream( buffer );
             using BinaryReader reader = new BinaryReader( ms );
             if ( reader.ReadUInt16() != VZipHeader )
             {
-                throw new Exception( "Expecting VZipHeader at start of stream" );
+                throw new InvalidDataException( "Expecting VZipHeader at start of stream" );
             }
 
-            if ( reader.ReadChar() != Version )
+            if ( reader.ReadByte() != Version )
             {
-                throw new Exception( "Expecting VZip version 'a'" );
+                throw new InvalidDataException( "Expecting VZip version 'a'" );
             }
 
             // Sometimes this is a creation timestamp (e.g. for Steam Client VZips).
             // Sometimes this is a CRC32 (e.g. for depot chunks).
-            /* uint creationTimestampOrSecondaryCRC = */ reader.ReadUInt32();
+            /* uint creationTimestampOrSecondaryCRC = */
+            reader.ReadUInt32();
 
-            byte[] properties = reader.ReadBytes( 5 );
-            byte[] compressedBuffer = reader.ReadBytes( ( int )ms.Length - HeaderLength - FooterLength - 5 );
+            // this is 5 bytes of LZMA properties
+            var propertyBits = reader.ReadByte();
+            var dictionarySize = reader.ReadUInt32();
+            var compressedBytesOffset = ms.Position;
 
-            uint outputCRC = reader.ReadUInt32();
-            uint sizeDecompressed = reader.ReadUInt32();
+            // jump to the end of the buffer to read the footer
+            ms.Seek( -FooterLength, SeekOrigin.End );
+            var sizeCompressed = ms.Position - compressedBytesOffset;
+            var outputCRC = reader.ReadUInt32();
+            var sizeDecompressed = reader.ReadInt32();
 
             if ( reader.ReadUInt16() != VZipFooter )
             {
-                throw new Exception( "Expecting VZipFooter at end of stream" );
+                throw new InvalidDataException( "Expecting VZipFooter at end of stream" );
             }
 
+            if ( destination.Length < sizeDecompressed )
+            {
+                throw new ArgumentException( "The destination buffer is smaller than the decompressed data size.", nameof( destination ) );
+            }
+
+            // jump back to the beginning of the compressed data
+            ms.Position = compressedBytesOffset;
+
             SevenZip.Compression.LZMA.Decoder decoder = new SevenZip.Compression.LZMA.Decoder();
-            decoder.SetDecoderProperties( properties );
 
-            using MemoryStream inputStream = new MemoryStream( compressedBuffer );
-            using MemoryStream outStream = new MemoryStream( ( int )sizeDecompressed );
-            decoder.Code( inputStream, outStream, compressedBuffer.Length, sizeDecompressed, null );
+            // If the value of dictionary size in properties is smaller than (1 << 12),
+            // the LZMA decoder must set the dictionary size variable to (1 << 12).
+            var windowBuffer = ArrayPool<byte>.Shared.Rent( Math.Max( 1 << 12, ( int )dictionarySize ) );
 
-            var outData = outStream.ToArray();
-            if ( Crc32.HashToUInt32( outData ) != outputCRC )
+            try
+            {
+                decoder.SteamKitSetDecoderProperties( propertyBits, dictionarySize, windowBuffer );
+
+                using MemoryStream outStream = new MemoryStream( destination );
+                decoder.Code( ms, outStream, sizeCompressed, sizeDecompressed, null );
+            }
+            finally
+            {
+                ArrayPool<byte>.Shared.Return( windowBuffer );
+            }
+
+            if ( verifyChecksum && Crc32.HashToUInt32( destination.AsSpan()[ ..sizeDecompressed ] ) != outputCRC )
             {
                 throw new InvalidDataException( "CRC does not match decompressed data. VZip data may be corrupted." );
             }
 
-            return outData;
+            return sizeDecompressed;
         }
 
-        public static byte[] Compress(byte[] buffer)
+        public static byte[] Compress( byte[] buffer )
         {
             using MemoryStream ms = new MemoryStream();
             using BinaryWriter writer = new BinaryWriter( ms );

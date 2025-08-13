@@ -1,10 +1,13 @@
+// This file is subject to the terms and conditions defined
+// in file 'LICENSE', which is part of this source code package.
+
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using ProtoBuf;
 
-namespace FO4Down.Steam.DepotDownloader
+namespace DepotDownloader
 {
     [ProtoContract]
     class DepotConfigStore
@@ -19,7 +22,7 @@ namespace FO4Down.Steam.DepotDownloader
             InstalledManifestIDs = [];
         }
 
-        public static bool Loaded
+        static bool Loaded
         {
             get { return Instance != null; }
         }

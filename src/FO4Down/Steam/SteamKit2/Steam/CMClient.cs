@@ -9,7 +9,6 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.IO.Compression;
-using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
@@ -378,10 +377,6 @@ namespace SteamKit2.Internal
                     HandleServerUnavailable( packetMsg );
                     break;
 
-                case EMsg.ClientCMList:
-                    HandleCMList( packetMsg );
-                    break;
-
                 case EMsg.ClientSessionToken: // am session token
                     HandleSessionToken( packetMsg );
                     break;
@@ -410,7 +405,7 @@ namespace SteamKit2.Internal
         {
             if ( protocol.HasFlagsFast( ProtocolTypes.WebSocket ) )
             {
-                return new WebSocketConnection( this );
+                return new WebSocketConnection( this, Configuration.HttpClientFactory( HttpClientPurpose.CMWebSocket ) );
             }
             else if ( protocol.HasFlagsFast( ProtocolTypes.Tcp ) )
             {
@@ -430,6 +425,11 @@ namespace SteamKit2.Internal
             OnClientMsgReceived( GetPacketMsg( e.Data, this ) );
         }
 
+#if DEBUG
+        internal void ReceiveTestPacketMsg( IPacketMsg packetMsg ) => OnClientMsgReceived( packetMsg );
+        internal void SetIsConnected( bool value ) => IsConnected = value;
+#endif
+
         void Connected( object? sender, EventArgs e )
         {
             DebugLog.Assert( connection != null, nameof( CMClient ), "No connection object after connecting." );
@@ -438,7 +438,16 @@ namespace SteamKit2.Internal
             Servers.TryMark( connection.CurrentEndPoint, connection.ProtocolTypes, ServerQuality.Good );
 
             IsConnected = true;
-            OnClientConnected();
+
+            try
+            {
+                OnClientConnected();
+            }
+            catch ( Exception ex )
+            {
+                DebugLog.WriteLine( nameof(CMClient), "Unhandled exception after connecting: {0}", ex );
+                Disconnect(userInitiated: false);
+            }
         }
 
         void Disconnected( object? sender, DisconnectedEventArgs e )
@@ -464,6 +473,11 @@ namespace SteamKit2.Internal
             connectionRelease.Connected -= Connected;
             connectionRelease.Disconnected -= Disconnected;
 
+            if ( connectionRelease is IDisposable disposableConnection )
+            {
+                disposableConnection.Dispose();
+            }
+
             heartBeatFunc.Stop();
 
             OnClientDisconnected( userInitiated: e.UserInitiated || ExpectDisconnection );
@@ -473,7 +487,7 @@ namespace SteamKit2.Internal
         {
             if ( data.Length < sizeof( uint ) )
             {
-                log.LogDebug( nameof( CMClient ), "PacketMsg too small to contain a message, was only {0} bytes. Message: 0x{1}", data.Length, BitConverter.ToString( data ).Replace( "-", string.Empty ) );
+                log.LogDebug( nameof( CMClient ), "PacketMsg too small to contain a message, was only {0} bytes. Message: 0x{1}", data.Length, Utils.EncodeHexString( data ) );
                 return null;
             }
 
@@ -520,40 +534,33 @@ namespace SteamKit2.Internal
             }
 
             var msgMulti = new ClientMsgProtobuf<CMsgMulti>( packetMsg );
-
-            byte[] payload = msgMulti.Body.message_body;
+            using var payloadStream = new MemoryStream( msgMulti.Body.message_body );
+            Stream stream = payloadStream;
 
             if ( msgMulti.Body.size_unzipped > 0 )
             {
-                try
-                {
-                    using var compressedStream = new MemoryStream( payload );
-                    using var gzipStream = new GZipStream( compressedStream, CompressionMode.Decompress );
-                    using var decompressedStream = new MemoryStream();
-                    gzipStream.CopyTo( decompressedStream );
-                    payload = decompressedStream.ToArray();
-                }
-                catch ( Exception ex )
-                {
-                    LogDebug( "CMClient", "HandleMulti encountered an exception when decompressing.\n{0}", ex.ToString() );
-                    return;
-                }
+                stream = new GZipStream( payloadStream, CompressionMode.Decompress );
             }
 
-            using var ms = new MemoryStream( payload );
-            using var br = new BinaryReader( ms );
-            while ( ( ms.Length - ms.Position ) != 0 )
+            using ( stream )
             {
-                int subSize = br.ReadInt32();
-                byte[] subData = br.ReadBytes( subSize );
+                Span<byte> length = stackalloc byte[ sizeof( int ) ];
 
-                if ( !OnClientMsgReceived( GetPacketMsg( subData, this ) ) )
+                while ( stream.ReadAll( length ) > 0 )
                 {
-                    break;
+                    var subSize = BitConverter.ToInt32( length );
+                    var subData = new byte[ subSize ];
+
+                    stream.ReadAll( subData );
+
+                    if ( !OnClientMsgReceived( GetPacketMsg( subData, this ) ) )
+                    {
+                        break;
+                    }
                 }
             }
-
         }
+
         void HandleLogOnResponse( IPacketMsg packetMsg )
         {
             if ( !packetMsg.IsProto )
@@ -625,19 +632,6 @@ namespace SteamKit2.Internal
             Disconnect( userInitiated: false );
         }
 
-        void HandleCMList( IPacketMsg packetMsg )
-        {
-            var cmMsg = new ClientMsgProtobuf<CMsgClientCMList>( packetMsg );
-            DebugLog.Assert( cmMsg.Body.cm_addresses.Count == cmMsg.Body.cm_ports.Count, "CMClient", "HandleCMList received malformed message" );
-
-            var cmList = cmMsg.Body.cm_addresses
-                .Zip( cmMsg.Body.cm_ports, ( addr, port ) => ServerRecord.CreateSocketServer( new IPEndPoint( NetHelpers.GetIPAddress( addr ), ( int )port ) ) );
-
-            var webSocketList = cmMsg.Body.cm_websocket_addresses.Select( addr => ServerRecord.CreateWebSocketServer( addr ) );
-
-            // update our list with steam's list of CMs
-            Servers.ReplaceList( cmList.Concat( webSocketList ) );
-        }
         void HandleSessionToken( IPacketMsg packetMsg )
         {
             var sessToken = new ClientMsgProtobuf<CMsgClientSessionToken>( packetMsg );

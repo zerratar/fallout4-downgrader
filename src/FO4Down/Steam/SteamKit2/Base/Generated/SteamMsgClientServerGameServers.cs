@@ -5,7 +5,7 @@
 // </auto-generated>
 
 #region Designer generated code
-#pragma warning disable CS0612, CS0618, CS1591, CS3021, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
+#pragma warning disable CS0612, CS0618, CS1591, CS3021, CS8981, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
 namespace SteamKit2.Internal
 {
 
@@ -136,6 +136,16 @@ namespace SteamKit2.Internal
         public bool ShouldSerializeis_secure() => __pbn__is_secure != null;
         public void Resetis_secure() => __pbn__is_secure = null;
         private bool? __pbn__is_secure;
+
+        [global::ProtoBuf.ProtoMember(2)]
+        public bool is_valveds
+        {
+            get => __pbn__is_valveds.GetValueOrDefault();
+            set => __pbn__is_valveds = value;
+        }
+        public bool ShouldSerializeis_valveds() => __pbn__is_valveds != null;
+        public void Resetis_valveds() => __pbn__is_valveds = null;
+        private bool? __pbn__is_valveds;
 
     }
 
@@ -613,6 +623,17 @@ namespace SteamKit2.Internal
         public bool ShouldSerializemax_servers() => __pbn__max_servers != null;
         public void Resetmax_servers() => __pbn__max_servers = null;
         private uint? __pbn__max_servers;
+
+        [global::ProtoBuf.ProtoMember(6)]
+        [global::System.ComponentModel.DefaultValue("")]
+        public string sdr_ping_location
+        {
+            get => __pbn__sdr_ping_location ?? "";
+            set => __pbn__sdr_ping_location = value;
+        }
+        public bool ShouldSerializesdr_ping_location() => __pbn__sdr_ping_location != null;
+        public void Resetsdr_ping_location() => __pbn__sdr_ping_location = null;
+        private string __pbn__sdr_ping_location;
 
     }
 
@@ -1132,5 +1153,5 @@ namespace SteamKit2.Internal
 
 }
 
-#pragma warning restore CS0612, CS0618, CS1591, CS3021, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
+#pragma warning restore CS0612, CS0618, CS1591, CS3021, CS8981, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
 #endregion

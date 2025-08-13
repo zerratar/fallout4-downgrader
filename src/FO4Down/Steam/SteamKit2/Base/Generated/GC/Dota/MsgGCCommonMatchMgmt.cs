@@ -5,7 +5,7 @@
 // </auto-generated>
 
 #region Designer generated code
-#pragma warning disable CS0612, CS0618, CS1591, CS3021, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
+#pragma warning disable CS0612, CS0618, CS1591, CS3021, CS8981, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
 namespace SteamKit2.GC.Dota.Internal
 {
 
@@ -141,6 +141,9 @@ namespace SteamKit2.GC.Dota.Internal
         public bool ShouldSerializeis_steam_china() => __pbn__is_steam_china != null;
         public void Resetis_steam_china() => __pbn__is_steam_china = null;
         private bool? __pbn__is_steam_china;
+
+        [global::ProtoBuf.ProtoMember(17)]
+        public global::System.Collections.Generic.List<int> banned_hero_ids { get; } = new global::System.Collections.Generic.List<int>();
 
     }
 
@@ -651,6 +654,26 @@ namespace SteamKit2.GC.Dota.Internal
         public void Resetrestricted_from_ranked_account_id() => __pbn__restricted_from_ranked_account_id = null;
         private uint? __pbn__restricted_from_ranked_account_id;
 
+        [global::ProtoBuf.ProtoMember(76)]
+        public uint rank_spread_likert_scale
+        {
+            get => __pbn__rank_spread_likert_scale.GetValueOrDefault();
+            set => __pbn__rank_spread_likert_scale = value;
+        }
+        public bool ShouldSerializerank_spread_likert_scale() => __pbn__rank_spread_likert_scale != null;
+        public void Resetrank_spread_likert_scale() => __pbn__rank_spread_likert_scale = null;
+        private uint? __pbn__rank_spread_likert_scale;
+
+        [global::ProtoBuf.ProtoMember(77)]
+        public uint behavior_score_likert_scale
+        {
+            get => __pbn__behavior_score_likert_scale.GetValueOrDefault();
+            set => __pbn__behavior_score_likert_scale = value;
+        }
+        public bool ShouldSerializebehavior_score_likert_scale() => __pbn__behavior_score_likert_scale != null;
+        public void Resetbehavior_score_likert_scale() => __pbn__behavior_score_likert_scale = null;
+        private uint? __pbn__behavior_score_likert_scale;
+
         [global::ProtoBuf.ProtoContract()]
         public enum State
         {
@@ -1044,6 +1067,9 @@ namespace SteamKit2.GC.Dota.Internal
         [global::ProtoBuf.ProtoMember(1)]
         public global::System.Collections.Generic.List<MvpDatum> mvps { get; } = new global::System.Collections.Generic.List<MvpDatum>();
 
+        [global::ProtoBuf.ProtoMember(2)]
+        public global::System.Collections.Generic.List<MvpDatum> event_mvps { get; } = new global::System.Collections.Generic.List<MvpDatum>();
+
         [global::ProtoBuf.ProtoContract()]
         public partial class MvpDatum : global::ProtoBuf.IExtensible
         {
@@ -1367,6 +1393,15 @@ namespace SteamKit2.GC.Dota.Internal
                     kKillEaterEventType_Muerta_PierceTheVeilKills = 276,
                     kKillEaterEventType_Muerta_MultiHeroDeadShot = 277,
                     kKillEaterEventType_Muerta_DeadShotsIntoTheCalling = 278,
+                    kKillEaterEventType_Ringmaster_LongRangeDaggerHits = 279,
+                    kKillEaterEventType_Ringmaster_MultiHeroWhips = 280,
+                    kKillEaterEventType_Ringmaster_MultiHeroMesmerizes = 281,
+                    kKillEaterEventType_Kez_ParryCounterAttacks = 282,
+                    kKillEaterEventType_Kez_RavensVeilKills = 283,
+                    kKillEaterEventType_Kez_RaptorDanceHealing = 284,
+                    kKillEaterEventType_Kez_KillsDuringFalconRush = 285,
+                    kKillEaterEventType_Seasonal_PartyHatsStolen = 286,
+                    kKillEaterEventType_Seasonal_TallestHat = 287,
                 }
 
             }
@@ -1449,5 +1484,5 @@ namespace SteamKit2.GC.Dota.Internal
 
 }
 
-#pragma warning restore CS0612, CS0618, CS1591, CS3021, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
+#pragma warning restore CS0612, CS0618, CS1591, CS3021, CS8981, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
 #endregion

@@ -8,13 +8,10 @@ namespace FO4Down.Windows
         private readonly TextField txtPassword;
         private readonly Button btnLogin;
         private readonly Button btnQuery;
-        private ApplicationContext ctx;
 
-        public SteamLoginDialog(ApplicationContext ctx)
+        public SteamLoginDialog()
             : base()
         {
-            this.ctx = ctx;
-
             Closing += SteamLoginDialog_Closing;
 
             Title = "Steam Login";
@@ -32,9 +29,9 @@ namespace FO4Down.Windows
             //btnQuery = Btn("Settings", txtPassword, BtnSettingsClicked);
             //btnQuery.X = Pos.Right(btnQuery) + 1;
 
-            if (ctx != null && ctx.IsError)
+            if (AppContext.IsError)
             {
-                ErrorLbl(ctx.LastErrorMessage, txtPassword);
+                ErrorLbl(AppContext.LastErrorMessage, txtPassword);
             }
             else
             {

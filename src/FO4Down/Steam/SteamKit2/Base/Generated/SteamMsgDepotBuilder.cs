@@ -5,7 +5,7 @@
 // </auto-generated>
 
 #region Designer generated code
-#pragma warning disable CS0612, CS0618, CS1591, CS3021, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
+#pragma warning disable CS0612, CS0618, CS1591, CS3021, CS8981, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
 namespace SteamKit2.Internal
 {
 
@@ -66,6 +66,16 @@ namespace SteamKit2.Internal
         public bool ShouldSerializetarget_branch() => __pbn__target_branch != null;
         public void Resettarget_branch() => __pbn__target_branch = null;
         private string __pbn__target_branch;
+
+        [global::ProtoBuf.ProtoMember(6)]
+        public bool shader_depot
+        {
+            get => __pbn__shader_depot.GetValueOrDefault();
+            set => __pbn__shader_depot = value;
+        }
+        public bool ShouldSerializeshader_depot() => __pbn__shader_depot != null;
+        public void Resetshader_depot() => __pbn__shader_depot = null;
+        private bool? __pbn__shader_depot;
 
     }
 
@@ -186,6 +196,16 @@ namespace SteamKit2.Internal
         public bool ShouldSerializeoffset_detection_max_distance_post() => __pbn__offset_detection_max_distance_post != null;
         public void Resetoffset_detection_max_distance_post() => __pbn__offset_detection_max_distance_post = null;
         private uint? __pbn__offset_detection_max_distance_post;
+
+        [global::ProtoBuf.ProtoMember(12)]
+        public uint compression_method
+        {
+            get => __pbn__compression_method.GetValueOrDefault();
+            set => __pbn__compression_method = value;
+        }
+        public bool ShouldSerializecompression_method() => __pbn__compression_method != null;
+        public void Resetcompression_method() => __pbn__compression_method = null;
+        private uint? __pbn__compression_method;
 
     }
 
@@ -457,6 +477,16 @@ namespace SteamKit2.Internal
         public void Resetlive_branch() => __pbn__live_branch = null;
         private string __pbn__live_branch;
 
+        [global::ProtoBuf.ProtoMember(6)]
+        public bool for_local_cs
+        {
+            get => __pbn__for_local_cs.GetValueOrDefault();
+            set => __pbn__for_local_cs = value;
+        }
+        public bool ShouldSerializefor_local_cs() => __pbn__for_local_cs != null;
+        public void Resetfor_local_cs() => __pbn__for_local_cs = null;
+        private bool? __pbn__for_local_cs;
+
         [global::ProtoBuf.ProtoContract()]
         public partial class Depots : global::ProtoBuf.IExtensible
         {
@@ -567,17 +597,71 @@ namespace SteamKit2.Internal
 
     }
 
-    public interface IContentBuilder
+    public class ContentBuilder : SteamUnifiedMessages.UnifiedService
     {
-        CContentBuilder_InitDepotBuild_Response InitDepotBuild(CContentBuilder_InitDepotBuild_Request request);
-        CContentBuilder_StartDepotUpload_Response StartDepotUpload(CContentBuilder_StartDepotUpload_Request request);
-        CContentBuilder_GetMissingDepotChunks_Response GetMissingDepotChunks(CContentBuilder_GetMissingDepotChunks_Request request);
-        CContentBuilder_FinishDepotUpload_Response FinishDepotUpload(CContentBuilder_FinishDepotUpload_Request request);
-        CContentBuilder_CommitAppBuild_Response CommitAppBuild(CContentBuilder_CommitAppBuild_Request request);
-        CContentBuilder_SignInstallScript_Response SignInstallScript(CContentBuilder_SignInstallScript_Request request);
+        public override string ServiceName { get; } = "ContentBuilder";
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CContentBuilder_InitDepotBuild_Response>> InitDepotBuild( CContentBuilder_InitDepotBuild_Request request )
+        {
+            return UnifiedMessages.SendMessage<CContentBuilder_InitDepotBuild_Request, CContentBuilder_InitDepotBuild_Response>( "ContentBuilder.InitDepotBuild#1", request );
+        }
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CContentBuilder_StartDepotUpload_Response>> StartDepotUpload( CContentBuilder_StartDepotUpload_Request request )
+        {
+            return UnifiedMessages.SendMessage<CContentBuilder_StartDepotUpload_Request, CContentBuilder_StartDepotUpload_Response>( "ContentBuilder.StartDepotUpload#1", request );
+        }
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CContentBuilder_GetMissingDepotChunks_Response>> GetMissingDepotChunks( CContentBuilder_GetMissingDepotChunks_Request request )
+        {
+            return UnifiedMessages.SendMessage<CContentBuilder_GetMissingDepotChunks_Request, CContentBuilder_GetMissingDepotChunks_Response>( "ContentBuilder.GetMissingDepotChunks#1", request );
+        }
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CContentBuilder_FinishDepotUpload_Response>> FinishDepotUpload( CContentBuilder_FinishDepotUpload_Request request )
+        {
+            return UnifiedMessages.SendMessage<CContentBuilder_FinishDepotUpload_Request, CContentBuilder_FinishDepotUpload_Response>( "ContentBuilder.FinishDepotUpload#1", request );
+        }
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CContentBuilder_CommitAppBuild_Response>> CommitAppBuild( CContentBuilder_CommitAppBuild_Request request )
+        {
+            return UnifiedMessages.SendMessage<CContentBuilder_CommitAppBuild_Request, CContentBuilder_CommitAppBuild_Response>( "ContentBuilder.CommitAppBuild#1", request );
+        }
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CContentBuilder_SignInstallScript_Response>> SignInstallScript( CContentBuilder_SignInstallScript_Request request )
+        {
+            return UnifiedMessages.SendMessage<CContentBuilder_SignInstallScript_Request, CContentBuilder_SignInstallScript_Response>( "ContentBuilder.SignInstallScript#1", request );
+        }
+
+        public override void HandleResponseMsg( string methodName, PacketClientMsgProtobuf packetMsg )
+        {
+            switch ( methodName )
+            {
+                case "InitDepotBuild":
+                    PostResponseMsg<CContentBuilder_InitDepotBuild_Response>( packetMsg );
+                    break;
+                case "StartDepotUpload":
+                    PostResponseMsg<CContentBuilder_StartDepotUpload_Response>( packetMsg );
+                    break;
+                case "GetMissingDepotChunks":
+                    PostResponseMsg<CContentBuilder_GetMissingDepotChunks_Response>( packetMsg );
+                    break;
+                case "FinishDepotUpload":
+                    PostResponseMsg<CContentBuilder_FinishDepotUpload_Response>( packetMsg );
+                    break;
+                case "CommitAppBuild":
+                    PostResponseMsg<CContentBuilder_CommitAppBuild_Response>( packetMsg );
+                    break;
+                case "SignInstallScript":
+                    PostResponseMsg<CContentBuilder_SignInstallScript_Response>( packetMsg );
+                    break;
+            }
+        }
+
+        public override void HandleNotificationMsg( string methodName, PacketClientMsgProtobuf packetMsg )
+        {
+        }
     }
 
 }
 
-#pragma warning restore CS0612, CS0618, CS1591, CS3021, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
+#pragma warning restore CS0612, CS0618, CS1591, CS3021, CS8981, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
 #endregion

@@ -11,7 +11,7 @@ namespace Fallout4Downgrader
         public bool KeepDepotFilesWhenDone { get; set; }
         public bool DownloadHDTextures { get; set; }
         public bool DownloadAllDLCs { get; set; }
-        public bool DeleteEnglishLanguageFiles { get; internal set; }
+        public bool DeleteEnglishLanguageFiles { get; set; }
     }
 
     public class AppSettings
@@ -26,14 +26,15 @@ namespace Fallout4Downgrader
         public bool DeleteCreationClubFiles { get; set; }
         public bool DownloadHDTextures { get; set; }
         public bool DownloadAllDLCs { get; set; }
-        public bool Merged { get; internal set; }
-        public bool DeleteEnglishLanguageFiles { get; internal set; }
+        public bool Merged { get; set; }
+        public bool DeleteEnglishLanguageFiles { get; set; }
         public bool InstallPlugins { get; set; }
-        public bool InstallHelperEnabled { get; internal set; }
-        public bool PatchFiles { get; private set; }
-        public bool DownloadDepots { get; private set; }
+        public bool InstallHelperEnabled { get; set; }
+        public bool PatchFiles { get; set; }
+        public bool DownloadDepots { get; set; }
         public bool ForcePatch { get; internal set; }
-        public bool DowngradeCreationKitOnly { get; private set; }
+        public bool DowngradeCreationKitOnly { get; set; }
+
         public static AppSettings FromParams(Params p)
         {
             var folon = p.Contains("-fallout4london") || p.Contains("-folon");

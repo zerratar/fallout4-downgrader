@@ -5,7 +5,7 @@
 // </auto-generated>
 
 #region Designer generated code
-#pragma warning disable CS0612, CS0618, CS1591, CS3021, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
+#pragma warning disable CS0612, CS0618, CS1591, CS3021, CS8981, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
 namespace SteamKit2.Internal
 {
 
@@ -511,6 +511,17 @@ namespace SteamKit2.Internal
             public void Resetcount() => __pbn__count = null;
             private uint? __pbn__count;
 
+            [global::ProtoBuf.ProtoMember(4)]
+            [global::System.ComponentModel.DefaultValue("")]
+            public string context
+            {
+                get => __pbn__context ?? "";
+                set => __pbn__context = value;
+            }
+            public bool ShouldSerializecontext() => __pbn__context != null;
+            public void Resetcontext() => __pbn__context = null;
+            private string __pbn__context;
+
         }
 
     }
@@ -556,6 +567,26 @@ namespace SteamKit2.Internal
         public bool ShouldSerializethrottling_kbps() => __pbn__throttling_kbps != null;
         public void Resetthrottling_kbps() => __pbn__throttling_kbps = null;
         private uint? __pbn__throttling_kbps;
+
+        [global::ProtoBuf.ProtoMember(4)]
+        public uint os_type
+        {
+            get => __pbn__os_type.GetValueOrDefault();
+            set => __pbn__os_type = value;
+        }
+        public bool ShouldSerializeos_type() => __pbn__os_type != null;
+        public void Resetos_type() => __pbn__os_type = null;
+        private uint? __pbn__os_type;
+
+        [global::ProtoBuf.ProtoMember(5)]
+        public uint device_type
+        {
+            get => __pbn__device_type.GetValueOrDefault();
+            set => __pbn__device_type = value;
+        }
+        public bool ShouldSerializedevice_type() => __pbn__device_type != null;
+        public void Resetdevice_type() => __pbn__device_type = null;
+        private uint? __pbn__device_type;
 
         [global::ProtoBuf.ProtoContract()]
         public partial class StatsInfo : global::ProtoBuf.IExtensible
@@ -1129,6 +1160,478 @@ namespace SteamKit2.Internal
         public void Resetlibrary_low_perf_mode_enabled() => __pbn__library_low_perf_mode_enabled = null;
         private bool? __pbn__library_low_perf_mode_enabled;
 
+        [global::ProtoBuf.ProtoMember(10)]
+        public int gr_mode
+        {
+            get => __pbn__gr_mode.GetValueOrDefault();
+            set => __pbn__gr_mode = value;
+        }
+        public bool ShouldSerializegr_mode() => __pbn__gr_mode != null;
+        public void Resetgr_mode() => __pbn__gr_mode = null;
+        private int? __pbn__gr_mode;
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class CClientMetrics_ReportLinuxStats_Notification : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1)]
+        public int glibc_version_major
+        {
+            get => __pbn__glibc_version_major.GetValueOrDefault();
+            set => __pbn__glibc_version_major = value;
+        }
+        public bool ShouldSerializeglibc_version_major() => __pbn__glibc_version_major != null;
+        public void Resetglibc_version_major() => __pbn__glibc_version_major = null;
+        private int? __pbn__glibc_version_major;
+
+        [global::ProtoBuf.ProtoMember(2)]
+        public int glibc_version_minor
+        {
+            get => __pbn__glibc_version_minor.GetValueOrDefault();
+            set => __pbn__glibc_version_minor = value;
+        }
+        public bool ShouldSerializeglibc_version_minor() => __pbn__glibc_version_minor != null;
+        public void Resetglibc_version_minor() => __pbn__glibc_version_minor = null;
+        private int? __pbn__glibc_version_minor;
+
+        [global::ProtoBuf.ProtoMember(3)]
+        public int account_type
+        {
+            get => __pbn__account_type.GetValueOrDefault();
+            set => __pbn__account_type = value;
+        }
+        public bool ShouldSerializeaccount_type() => __pbn__account_type != null;
+        public void Resetaccount_type() => __pbn__account_type = null;
+        private int? __pbn__account_type;
+
+        [global::ProtoBuf.ProtoMember(4)]
+        public int launcher_type
+        {
+            get => __pbn__launcher_type.GetValueOrDefault();
+            set => __pbn__launcher_type = value;
+        }
+        public bool ShouldSerializelauncher_type() => __pbn__launcher_type != null;
+        public void Resetlauncher_type() => __pbn__launcher_type = null;
+        private int? __pbn__launcher_type;
+
+        [global::ProtoBuf.ProtoMember(5)]
+        public int game_server_appid
+        {
+            get => __pbn__game_server_appid.GetValueOrDefault();
+            set => __pbn__game_server_appid = value;
+        }
+        public bool ShouldSerializegame_server_appid() => __pbn__game_server_appid != null;
+        public void Resetgame_server_appid() => __pbn__game_server_appid = null;
+        private int? __pbn__game_server_appid;
+
+        [global::ProtoBuf.ProtoMember(6)]
+        [global::System.ComponentModel.DefaultValue("")]
+        public string process_name
+        {
+            get => __pbn__process_name ?? "";
+            set => __pbn__process_name = value;
+        }
+        public bool ShouldSerializeprocess_name() => __pbn__process_name != null;
+        public void Resetprocess_name() => __pbn__process_name = null;
+        private string __pbn__process_name;
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class CClientMetrics_ReportAccessibilitySettings_Notification : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1)]
+        public float accessibility_desktop_ui_scale
+        {
+            get => __pbn__accessibility_desktop_ui_scale.GetValueOrDefault();
+            set => __pbn__accessibility_desktop_ui_scale = value;
+        }
+        public bool ShouldSerializeaccessibility_desktop_ui_scale() => __pbn__accessibility_desktop_ui_scale != null;
+        public void Resetaccessibility_desktop_ui_scale() => __pbn__accessibility_desktop_ui_scale = null;
+        private float? __pbn__accessibility_desktop_ui_scale;
+
+        [global::ProtoBuf.ProtoMember(2)]
+        public bool accessibility_screen_reader_enabled
+        {
+            get => __pbn__accessibility_screen_reader_enabled.GetValueOrDefault();
+            set => __pbn__accessibility_screen_reader_enabled = value;
+        }
+        public bool ShouldSerializeaccessibility_screen_reader_enabled() => __pbn__accessibility_screen_reader_enabled != null;
+        public void Resetaccessibility_screen_reader_enabled() => __pbn__accessibility_screen_reader_enabled = null;
+        private bool? __pbn__accessibility_screen_reader_enabled;
+
+        [global::ProtoBuf.ProtoMember(3)]
+        public bool accessibility_high_contrast_mode
+        {
+            get => __pbn__accessibility_high_contrast_mode.GetValueOrDefault();
+            set => __pbn__accessibility_high_contrast_mode = value;
+        }
+        public bool ShouldSerializeaccessibility_high_contrast_mode() => __pbn__accessibility_high_contrast_mode != null;
+        public void Resetaccessibility_high_contrast_mode() => __pbn__accessibility_high_contrast_mode = null;
+        private bool? __pbn__accessibility_high_contrast_mode;
+
+        [global::ProtoBuf.ProtoMember(4)]
+        public bool accessibility_reduce_motion
+        {
+            get => __pbn__accessibility_reduce_motion.GetValueOrDefault();
+            set => __pbn__accessibility_reduce_motion = value;
+        }
+        public bool ShouldSerializeaccessibility_reduce_motion() => __pbn__accessibility_reduce_motion != null;
+        public void Resetaccessibility_reduce_motion() => __pbn__accessibility_reduce_motion = null;
+        private bool? __pbn__accessibility_reduce_motion;
+
+        [global::ProtoBuf.ProtoMember(5)]
+        [global::System.ComponentModel.DefaultValue("")]
+        public string accessibility_color_filter_name
+        {
+            get => __pbn__accessibility_color_filter_name ?? "";
+            set => __pbn__accessibility_color_filter_name = value;
+        }
+        public bool ShouldSerializeaccessibility_color_filter_name() => __pbn__accessibility_color_filter_name != null;
+        public void Resetaccessibility_color_filter_name() => __pbn__accessibility_color_filter_name = null;
+        private string __pbn__accessibility_color_filter_name;
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class CClientMetrics_ClipShare_Notification : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1)]
+        [global::System.ComponentModel.DefaultValue(2u)]
+        public uint eresult
+        {
+            get => __pbn__eresult ?? 2u;
+            set => __pbn__eresult = value;
+        }
+        public bool ShouldSerializeeresult() => __pbn__eresult != null;
+        public void Reseteresult() => __pbn__eresult = null;
+        private uint? __pbn__eresult;
+
+        [global::ProtoBuf.ProtoMember(2)]
+        [global::System.ComponentModel.DefaultValue(EClipShareMethod.k_EClipShareMethod_Chat)]
+        public EClipShareMethod share_method
+        {
+            get => __pbn__share_method ?? EClipShareMethod.k_EClipShareMethod_Chat;
+            set => __pbn__share_method = value;
+        }
+        public bool ShouldSerializeshare_method() => __pbn__share_method != null;
+        public void Resetshare_method() => __pbn__share_method = null;
+        private EClipShareMethod? __pbn__share_method;
+
+        [global::ProtoBuf.ProtoMember(3)]
+        public float seconds
+        {
+            get => __pbn__seconds.GetValueOrDefault();
+            set => __pbn__seconds = value;
+        }
+        public bool ShouldSerializeseconds() => __pbn__seconds != null;
+        public void Resetseconds() => __pbn__seconds = null;
+        private float? __pbn__seconds;
+
+        [global::ProtoBuf.ProtoMember(4)]
+        public ulong bytes
+        {
+            get => __pbn__bytes.GetValueOrDefault();
+            set => __pbn__bytes = value;
+        }
+        public bool ShouldSerializebytes() => __pbn__bytes != null;
+        public void Resetbytes() => __pbn__bytes = null;
+        private ulong? __pbn__bytes;
+
+        [global::ProtoBuf.ProtoMember(5, DataFormat = global::ProtoBuf.DataFormat.FixedSize)]
+        public ulong gameid
+        {
+            get => __pbn__gameid.GetValueOrDefault();
+            set => __pbn__gameid = value;
+        }
+        public bool ShouldSerializegameid() => __pbn__gameid != null;
+        public void Resetgameid() => __pbn__gameid = null;
+        private ulong? __pbn__gameid;
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class CClientMetrics_ClipRange_Notification : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1)]
+        [global::System.ComponentModel.DefaultValue(EClipRangeMethod.k_EClipRangeMethod_CreateClipButton)]
+        public EClipRangeMethod original_range_method
+        {
+            get => __pbn__original_range_method ?? EClipRangeMethod.k_EClipRangeMethod_CreateClipButton;
+            set => __pbn__original_range_method = value;
+        }
+        public bool ShouldSerializeoriginal_range_method() => __pbn__original_range_method != null;
+        public void Resetoriginal_range_method() => __pbn__original_range_method = null;
+        private EClipRangeMethod? __pbn__original_range_method;
+
+        [global::ProtoBuf.ProtoMember(2)]
+        public RelativeRangeEdge start { get; set; }
+
+        [global::ProtoBuf.ProtoMember(3)]
+        public RelativeRangeEdge end { get; set; }
+
+        [global::ProtoBuf.ProtoMember(4)]
+        public float seconds
+        {
+            get => __pbn__seconds.GetValueOrDefault();
+            set => __pbn__seconds = value;
+        }
+        public bool ShouldSerializeseconds() => __pbn__seconds != null;
+        public void Resetseconds() => __pbn__seconds = null;
+        private float? __pbn__seconds;
+
+        [global::ProtoBuf.ProtoMember(5, DataFormat = global::ProtoBuf.DataFormat.FixedSize)]
+        public ulong gameid
+        {
+            get => __pbn__gameid.GetValueOrDefault();
+            set => __pbn__gameid = value;
+        }
+        public bool ShouldSerializegameid() => __pbn__gameid != null;
+        public void Resetgameid() => __pbn__gameid = null;
+        private ulong? __pbn__gameid;
+
+        [global::ProtoBuf.ProtoContract()]
+        public partial class RelativeRangeEdge : global::ProtoBuf.IExtensible
+        {
+            private global::ProtoBuf.IExtension __pbn__extensionData;
+            global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+                => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+            [global::ProtoBuf.ProtoMember(1)]
+            [global::System.ComponentModel.DefaultValue(EClipRangeMethod.k_EClipRangeMethod_CreateClipButton)]
+            public EClipRangeMethod original_range_method
+            {
+                get => __pbn__original_range_method ?? EClipRangeMethod.k_EClipRangeMethod_CreateClipButton;
+                set => __pbn__original_range_method = value;
+            }
+            public bool ShouldSerializeoriginal_range_method() => __pbn__original_range_method != null;
+            public void Resetoriginal_range_method() => __pbn__original_range_method = null;
+            private EClipRangeMethod? __pbn__original_range_method;
+
+            [global::ProtoBuf.ProtoMember(2)]
+            [global::System.ComponentModel.DefaultValue(EClipRangeMethod.k_EClipRangeMethod_CreateClipButton)]
+            public EClipRangeMethod latest_range_method
+            {
+                get => __pbn__latest_range_method ?? EClipRangeMethod.k_EClipRangeMethod_CreateClipButton;
+                set => __pbn__latest_range_method = value;
+            }
+            public bool ShouldSerializelatest_range_method() => __pbn__latest_range_method != null;
+            public void Resetlatest_range_method() => __pbn__latest_range_method = null;
+            private EClipRangeMethod? __pbn__latest_range_method;
+
+            [global::ProtoBuf.ProtoMember(3)]
+            public int delta_ms
+            {
+                get => __pbn__delta_ms.GetValueOrDefault();
+                set => __pbn__delta_ms = value;
+            }
+            public bool ShouldSerializedelta_ms() => __pbn__delta_ms != null;
+            public void Resetdelta_ms() => __pbn__delta_ms = null;
+            private int? __pbn__delta_ms;
+
+        }
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class CClientMetrics_EndGameRecording_Notification : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1)]
+        [global::System.ComponentModel.DefaultValue(EGameRecordingType.k_EGameRecordingType_Unknown)]
+        public EGameRecordingType recording_type
+        {
+            get => __pbn__recording_type ?? EGameRecordingType.k_EGameRecordingType_Unknown;
+            set => __pbn__recording_type = value;
+        }
+        public bool ShouldSerializerecording_type() => __pbn__recording_type != null;
+        public void Resetrecording_type() => __pbn__recording_type = null;
+        private EGameRecordingType? __pbn__recording_type;
+
+        [global::ProtoBuf.ProtoMember(2)]
+        public float seconds
+        {
+            get => __pbn__seconds.GetValueOrDefault();
+            set => __pbn__seconds = value;
+        }
+        public bool ShouldSerializeseconds() => __pbn__seconds != null;
+        public void Resetseconds() => __pbn__seconds = null;
+        private float? __pbn__seconds;
+
+        [global::ProtoBuf.ProtoMember(3)]
+        public ulong bytes
+        {
+            get => __pbn__bytes.GetValueOrDefault();
+            set => __pbn__bytes = value;
+        }
+        public bool ShouldSerializebytes() => __pbn__bytes != null;
+        public void Resetbytes() => __pbn__bytes = null;
+        private ulong? __pbn__bytes;
+
+        [global::ProtoBuf.ProtoMember(4, DataFormat = global::ProtoBuf.DataFormat.FixedSize)]
+        public ulong gameid
+        {
+            get => __pbn__gameid.GetValueOrDefault();
+            set => __pbn__gameid = value;
+        }
+        public bool ShouldSerializegameid() => __pbn__gameid != null;
+        public void Resetgameid() => __pbn__gameid = null;
+        private ulong? __pbn__gameid;
+
+        [global::ProtoBuf.ProtoMember(5)]
+        public bool instant_clip
+        {
+            get => __pbn__instant_clip.GetValueOrDefault();
+            set => __pbn__instant_clip = value;
+        }
+        public bool ShouldSerializeinstant_clip() => __pbn__instant_clip != null;
+        public void Resetinstant_clip() => __pbn__instant_clip = null;
+        private bool? __pbn__instant_clip;
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class CClientMetrics_GamePerformance_Notification : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1)]
+        public global::System.Collections.Generic.List<FrameRateReport> reports { get; } = new global::System.Collections.Generic.List<FrameRateReport>();
+
+        [global::ProtoBuf.ProtoContract()]
+        public partial class FrameRateReport : global::ProtoBuf.IExtensible
+        {
+            private global::ProtoBuf.IExtension __pbn__extensionData;
+            global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+                => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+            [global::ProtoBuf.ProtoMember(1, DataFormat = global::ProtoBuf.DataFormat.FixedSize)]
+            public ulong gameid
+            {
+                get => __pbn__gameid.GetValueOrDefault();
+                set => __pbn__gameid = value;
+            }
+            public bool ShouldSerializegameid() => __pbn__gameid != null;
+            public void Resetgameid() => __pbn__gameid = null;
+            private ulong? __pbn__gameid;
+
+            [global::ProtoBuf.ProtoMember(2)]
+            public uint frame_rate
+            {
+                get => __pbn__frame_rate.GetValueOrDefault();
+                set => __pbn__frame_rate = value;
+            }
+            public bool ShouldSerializeframe_rate() => __pbn__frame_rate != null;
+            public void Resetframe_rate() => __pbn__frame_rate = null;
+            private uint? __pbn__frame_rate;
+
+            [global::ProtoBuf.ProtoMember(3)]
+            [global::System.ComponentModel.DefaultValue("")]
+            public string manufacturer
+            {
+                get => __pbn__manufacturer ?? "";
+                set => __pbn__manufacturer = value;
+            }
+            public bool ShouldSerializemanufacturer() => __pbn__manufacturer != null;
+            public void Resetmanufacturer() => __pbn__manufacturer = null;
+            private string __pbn__manufacturer;
+
+            [global::ProtoBuf.ProtoMember(4)]
+            [global::System.ComponentModel.DefaultValue("")]
+            public string model
+            {
+                get => __pbn__model ?? "";
+                set => __pbn__model = value;
+            }
+            public bool ShouldSerializemodel() => __pbn__model != null;
+            public void Resetmodel() => __pbn__model = null;
+            private string __pbn__model;
+
+            [global::ProtoBuf.ProtoMember(5)]
+            [global::System.ComponentModel.DefaultValue("")]
+            public string dx_video_card
+            {
+                get => __pbn__dx_video_card ?? "";
+                set => __pbn__dx_video_card = value;
+            }
+            public bool ShouldSerializedx_video_card() => __pbn__dx_video_card != null;
+            public void Resetdx_video_card() => __pbn__dx_video_card = null;
+            private string __pbn__dx_video_card;
+
+            [global::ProtoBuf.ProtoMember(6)]
+            public int dx_vendorid
+            {
+                get => __pbn__dx_vendorid.GetValueOrDefault();
+                set => __pbn__dx_vendorid = value;
+            }
+            public bool ShouldSerializedx_vendorid() => __pbn__dx_vendorid != null;
+            public void Resetdx_vendorid() => __pbn__dx_vendorid = null;
+            private int? __pbn__dx_vendorid;
+
+            [global::ProtoBuf.ProtoMember(7)]
+            public int dx_deviceid
+            {
+                get => __pbn__dx_deviceid.GetValueOrDefault();
+                set => __pbn__dx_deviceid = value;
+            }
+            public bool ShouldSerializedx_deviceid() => __pbn__dx_deviceid != null;
+            public void Resetdx_deviceid() => __pbn__dx_deviceid = null;
+            private int? __pbn__dx_deviceid;
+
+            [global::ProtoBuf.ProtoMember(8)]
+            public uint num_gpu
+            {
+                get => __pbn__num_gpu.GetValueOrDefault();
+                set => __pbn__num_gpu = value;
+            }
+            public bool ShouldSerializenum_gpu() => __pbn__num_gpu != null;
+            public void Resetnum_gpu() => __pbn__num_gpu = null;
+            private uint? __pbn__num_gpu;
+
+            [global::ProtoBuf.ProtoMember(9)]
+            public ulong system_ram
+            {
+                get => __pbn__system_ram.GetValueOrDefault();
+                set => __pbn__system_ram = value;
+            }
+            public bool ShouldSerializesystem_ram() => __pbn__system_ram != null;
+            public void Resetsystem_ram() => __pbn__system_ram = null;
+            private ulong? __pbn__system_ram;
+
+            [global::ProtoBuf.ProtoMember(10)]
+            public int session_seconds
+            {
+                get => __pbn__session_seconds.GetValueOrDefault();
+                set => __pbn__session_seconds = value;
+            }
+            public bool ShouldSerializesession_seconds() => __pbn__session_seconds != null;
+            public void Resetsession_seconds() => __pbn__session_seconds = null;
+            private int? __pbn__session_seconds;
+
+        }
+
     }
 
     [global::ProtoBuf.ProtoContract()]
@@ -1147,22 +1650,182 @@ namespace SteamKit2.Internal
         k_ESteamPipeOperationType_DiskWrite = 3,
     }
 
-    public interface IClientMetrics
+    [global::ProtoBuf.ProtoContract()]
+    public enum EClipShareMethod
     {
-        NoResponse ClientAppInterfaceStatsReport(CClientMetrics_AppInterfaceStats_Notification request);
-        NoResponse ClientIPv6ConnectivityReport(CClientMetrics_IPv6Connectivity_Notification request);
-        NoResponse SteamPipeWorkStatsReport(CClientMetrics_SteamPipeWorkStats_Notification request);
-        NoResponse ReportReactUsage(CClientMetrics_ReportReactUsage_Notification request);
-        NoResponse ReportClientError(CClientMetrics_ReportClientError_Notification request);
-        NoResponse ClientBootstrapReport(CClientMetrics_ClientBootstrap_Notification request);
-        NoResponse ClientDownloadRatesReport(CClientMetrics_DownloadRates_Notification request);
-        NoResponse ClientContentValidationReport(CClientMetrics_ContentValidation_Notification request);
-        NoResponse ClientCloudAppSyncStats(CClientMetrics_CloudAppSyncStats_Notification request);
-        NoResponse ClientDownloadResponseCodeCounts(CClientMetrics_ContentDownloadResponse_Counts_Notification request);
-        NoResponse ReportClientArgs(CClientMetrics_ReportClientArgs_Notification request);
+        k_EClipShareMethod_Chat = 1,
+        k_EClipShareMethod_Clipboard = 2,
+        k_EClipShareMethod_File = 3,
+        k_EClipShareMethod_SendClip = 4,
+        k_EClipShareMethod_SaveToMedia = 5,
+        k_EClipShareMethod_CreateLink = 6,
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public enum EClipRangeMethod
+    {
+        k_EClipRangeMethod_CreateClipButton = 1,
+        k_EClipRangeMethod_Highlight = 2,
+        k_EClipRangeMethod_BeginEndButtons = 3,
+        k_EClipRangeMethod_ContextMenu = 4,
+        k_EClipRangeMethod_Drag = 5,
+        k_EClipRangeMethod_EntireClip = 6,
+        k_EClipRangeMethod_PhaseRecording = 7,
+    }
+
+    public class ClientMetrics : SteamUnifiedMessages.UnifiedService
+    {
+        public override string ServiceName { get; } = "ClientMetrics";
+
+        public void ClientAppInterfaceStatsReport(CClientMetrics_AppInterfaceStats_Notification request )
+        {
+            UnifiedMessages.SendNotification<CClientMetrics_AppInterfaceStats_Notification>( "ClientMetrics.ClientAppInterfaceStatsReport#1", request );
+        }
+
+        public void ClientIPv6ConnectivityReport(CClientMetrics_IPv6Connectivity_Notification request )
+        {
+            UnifiedMessages.SendNotification<CClientMetrics_IPv6Connectivity_Notification>( "ClientMetrics.ClientIPv6ConnectivityReport#1", request );
+        }
+
+        public void SteamPipeWorkStatsReport(CClientMetrics_SteamPipeWorkStats_Notification request )
+        {
+            UnifiedMessages.SendNotification<CClientMetrics_SteamPipeWorkStats_Notification>( "ClientMetrics.SteamPipeWorkStatsReport#1", request );
+        }
+
+        public void ReportReactUsage(CClientMetrics_ReportReactUsage_Notification request )
+        {
+            UnifiedMessages.SendNotification<CClientMetrics_ReportReactUsage_Notification>( "ClientMetrics.ReportReactUsage#1", request );
+        }
+
+        public void ReportClientError(CClientMetrics_ReportClientError_Notification request )
+        {
+            UnifiedMessages.SendNotification<CClientMetrics_ReportClientError_Notification>( "ClientMetrics.ReportClientError#1", request );
+        }
+
+        public void ClientBootstrapReport(CClientMetrics_ClientBootstrap_Notification request )
+        {
+            UnifiedMessages.SendNotification<CClientMetrics_ClientBootstrap_Notification>( "ClientMetrics.ClientBootstrapReport#1", request );
+        }
+
+        public void ClientDownloadRatesReport(CClientMetrics_DownloadRates_Notification request )
+        {
+            UnifiedMessages.SendNotification<CClientMetrics_DownloadRates_Notification>( "ClientMetrics.ClientDownloadRatesReport#1", request );
+        }
+
+        public void ClientContentValidationReport(CClientMetrics_ContentValidation_Notification request )
+        {
+            UnifiedMessages.SendNotification<CClientMetrics_ContentValidation_Notification>( "ClientMetrics.ClientContentValidationReport#1", request );
+        }
+
+        public void ClientCloudAppSyncStats(CClientMetrics_CloudAppSyncStats_Notification request )
+        {
+            UnifiedMessages.SendNotification<CClientMetrics_CloudAppSyncStats_Notification>( "ClientMetrics.ClientCloudAppSyncStats#1", request );
+        }
+
+        public void ClientDownloadResponseCodeCounts(CClientMetrics_ContentDownloadResponse_Counts_Notification request )
+        {
+            UnifiedMessages.SendNotification<CClientMetrics_ContentDownloadResponse_Counts_Notification>( "ClientMetrics.ClientDownloadResponseCodeCounts#1", request );
+        }
+
+        public void ReportClientArgs(CClientMetrics_ReportClientArgs_Notification request )
+        {
+            UnifiedMessages.SendNotification<CClientMetrics_ReportClientArgs_Notification>( "ClientMetrics.ReportClientArgs#1", request );
+        }
+
+        public void ReportLinuxStats(CClientMetrics_ReportLinuxStats_Notification request )
+        {
+            UnifiedMessages.SendNotification<CClientMetrics_ReportLinuxStats_Notification>( "ClientMetrics.ReportLinuxStats#1", request );
+        }
+
+        public void ReportAccessibilitySettings(CClientMetrics_ReportAccessibilitySettings_Notification request )
+        {
+            UnifiedMessages.SendNotification<CClientMetrics_ReportAccessibilitySettings_Notification>( "ClientMetrics.ReportAccessibilitySettings#1", request );
+        }
+
+        public void ReportClipShare(CClientMetrics_ClipShare_Notification request )
+        {
+            UnifiedMessages.SendNotification<CClientMetrics_ClipShare_Notification>( "ClientMetrics.ReportClipShare#1", request );
+        }
+
+        public void ReportClipRange(CClientMetrics_ClipRange_Notification request )
+        {
+            UnifiedMessages.SendNotification<CClientMetrics_ClipRange_Notification>( "ClientMetrics.ReportClipRange#1", request );
+        }
+
+        public void ReportEndGameRecording(CClientMetrics_EndGameRecording_Notification request )
+        {
+            UnifiedMessages.SendNotification<CClientMetrics_EndGameRecording_Notification>( "ClientMetrics.ReportEndGameRecording#1", request );
+        }
+
+        public void ReportGamePerformance(CClientMetrics_GamePerformance_Notification request )
+        {
+            UnifiedMessages.SendNotification<CClientMetrics_GamePerformance_Notification>( "ClientMetrics.ReportGamePerformance#1", request );
+        }
+
+        public override void HandleResponseMsg( string methodName, PacketClientMsgProtobuf packetMsg )
+        {
+        }
+
+        public override void HandleNotificationMsg( string methodName, PacketClientMsgProtobuf packetMsg )
+        {
+            switch ( methodName )
+            {
+                case "ClientAppInterfaceStatsReport":
+                    PostNotificationMsg<CClientMetrics_AppInterfaceStats_Notification>( packetMsg );
+                    break;
+                case "ClientIPv6ConnectivityReport":
+                    PostNotificationMsg<CClientMetrics_IPv6Connectivity_Notification>( packetMsg );
+                    break;
+                case "SteamPipeWorkStatsReport":
+                    PostNotificationMsg<CClientMetrics_SteamPipeWorkStats_Notification>( packetMsg );
+                    break;
+                case "ReportReactUsage":
+                    PostNotificationMsg<CClientMetrics_ReportReactUsage_Notification>( packetMsg );
+                    break;
+                case "ReportClientError":
+                    PostNotificationMsg<CClientMetrics_ReportClientError_Notification>( packetMsg );
+                    break;
+                case "ClientBootstrapReport":
+                    PostNotificationMsg<CClientMetrics_ClientBootstrap_Notification>( packetMsg );
+                    break;
+                case "ClientDownloadRatesReport":
+                    PostNotificationMsg<CClientMetrics_DownloadRates_Notification>( packetMsg );
+                    break;
+                case "ClientContentValidationReport":
+                    PostNotificationMsg<CClientMetrics_ContentValidation_Notification>( packetMsg );
+                    break;
+                case "ClientCloudAppSyncStats":
+                    PostNotificationMsg<CClientMetrics_CloudAppSyncStats_Notification>( packetMsg );
+                    break;
+                case "ClientDownloadResponseCodeCounts":
+                    PostNotificationMsg<CClientMetrics_ContentDownloadResponse_Counts_Notification>( packetMsg );
+                    break;
+                case "ReportClientArgs":
+                    PostNotificationMsg<CClientMetrics_ReportClientArgs_Notification>( packetMsg );
+                    break;
+                case "ReportLinuxStats":
+                    PostNotificationMsg<CClientMetrics_ReportLinuxStats_Notification>( packetMsg );
+                    break;
+                case "ReportAccessibilitySettings":
+                    PostNotificationMsg<CClientMetrics_ReportAccessibilitySettings_Notification>( packetMsg );
+                    break;
+                case "ReportClipShare":
+                    PostNotificationMsg<CClientMetrics_ClipShare_Notification>( packetMsg );
+                    break;
+                case "ReportClipRange":
+                    PostNotificationMsg<CClientMetrics_ClipRange_Notification>( packetMsg );
+                    break;
+                case "ReportEndGameRecording":
+                    PostNotificationMsg<CClientMetrics_EndGameRecording_Notification>( packetMsg );
+                    break;
+                case "ReportGamePerformance":
+                    PostNotificationMsg<CClientMetrics_GamePerformance_Notification>( packetMsg );
+                    break;
+            }
+        }
     }
 
 }
 
-#pragma warning restore CS0612, CS0618, CS1591, CS3021, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
+#pragma warning restore CS0612, CS0618, CS1591, CS3021, CS8981, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
 #endregion

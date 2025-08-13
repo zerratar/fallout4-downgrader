@@ -5,7 +5,7 @@
 // </auto-generated>
 
 #region Designer generated code
-#pragma warning disable CS0612, CS0618, CS1591, CS3021, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
+#pragma warning disable CS0612, CS0618, CS1591, CS3021, CS8981, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
 namespace SteamKit2.Internal
 {
 
@@ -740,18 +740,263 @@ namespace SteamKit2.Internal
 
     }
 
-    public interface IContentServerDirectory
+    [global::ProtoBuf.ProtoContract()]
+    public partial class CDepotContentDetection_GetAllDetectedAppContent_Request : global::ProtoBuf.IExtensible
     {
-        CContentServerDirectory_GetServersForSteamPipe_Response GetServersForSteamPipe(CContentServerDirectory_GetServersForSteamPipe_Request request);
-        CContentServerDirectory_GetDepotPatchInfo_Response GetDepotPatchInfo(CContentServerDirectory_GetDepotPatchInfo_Request request);
-        CContentServerDirectory_GetClientUpdateHosts_Response GetClientUpdateHosts(CContentServerDirectory_GetClientUpdateHosts_Request request);
-        CContentServerDirectory_GetManifestRequestCode_Response GetManifestRequestCode(CContentServerDirectory_GetManifestRequestCode_Request request);
-        CContentServerDirectory_GetCDNAuthToken_Response GetCDNAuthToken(CContentServerDirectory_GetCDNAuthToken_Request request);
-        CContentServerDirectory_RequestPeerContentServer_Response RequestPeerContentServer(CContentServerDirectory_RequestPeerContentServer_Request request);
-        CContentServerDirectory_GetPeerContentInfo_Response GetPeerContentInfo(CContentServerDirectory_GetPeerContentInfo_Request request);
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1)]
+        [global::System.ComponentModel.DefaultValue(EAppContentDetectionType.k_EAppContentDetectionType_None)]
+        public EAppContentDetectionType detection_type
+        {
+            get => __pbn__detection_type ?? EAppContentDetectionType.k_EAppContentDetectionType_None;
+            set => __pbn__detection_type = value;
+        }
+        public bool ShouldSerializedetection_type() => __pbn__detection_type != null;
+        public void Resetdetection_type() => __pbn__detection_type = null;
+        private EAppContentDetectionType? __pbn__detection_type;
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class DetectedAppContent : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1)]
+        public uint app_id
+        {
+            get => __pbn__app_id.GetValueOrDefault();
+            set => __pbn__app_id = value;
+        }
+        public bool ShouldSerializeapp_id() => __pbn__app_id != null;
+        public void Resetapp_id() => __pbn__app_id = null;
+        private uint? __pbn__app_id;
+
+        [global::ProtoBuf.ProtoMember(2)]
+        public uint depot_id
+        {
+            get => __pbn__depot_id.GetValueOrDefault();
+            set => __pbn__depot_id = value;
+        }
+        public bool ShouldSerializedepot_id() => __pbn__depot_id != null;
+        public void Resetdepot_id() => __pbn__depot_id = null;
+        private uint? __pbn__depot_id;
+
+        [global::ProtoBuf.ProtoMember(3)]
+        public int detected_content
+        {
+            get => __pbn__detected_content.GetValueOrDefault();
+            set => __pbn__detected_content = value;
+        }
+        public bool ShouldSerializedetected_content() => __pbn__detected_content != null;
+        public void Resetdetected_content() => __pbn__detected_content = null;
+        private int? __pbn__detected_content;
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class CDepotContentDetection_GetAllDetectedAppContent_Response : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1)]
+        public global::System.Collections.Generic.List<DetectedAppContent> detected_app_content { get; } = new global::System.Collections.Generic.List<DetectedAppContent>();
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class CDepotContentDetection_GetDetectedContentSingleApp_Request : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1)]
+        public uint appid
+        {
+            get => __pbn__appid.GetValueOrDefault();
+            set => __pbn__appid = value;
+        }
+        public bool ShouldSerializeappid() => __pbn__appid != null;
+        public void Resetappid() => __pbn__appid = null;
+        private uint? __pbn__appid;
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class CDepotContentDetection_GetDetectedContentSingleApp_Response : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1)]
+        [global::System.ComponentModel.DefaultValue(EAppAntiCheatType.k_EAppAntiCheatTypeNone)]
+        public EAppAntiCheatType detected_anticheat
+        {
+            get => __pbn__detected_anticheat ?? EAppAntiCheatType.k_EAppAntiCheatTypeNone;
+            set => __pbn__detected_anticheat = value;
+        }
+        public bool ShouldSerializedetected_anticheat() => __pbn__detected_anticheat != null;
+        public void Resetdetected_anticheat() => __pbn__detected_anticheat = null;
+        private EAppAntiCheatType? __pbn__detected_anticheat;
+
+        [global::ProtoBuf.ProtoMember(2)]
+        [global::System.ComponentModel.DefaultValue(EAppGameEngineType.k_EAppGameEngineTypeNone)]
+        public EAppGameEngineType detected_gameengine
+        {
+            get => __pbn__detected_gameengine ?? EAppGameEngineType.k_EAppGameEngineTypeNone;
+            set => __pbn__detected_gameengine = value;
+        }
+        public bool ShouldSerializedetected_gameengine() => __pbn__detected_gameengine != null;
+        public void Resetdetected_gameengine() => __pbn__detected_gameengine = null;
+        private EAppGameEngineType? __pbn__detected_gameengine;
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public enum EAppContentDetectionType
+    {
+        k_EAppContentDetectionType_None = 0,
+        k_EAppContentDetectionType_AntiCheat = 1,
+        k_EAppContentDetectionType_GameEngine = 2,
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public enum EAppAntiCheatType
+    {
+        k_EAppAntiCheatTypeNone = 0,
+        k_EAppAntiCheatTypeEasyAC = 1,
+        k_EAppAntiCheatTypeDenuvo = 2,
+        k_EAppAntiCheatTypeBattlEye = 3,
+        k_EAppAntiCheatTypeXignCode = 4,
+        k_EAppAntiCheatTypePunkBuster = 5,
+        k_EAppAntiCheatTypeVAC = 6,
+        k_EAppAntiCheatTypeGameGuard = 7,
+        k_EAppAntiCheatTypeHackShield = 8,
+        k_EAppAntiCheatTypeAntiCheatExpert = 9,
+        k_EAppAntiCheatTypeOther = 10,
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public enum EAppGameEngineType
+    {
+        k_EAppGameEngineTypeNone = 0,
+        k_EAppGameEngineTypeUnreal = 1,
+    }
+
+    public class ContentServerDirectory : SteamUnifiedMessages.UnifiedService
+    {
+        public override string ServiceName { get; } = "ContentServerDirectory";
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CContentServerDirectory_GetServersForSteamPipe_Response>> GetServersForSteamPipe( CContentServerDirectory_GetServersForSteamPipe_Request request )
+        {
+            return UnifiedMessages.SendMessage<CContentServerDirectory_GetServersForSteamPipe_Request, CContentServerDirectory_GetServersForSteamPipe_Response>( "ContentServerDirectory.GetServersForSteamPipe#1", request );
+        }
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CContentServerDirectory_GetDepotPatchInfo_Response>> GetDepotPatchInfo( CContentServerDirectory_GetDepotPatchInfo_Request request )
+        {
+            return UnifiedMessages.SendMessage<CContentServerDirectory_GetDepotPatchInfo_Request, CContentServerDirectory_GetDepotPatchInfo_Response>( "ContentServerDirectory.GetDepotPatchInfo#1", request );
+        }
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CContentServerDirectory_GetClientUpdateHosts_Response>> GetClientUpdateHosts( CContentServerDirectory_GetClientUpdateHosts_Request request )
+        {
+            return UnifiedMessages.SendMessage<CContentServerDirectory_GetClientUpdateHosts_Request, CContentServerDirectory_GetClientUpdateHosts_Response>( "ContentServerDirectory.GetClientUpdateHosts#1", request );
+        }
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CContentServerDirectory_GetManifestRequestCode_Response>> GetManifestRequestCode( CContentServerDirectory_GetManifestRequestCode_Request request )
+        {
+            return UnifiedMessages.SendMessage<CContentServerDirectory_GetManifestRequestCode_Request, CContentServerDirectory_GetManifestRequestCode_Response>( "ContentServerDirectory.GetManifestRequestCode#1", request );
+        }
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CContentServerDirectory_GetCDNAuthToken_Response>> GetCDNAuthToken( CContentServerDirectory_GetCDNAuthToken_Request request )
+        {
+            return UnifiedMessages.SendMessage<CContentServerDirectory_GetCDNAuthToken_Request, CContentServerDirectory_GetCDNAuthToken_Response>( "ContentServerDirectory.GetCDNAuthToken#1", request );
+        }
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CContentServerDirectory_RequestPeerContentServer_Response>> RequestPeerContentServer( CContentServerDirectory_RequestPeerContentServer_Request request )
+        {
+            return UnifiedMessages.SendMessage<CContentServerDirectory_RequestPeerContentServer_Request, CContentServerDirectory_RequestPeerContentServer_Response>( "ContentServerDirectory.RequestPeerContentServer#1", request );
+        }
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CContentServerDirectory_GetPeerContentInfo_Response>> GetPeerContentInfo( CContentServerDirectory_GetPeerContentInfo_Request request )
+        {
+            return UnifiedMessages.SendMessage<CContentServerDirectory_GetPeerContentInfo_Request, CContentServerDirectory_GetPeerContentInfo_Response>( "ContentServerDirectory.GetPeerContentInfo#1", request );
+        }
+
+        public override void HandleResponseMsg( string methodName, PacketClientMsgProtobuf packetMsg )
+        {
+            switch ( methodName )
+            {
+                case "GetServersForSteamPipe":
+                    PostResponseMsg<CContentServerDirectory_GetServersForSteamPipe_Response>( packetMsg );
+                    break;
+                case "GetDepotPatchInfo":
+                    PostResponseMsg<CContentServerDirectory_GetDepotPatchInfo_Response>( packetMsg );
+                    break;
+                case "GetClientUpdateHosts":
+                    PostResponseMsg<CContentServerDirectory_GetClientUpdateHosts_Response>( packetMsg );
+                    break;
+                case "GetManifestRequestCode":
+                    PostResponseMsg<CContentServerDirectory_GetManifestRequestCode_Response>( packetMsg );
+                    break;
+                case "GetCDNAuthToken":
+                    PostResponseMsg<CContentServerDirectory_GetCDNAuthToken_Response>( packetMsg );
+                    break;
+                case "RequestPeerContentServer":
+                    PostResponseMsg<CContentServerDirectory_RequestPeerContentServer_Response>( packetMsg );
+                    break;
+                case "GetPeerContentInfo":
+                    PostResponseMsg<CContentServerDirectory_GetPeerContentInfo_Response>( packetMsg );
+                    break;
+            }
+        }
+
+        public override void HandleNotificationMsg( string methodName, PacketClientMsgProtobuf packetMsg )
+        {
+        }
+    }
+
+    public class DepotContentDetection : SteamUnifiedMessages.UnifiedService
+    {
+        public override string ServiceName { get; } = "DepotContentDetection";
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CDepotContentDetection_GetAllDetectedAppContent_Response>> GetAllDetectedAppContent( CDepotContentDetection_GetAllDetectedAppContent_Request request )
+        {
+            return UnifiedMessages.SendMessage<CDepotContentDetection_GetAllDetectedAppContent_Request, CDepotContentDetection_GetAllDetectedAppContent_Response>( "DepotContentDetection.GetAllDetectedAppContent#1", request );
+        }
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CDepotContentDetection_GetDetectedContentSingleApp_Response>> GetDetectedContentSingleApp( CDepotContentDetection_GetDetectedContentSingleApp_Request request )
+        {
+            return UnifiedMessages.SendMessage<CDepotContentDetection_GetDetectedContentSingleApp_Request, CDepotContentDetection_GetDetectedContentSingleApp_Response>( "DepotContentDetection.GetDetectedContentSingleApp#1", request );
+        }
+
+        public override void HandleResponseMsg( string methodName, PacketClientMsgProtobuf packetMsg )
+        {
+            switch ( methodName )
+            {
+                case "GetAllDetectedAppContent":
+                    PostResponseMsg<CDepotContentDetection_GetAllDetectedAppContent_Response>( packetMsg );
+                    break;
+                case "GetDetectedContentSingleApp":
+                    PostResponseMsg<CDepotContentDetection_GetDetectedContentSingleApp_Response>( packetMsg );
+                    break;
+            }
+        }
+
+        public override void HandleNotificationMsg( string methodName, PacketClientMsgProtobuf packetMsg )
+        {
+        }
     }
 
 }
 
-#pragma warning restore CS0612, CS0618, CS1591, CS3021, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
+#pragma warning restore CS0612, CS0618, CS1591, CS3021, CS8981, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
 #endregion

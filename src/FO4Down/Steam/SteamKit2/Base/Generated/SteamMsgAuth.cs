@@ -5,7 +5,7 @@
 // </auto-generated>
 
 #region Designer generated code
-#pragma warning disable CS0612, CS0618, CS1591, CS3021, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
+#pragma warning disable CS0612, CS0618, CS1591, CS3021, CS8981, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
 namespace SteamKit2.Internal
 {
 
@@ -138,6 +138,17 @@ namespace SteamKit2.Internal
         public bool ShouldSerializemachine_id() => __pbn__machine_id != null;
         public void Resetmachine_id() => __pbn__machine_id = null;
         private byte[] __pbn__machine_id;
+
+        [global::ProtoBuf.ProtoMember(7)]
+        [global::System.ComponentModel.DefaultValue(EAuthTokenAppType.k_EAuthTokenAppType_Unknown)]
+        public EAuthTokenAppType app_type
+        {
+            get => __pbn__app_type ?? EAuthTokenAppType.k_EAuthTokenAppType_Unknown;
+            set => __pbn__app_type = value;
+        }
+        public bool ShouldSerializeapp_type() => __pbn__app_type != null;
+        public void Resetapp_type() => __pbn__app_type = null;
+        private EAuthTokenAppType? __pbn__app_type;
 
     }
 
@@ -784,6 +795,191 @@ namespace SteamKit2.Internal
         public void Resetrequested_persistence() => __pbn__requested_persistence = null;
         private ESessionPersistence? __pbn__requested_persistence;
 
+        [global::ProtoBuf.ProtoMember(13)]
+        public int device_trust
+        {
+            get => __pbn__device_trust.GetValueOrDefault();
+            set => __pbn__device_trust = value;
+        }
+        public bool ShouldSerializedevice_trust() => __pbn__device_trust != null;
+        public void Resetdevice_trust() => __pbn__device_trust = null;
+        private int? __pbn__device_trust;
+
+        [global::ProtoBuf.ProtoMember(14)]
+        [global::System.ComponentModel.DefaultValue(EAuthTokenAppType.k_EAuthTokenAppType_Unknown)]
+        public EAuthTokenAppType app_type
+        {
+            get => __pbn__app_type ?? EAuthTokenAppType.k_EAuthTokenAppType_Unknown;
+            set => __pbn__app_type = value;
+        }
+        public bool ShouldSerializeapp_type() => __pbn__app_type != null;
+        public void Resetapp_type() => __pbn__app_type = null;
+        private EAuthTokenAppType? __pbn__app_type;
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class CAuthentication_GetAuthSessionRiskInfo_Request : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1)]
+        public ulong client_id
+        {
+            get => __pbn__client_id.GetValueOrDefault();
+            set => __pbn__client_id = value;
+        }
+        public bool ShouldSerializeclient_id() => __pbn__client_id != null;
+        public void Resetclient_id() => __pbn__client_id = null;
+        private ulong? __pbn__client_id;
+
+        [global::ProtoBuf.ProtoMember(2)]
+        public uint language
+        {
+            get => __pbn__language.GetValueOrDefault();
+            set => __pbn__language = value;
+        }
+        public bool ShouldSerializelanguage() => __pbn__language != null;
+        public void Resetlanguage() => __pbn__language = null;
+        private uint? __pbn__language;
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class CAuthentication_GetAuthSessionRiskInfo_Response : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1)]
+        [global::System.ComponentModel.DefaultValue("")]
+        public string location_confirmer
+        {
+            get => __pbn__location_confirmer ?? "";
+            set => __pbn__location_confirmer = value;
+        }
+        public bool ShouldSerializelocation_confirmer() => __pbn__location_confirmer != null;
+        public void Resetlocation_confirmer() => __pbn__location_confirmer = null;
+        private string __pbn__location_confirmer;
+
+        [global::ProtoBuf.ProtoMember(2)]
+        [global::System.ComponentModel.DefaultValue("")]
+        public string location_requestor
+        {
+            get => __pbn__location_requestor ?? "";
+            set => __pbn__location_requestor = value;
+        }
+        public bool ShouldSerializelocation_requestor() => __pbn__location_requestor != null;
+        public void Resetlocation_requestor() => __pbn__location_requestor = null;
+        private string __pbn__location_requestor;
+
+        [global::ProtoBuf.ProtoMember(3)]
+        [global::System.ComponentModel.DefaultValue("")]
+        public string location_other
+        {
+            get => __pbn__location_other ?? "";
+            set => __pbn__location_other = value;
+        }
+        public bool ShouldSerializelocation_other() => __pbn__location_other != null;
+        public void Resetlocation_other() => __pbn__location_other = null;
+        private string __pbn__location_other;
+
+        [global::ProtoBuf.ProtoMember(4)]
+        [global::System.ComponentModel.DefaultValue(EAuthTokenPlatformType.k_EAuthTokenPlatformType_Unknown)]
+        public EAuthTokenPlatformType platform_type
+        {
+            get => __pbn__platform_type ?? EAuthTokenPlatformType.k_EAuthTokenPlatformType_Unknown;
+            set => __pbn__platform_type = value;
+        }
+        public bool ShouldSerializeplatform_type() => __pbn__platform_type != null;
+        public void Resetplatform_type() => __pbn__platform_type = null;
+        private EAuthTokenPlatformType? __pbn__platform_type;
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class CAuthentication_NotifyRiskQuizResults_Notification : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1)]
+        public ulong client_id
+        {
+            get => __pbn__client_id.GetValueOrDefault();
+            set => __pbn__client_id = value;
+        }
+        public bool ShouldSerializeclient_id() => __pbn__client_id != null;
+        public void Resetclient_id() => __pbn__client_id = null;
+        private ulong? __pbn__client_id;
+
+        [global::ProtoBuf.ProtoMember(2)]
+        public RiskQuizResults results { get; set; }
+
+        [global::ProtoBuf.ProtoMember(3)]
+        [global::System.ComponentModel.DefaultValue("")]
+        public string selected_action
+        {
+            get => __pbn__selected_action ?? "";
+            set => __pbn__selected_action = value;
+        }
+        public bool ShouldSerializeselected_action() => __pbn__selected_action != null;
+        public void Resetselected_action() => __pbn__selected_action = null;
+        private string __pbn__selected_action;
+
+        [global::ProtoBuf.ProtoMember(4)]
+        public bool did_confirm_login
+        {
+            get => __pbn__did_confirm_login.GetValueOrDefault();
+            set => __pbn__did_confirm_login = value;
+        }
+        public bool ShouldSerializedid_confirm_login() => __pbn__did_confirm_login != null;
+        public void Resetdid_confirm_login() => __pbn__did_confirm_login = null;
+        private bool? __pbn__did_confirm_login;
+
+        [global::ProtoBuf.ProtoContract()]
+        public partial class RiskQuizResults : global::ProtoBuf.IExtensible
+        {
+            private global::ProtoBuf.IExtension __pbn__extensionData;
+            global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+                => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+            [global::ProtoBuf.ProtoMember(1)]
+            public bool platform
+            {
+                get => __pbn__platform.GetValueOrDefault();
+                set => __pbn__platform = value;
+            }
+            public bool ShouldSerializeplatform() => __pbn__platform != null;
+            public void Resetplatform() => __pbn__platform = null;
+            private bool? __pbn__platform;
+
+            [global::ProtoBuf.ProtoMember(2)]
+            public bool location
+            {
+                get => __pbn__location.GetValueOrDefault();
+                set => __pbn__location = value;
+            }
+            public bool ShouldSerializelocation() => __pbn__location != null;
+            public void Resetlocation() => __pbn__location = null;
+            private bool? __pbn__location;
+
+            [global::ProtoBuf.ProtoMember(3)]
+            public bool action
+            {
+                get => __pbn__action.GetValueOrDefault();
+                set => __pbn__action = value;
+            }
+            public bool ShouldSerializeaction() => __pbn__action != null;
+            public void Resetaction() => __pbn__action = null;
+            private bool? __pbn__action;
+
+        }
+
     }
 
     [global::ProtoBuf.ProtoContract()]
@@ -1016,6 +1212,17 @@ namespace SteamKit2.Internal
         global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
             => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
+        [global::ProtoBuf.ProtoMember(1)]
+        [global::System.ComponentModel.DefaultValue(false)]
+        public bool include_revoked
+        {
+            get => __pbn__include_revoked ?? false;
+            set => __pbn__include_revoked = value;
+        }
+        public bool ShouldSerializeinclude_revoked() => __pbn__include_revoked != null;
+        public void Resetinclude_revoked() => __pbn__include_revoked = null;
+        private bool? __pbn__include_revoked;
+
     }
 
     [global::ProtoBuf.ProtoContract()]
@@ -1208,6 +1415,28 @@ namespace SteamKit2.Internal
             public bool ShouldSerializeos_type() => __pbn__os_type != null;
             public void Resetos_type() => __pbn__os_type = null;
             private int? __pbn__os_type;
+
+            [global::ProtoBuf.ProtoMember(12)]
+            [global::System.ComponentModel.DefaultValue(EAuthenticationType.k_EAuthenticationType_Unknown)]
+            public EAuthenticationType authentication_type
+            {
+                get => __pbn__authentication_type ?? EAuthenticationType.k_EAuthenticationType_Unknown;
+                set => __pbn__authentication_type = value;
+            }
+            public bool ShouldSerializeauthentication_type() => __pbn__authentication_type != null;
+            public void Resetauthentication_type() => __pbn__authentication_type = null;
+            private EAuthenticationType? __pbn__authentication_type;
+
+            [global::ProtoBuf.ProtoMember(13)]
+            [global::System.ComponentModel.DefaultValue(EAuthTokenState.k_EAuthTokenState_Invalid)]
+            public EAuthTokenState effective_token_state
+            {
+                get => __pbn__effective_token_state ?? EAuthTokenState.k_EAuthTokenState_Invalid;
+                set => __pbn__effective_token_state = value;
+            }
+            public bool ShouldSerializeeffective_token_state() => __pbn__effective_token_state != null;
+            public void Reseteffective_token_state() => __pbn__effective_token_state = null;
+            private EAuthTokenState? __pbn__effective_token_state;
 
         }
 
@@ -1772,6 +2001,44 @@ namespace SteamKit2.Internal
     }
 
     [global::ProtoBuf.ProtoContract()]
+    public partial class CAuthenticationSupport_MarkTokenCompromised_Request : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1, DataFormat = global::ProtoBuf.DataFormat.FixedSize)]
+        public ulong steamid
+        {
+            get => __pbn__steamid.GetValueOrDefault();
+            set => __pbn__steamid = value;
+        }
+        public bool ShouldSerializesteamid() => __pbn__steamid != null;
+        public void Resetsteamid() => __pbn__steamid = null;
+        private ulong? __pbn__steamid;
+
+        [global::ProtoBuf.ProtoMember(2, DataFormat = global::ProtoBuf.DataFormat.FixedSize)]
+        public ulong token_id
+        {
+            get => __pbn__token_id.GetValueOrDefault();
+            set => __pbn__token_id = value;
+        }
+        public bool ShouldSerializetoken_id() => __pbn__token_id != null;
+        public void Resettoken_id() => __pbn__token_id = null;
+        private ulong? __pbn__token_id;
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class CAuthenticationSupport_MarkTokenCompromised_Response : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
     public partial class CCloudGaming_CreateNonce_Request : global::ProtoBuf.IExtensible
     {
         private global::ProtoBuf.IExtension __pbn__extensionData;
@@ -1905,6 +2172,14 @@ namespace SteamKit2.Internal
     }
 
     [global::ProtoBuf.ProtoContract()]
+    public enum EAuthTokenAppType
+    {
+        k_EAuthTokenAppType_Unknown = 0,
+        k_EAuthTokenAppType_Mobile_SteamApp = 1,
+        k_EAuthTokenAppType_Mobile_ChatApp = 2,
+    }
+
+    [global::ProtoBuf.ProtoContract()]
     public enum EAuthSessionGuardType
     {
         k_EAuthSessionGuardType_Unknown = 0,
@@ -1933,16 +2208,13 @@ namespace SteamKit2.Internal
     }
 
     [global::ProtoBuf.ProtoContract()]
-    public enum EAuthTokenRevokeAction
+    public enum EAuthenticationType
     {
-        k_EAuthTokenRevokeLogout = 0,
-        k_EAuthTokenRevokePermanent = 1,
-        k_EAuthTokenRevokeReplaced = 2,
-        k_EAuthTokenRevokeSupport = 3,
-        k_EAuthTokenRevokeConsume = 4,
-        k_EAuthTokenRevokeNonRememberedLogout = 5,
-        k_EAuthTokenRevokeNonRememberedPermanent = 6,
-        k_EAuthTokenRevokeAutomatic = 7,
+        k_EAuthenticationType_Unknown = 0,
+        k_EAuthenticationType_Password = 1,
+        k_EAuthenticationType_QR = 2,
+        k_EAuthenticationType_AccountCreation = 3,
+        k_EAuthenticationType_GuestAccount = 4,
     }
 
     [global::ProtoBuf.ProtoContract()]
@@ -1958,38 +2230,247 @@ namespace SteamKit2.Internal
         k_EAuthTokenState_Revoked = 99,
     }
 
-    public interface IAuthentication
+    [global::ProtoBuf.ProtoContract()]
+    public enum EAuthTokenRevokeAction
     {
-        CAuthentication_GetPasswordRSAPublicKey_Response GetPasswordRSAPublicKey(CAuthentication_GetPasswordRSAPublicKey_Request request);
-        CAuthentication_BeginAuthSessionViaQR_Response BeginAuthSessionViaQR(CAuthentication_BeginAuthSessionViaQR_Request request);
-        CAuthentication_BeginAuthSessionViaCredentials_Response BeginAuthSessionViaCredentials(CAuthentication_BeginAuthSessionViaCredentials_Request request);
-        CAuthentication_PollAuthSessionStatus_Response PollAuthSessionStatus(CAuthentication_PollAuthSessionStatus_Request request);
-        CAuthentication_GetAuthSessionInfo_Response GetAuthSessionInfo(CAuthentication_GetAuthSessionInfo_Request request);
-        CAuthentication_UpdateAuthSessionWithMobileConfirmation_Response UpdateAuthSessionWithMobileConfirmation(CAuthentication_UpdateAuthSessionWithMobileConfirmation_Request request);
-        CAuthentication_UpdateAuthSessionWithSteamGuardCode_Response UpdateAuthSessionWithSteamGuardCode(CAuthentication_UpdateAuthSessionWithSteamGuardCode_Request request);
-        CAuthentication_AccessToken_GenerateForApp_Response GenerateAccessTokenForApp(CAuthentication_AccessToken_GenerateForApp_Request request);
-        CAuthentication_RefreshToken_Enumerate_Response EnumerateTokens(CAuthentication_RefreshToken_Enumerate_Request request);
-        CAuthentication_GetAuthSessionsForAccount_Response GetAuthSessionsForAccount(CAuthentication_GetAuthSessionsForAccount_Request request);
-        CAuthentication_MigrateMobileSession_Response MigrateMobileSession(CAuthentication_MigrateMobileSession_Request request);
-        CAuthentication_Token_Revoke_Response RevokeToken(CAuthentication_Token_Revoke_Request request);
-        CAuthentication_RefreshToken_Revoke_Response RevokeRefreshToken(CAuthentication_RefreshToken_Revoke_Request request);
+        k_EAuthTokenRevokeLogout = 0,
+        k_EAuthTokenRevokePermanent = 1,
+        k_EAuthTokenRevokeReplaced = 2,
+        k_EAuthTokenRevokeSupport = 3,
+        k_EAuthTokenRevokeConsume = 4,
+        k_EAuthTokenRevokeNonRememberedLogout = 5,
+        k_EAuthTokenRevokeNonRememberedPermanent = 6,
+        k_EAuthTokenRevokeAutomatic = 7,
     }
 
-    public interface IAuthenticationSupport
+    public class Authentication : SteamUnifiedMessages.UnifiedService
     {
-        CAuthenticationSupport_QueryRefreshTokensByAccount_Response QueryRefreshTokensByAccount(CAuthenticationSupport_QueryRefreshTokensByAccount_Request request);
-        CAuthenticationSupport_QueryRefreshTokenByID_Response QueryRefreshTokenByID(CAuthenticationSupport_QueryRefreshTokenByID_Request request);
-        CAuthenticationSupport_RevokeToken_Response RevokeToken(CAuthenticationSupport_RevokeToken_Request request);
-        CAuthenticationSupport_GetTokenHistory_Response GetTokenHistory(CAuthenticationSupport_GetTokenHistory_Request request);
+        public override string ServiceName { get; } = "Authentication";
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CAuthentication_GetPasswordRSAPublicKey_Response>> GetPasswordRSAPublicKey( CAuthentication_GetPasswordRSAPublicKey_Request request )
+        {
+            return UnifiedMessages.SendMessage<CAuthentication_GetPasswordRSAPublicKey_Request, CAuthentication_GetPasswordRSAPublicKey_Response>( "Authentication.GetPasswordRSAPublicKey#1", request );
+        }
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CAuthentication_BeginAuthSessionViaQR_Response>> BeginAuthSessionViaQR( CAuthentication_BeginAuthSessionViaQR_Request request )
+        {
+            return UnifiedMessages.SendMessage<CAuthentication_BeginAuthSessionViaQR_Request, CAuthentication_BeginAuthSessionViaQR_Response>( "Authentication.BeginAuthSessionViaQR#1", request );
+        }
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CAuthentication_BeginAuthSessionViaCredentials_Response>> BeginAuthSessionViaCredentials( CAuthentication_BeginAuthSessionViaCredentials_Request request )
+        {
+            return UnifiedMessages.SendMessage<CAuthentication_BeginAuthSessionViaCredentials_Request, CAuthentication_BeginAuthSessionViaCredentials_Response>( "Authentication.BeginAuthSessionViaCredentials#1", request );
+        }
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CAuthentication_PollAuthSessionStatus_Response>> PollAuthSessionStatus( CAuthentication_PollAuthSessionStatus_Request request )
+        {
+            return UnifiedMessages.SendMessage<CAuthentication_PollAuthSessionStatus_Request, CAuthentication_PollAuthSessionStatus_Response>( "Authentication.PollAuthSessionStatus#1", request );
+        }
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CAuthentication_GetAuthSessionInfo_Response>> GetAuthSessionInfo( CAuthentication_GetAuthSessionInfo_Request request )
+        {
+            return UnifiedMessages.SendMessage<CAuthentication_GetAuthSessionInfo_Request, CAuthentication_GetAuthSessionInfo_Response>( "Authentication.GetAuthSessionInfo#1", request );
+        }
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CAuthentication_GetAuthSessionRiskInfo_Response>> GetAuthSessionRiskInfo( CAuthentication_GetAuthSessionRiskInfo_Request request )
+        {
+            return UnifiedMessages.SendMessage<CAuthentication_GetAuthSessionRiskInfo_Request, CAuthentication_GetAuthSessionRiskInfo_Response>( "Authentication.GetAuthSessionRiskInfo#1", request );
+        }
+
+        public void NotifyRiskQuizResults(CAuthentication_NotifyRiskQuizResults_Notification request )
+        {
+            UnifiedMessages.SendNotification<CAuthentication_NotifyRiskQuizResults_Notification>( "Authentication.NotifyRiskQuizResults#1", request );
+        }
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CAuthentication_UpdateAuthSessionWithMobileConfirmation_Response>> UpdateAuthSessionWithMobileConfirmation( CAuthentication_UpdateAuthSessionWithMobileConfirmation_Request request )
+        {
+            return UnifiedMessages.SendMessage<CAuthentication_UpdateAuthSessionWithMobileConfirmation_Request, CAuthentication_UpdateAuthSessionWithMobileConfirmation_Response>( "Authentication.UpdateAuthSessionWithMobileConfirmation#1", request );
+        }
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CAuthentication_UpdateAuthSessionWithSteamGuardCode_Response>> UpdateAuthSessionWithSteamGuardCode( CAuthentication_UpdateAuthSessionWithSteamGuardCode_Request request )
+        {
+            return UnifiedMessages.SendMessage<CAuthentication_UpdateAuthSessionWithSteamGuardCode_Request, CAuthentication_UpdateAuthSessionWithSteamGuardCode_Response>( "Authentication.UpdateAuthSessionWithSteamGuardCode#1", request );
+        }
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CAuthentication_AccessToken_GenerateForApp_Response>> GenerateAccessTokenForApp( CAuthentication_AccessToken_GenerateForApp_Request request )
+        {
+            return UnifiedMessages.SendMessage<CAuthentication_AccessToken_GenerateForApp_Request, CAuthentication_AccessToken_GenerateForApp_Response>( "Authentication.GenerateAccessTokenForApp#1", request );
+        }
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CAuthentication_RefreshToken_Enumerate_Response>> EnumerateTokens( CAuthentication_RefreshToken_Enumerate_Request request )
+        {
+            return UnifiedMessages.SendMessage<CAuthentication_RefreshToken_Enumerate_Request, CAuthentication_RefreshToken_Enumerate_Response>( "Authentication.EnumerateTokens#1", request );
+        }
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CAuthentication_GetAuthSessionsForAccount_Response>> GetAuthSessionsForAccount( CAuthentication_GetAuthSessionsForAccount_Request request )
+        {
+            return UnifiedMessages.SendMessage<CAuthentication_GetAuthSessionsForAccount_Request, CAuthentication_GetAuthSessionsForAccount_Response>( "Authentication.GetAuthSessionsForAccount#1", request );
+        }
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CAuthentication_MigrateMobileSession_Response>> MigrateMobileSession( CAuthentication_MigrateMobileSession_Request request )
+        {
+            return UnifiedMessages.SendMessage<CAuthentication_MigrateMobileSession_Request, CAuthentication_MigrateMobileSession_Response>( "Authentication.MigrateMobileSession#1", request );
+        }
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CAuthentication_Token_Revoke_Response>> RevokeToken( CAuthentication_Token_Revoke_Request request )
+        {
+            return UnifiedMessages.SendMessage<CAuthentication_Token_Revoke_Request, CAuthentication_Token_Revoke_Response>( "Authentication.RevokeToken#1", request );
+        }
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CAuthentication_RefreshToken_Revoke_Response>> RevokeRefreshToken( CAuthentication_RefreshToken_Revoke_Request request )
+        {
+            return UnifiedMessages.SendMessage<CAuthentication_RefreshToken_Revoke_Request, CAuthentication_RefreshToken_Revoke_Response>( "Authentication.RevokeRefreshToken#1", request );
+        }
+
+        public override void HandleResponseMsg( string methodName, PacketClientMsgProtobuf packetMsg )
+        {
+            switch ( methodName )
+            {
+                case "GetPasswordRSAPublicKey":
+                    PostResponseMsg<CAuthentication_GetPasswordRSAPublicKey_Response>( packetMsg );
+                    break;
+                case "BeginAuthSessionViaQR":
+                    PostResponseMsg<CAuthentication_BeginAuthSessionViaQR_Response>( packetMsg );
+                    break;
+                case "BeginAuthSessionViaCredentials":
+                    PostResponseMsg<CAuthentication_BeginAuthSessionViaCredentials_Response>( packetMsg );
+                    break;
+                case "PollAuthSessionStatus":
+                    PostResponseMsg<CAuthentication_PollAuthSessionStatus_Response>( packetMsg );
+                    break;
+                case "GetAuthSessionInfo":
+                    PostResponseMsg<CAuthentication_GetAuthSessionInfo_Response>( packetMsg );
+                    break;
+                case "GetAuthSessionRiskInfo":
+                    PostResponseMsg<CAuthentication_GetAuthSessionRiskInfo_Response>( packetMsg );
+                    break;
+                case "UpdateAuthSessionWithMobileConfirmation":
+                    PostResponseMsg<CAuthentication_UpdateAuthSessionWithMobileConfirmation_Response>( packetMsg );
+                    break;
+                case "UpdateAuthSessionWithSteamGuardCode":
+                    PostResponseMsg<CAuthentication_UpdateAuthSessionWithSteamGuardCode_Response>( packetMsg );
+                    break;
+                case "GenerateAccessTokenForApp":
+                    PostResponseMsg<CAuthentication_AccessToken_GenerateForApp_Response>( packetMsg );
+                    break;
+                case "EnumerateTokens":
+                    PostResponseMsg<CAuthentication_RefreshToken_Enumerate_Response>( packetMsg );
+                    break;
+                case "GetAuthSessionsForAccount":
+                    PostResponseMsg<CAuthentication_GetAuthSessionsForAccount_Response>( packetMsg );
+                    break;
+                case "MigrateMobileSession":
+                    PostResponseMsg<CAuthentication_MigrateMobileSession_Response>( packetMsg );
+                    break;
+                case "RevokeToken":
+                    PostResponseMsg<CAuthentication_Token_Revoke_Response>( packetMsg );
+                    break;
+                case "RevokeRefreshToken":
+                    PostResponseMsg<CAuthentication_RefreshToken_Revoke_Response>( packetMsg );
+                    break;
+            }
+        }
+
+        public override void HandleNotificationMsg( string methodName, PacketClientMsgProtobuf packetMsg )
+        {
+            switch ( methodName )
+            {
+                case "NotifyRiskQuizResults":
+                    PostNotificationMsg<CAuthentication_NotifyRiskQuizResults_Notification>( packetMsg );
+                    break;
+            }
+        }
     }
 
-    public interface ICloudGaming
+    public class AuthenticationSupport : SteamUnifiedMessages.UnifiedService
     {
-        CCloudGaming_CreateNonce_Response CreateNonce(CCloudGaming_CreateNonce_Request request);
-        CCloudGaming_GetTimeRemaining_Response GetTimeRemaining(CCloudGaming_GetTimeRemaining_Request request);
+        public override string ServiceName { get; } = "AuthenticationSupport";
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CAuthenticationSupport_QueryRefreshTokensByAccount_Response>> QueryRefreshTokensByAccount( CAuthenticationSupport_QueryRefreshTokensByAccount_Request request )
+        {
+            return UnifiedMessages.SendMessage<CAuthenticationSupport_QueryRefreshTokensByAccount_Request, CAuthenticationSupport_QueryRefreshTokensByAccount_Response>( "AuthenticationSupport.QueryRefreshTokensByAccount#1", request );
+        }
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CAuthenticationSupport_QueryRefreshTokenByID_Response>> QueryRefreshTokenByID( CAuthenticationSupport_QueryRefreshTokenByID_Request request )
+        {
+            return UnifiedMessages.SendMessage<CAuthenticationSupport_QueryRefreshTokenByID_Request, CAuthenticationSupport_QueryRefreshTokenByID_Response>( "AuthenticationSupport.QueryRefreshTokenByID#1", request );
+        }
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CAuthenticationSupport_RevokeToken_Response>> RevokeToken( CAuthenticationSupport_RevokeToken_Request request )
+        {
+            return UnifiedMessages.SendMessage<CAuthenticationSupport_RevokeToken_Request, CAuthenticationSupport_RevokeToken_Response>( "AuthenticationSupport.RevokeToken#1", request );
+        }
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CAuthenticationSupport_GetTokenHistory_Response>> GetTokenHistory( CAuthenticationSupport_GetTokenHistory_Request request )
+        {
+            return UnifiedMessages.SendMessage<CAuthenticationSupport_GetTokenHistory_Request, CAuthenticationSupport_GetTokenHistory_Response>( "AuthenticationSupport.GetTokenHistory#1", request );
+        }
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CAuthenticationSupport_MarkTokenCompromised_Response>> MarkTokenCompromised( CAuthenticationSupport_MarkTokenCompromised_Request request )
+        {
+            return UnifiedMessages.SendMessage<CAuthenticationSupport_MarkTokenCompromised_Request, CAuthenticationSupport_MarkTokenCompromised_Response>( "AuthenticationSupport.MarkTokenCompromised#1", request );
+        }
+
+        public override void HandleResponseMsg( string methodName, PacketClientMsgProtobuf packetMsg )
+        {
+            switch ( methodName )
+            {
+                case "QueryRefreshTokensByAccount":
+                    PostResponseMsg<CAuthenticationSupport_QueryRefreshTokensByAccount_Response>( packetMsg );
+                    break;
+                case "QueryRefreshTokenByID":
+                    PostResponseMsg<CAuthenticationSupport_QueryRefreshTokenByID_Response>( packetMsg );
+                    break;
+                case "RevokeToken":
+                    PostResponseMsg<CAuthenticationSupport_RevokeToken_Response>( packetMsg );
+                    break;
+                case "GetTokenHistory":
+                    PostResponseMsg<CAuthenticationSupport_GetTokenHistory_Response>( packetMsg );
+                    break;
+                case "MarkTokenCompromised":
+                    PostResponseMsg<CAuthenticationSupport_MarkTokenCompromised_Response>( packetMsg );
+                    break;
+            }
+        }
+
+        public override void HandleNotificationMsg( string methodName, PacketClientMsgProtobuf packetMsg )
+        {
+        }
+    }
+
+    public class CloudGaming : SteamUnifiedMessages.UnifiedService
+    {
+        public override string ServiceName { get; } = "CloudGaming";
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CCloudGaming_CreateNonce_Response>> CreateNonce( CCloudGaming_CreateNonce_Request request )
+        {
+            return UnifiedMessages.SendMessage<CCloudGaming_CreateNonce_Request, CCloudGaming_CreateNonce_Response>( "CloudGaming.CreateNonce#1", request );
+        }
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CCloudGaming_GetTimeRemaining_Response>> GetTimeRemaining( CCloudGaming_GetTimeRemaining_Request request )
+        {
+            return UnifiedMessages.SendMessage<CCloudGaming_GetTimeRemaining_Request, CCloudGaming_GetTimeRemaining_Response>( "CloudGaming.GetTimeRemaining#1", request );
+        }
+
+        public override void HandleResponseMsg( string methodName, PacketClientMsgProtobuf packetMsg )
+        {
+            switch ( methodName )
+            {
+                case "CreateNonce":
+                    PostResponseMsg<CCloudGaming_CreateNonce_Response>( packetMsg );
+                    break;
+                case "GetTimeRemaining":
+                    PostResponseMsg<CCloudGaming_GetTimeRemaining_Response>( packetMsg );
+                    break;
+            }
+        }
+
+        public override void HandleNotificationMsg( string methodName, PacketClientMsgProtobuf packetMsg )
+        {
+        }
     }
 
 }
 
-#pragma warning restore CS0612, CS0618, CS1591, CS3021, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
+#pragma warning restore CS0612, CS0618, CS1591, CS3021, CS8981, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
 #endregion

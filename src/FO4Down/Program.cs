@@ -1,5 +1,5 @@
 ﻿using FO4Down.Core;
-using FO4Down.Steam.DepotDownloader;
+using DepotDownloader;
 using FO4Down.Windows;
 using System.Reflection;
 using Terminal.Gui;
@@ -19,21 +19,6 @@ namespace Fallout4Downgrader
 
         static async Task Main(string[] args)
         {
-            //var s = Fallout4IniSettings.FromIni(@"G:\SteamLibrary\steamapps\common\Fallout 4\Fallout4_Default.ini");
-            //var general = s["General"];
-            //general["sLanguage"] = "de";
-            //var archive = s["Archive"];
-            //var props = archive.Properties;
-            //foreach (var archives in archive.Properties)
-            //{
-            //    props[archives.Key]
-            //}
-
-//#if DEBUG
-//            CommandLineArguments = ["-download-depots"];
-//#endif
-
-
             if (args.Contains("-help") || args.Contains("-h") || args.Contains("/?") || args.Contains("-?"))
             {
                 Console.WriteLine("Fallout 4 Downgrader - v" + Assembly.GetExecutingAssembly().GetName().Version);

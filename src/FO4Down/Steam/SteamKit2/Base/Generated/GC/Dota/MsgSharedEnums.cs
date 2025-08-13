@@ -5,7 +5,7 @@
 // </auto-generated>
 
 #region Designer generated code
-#pragma warning disable CS0612, CS0618, CS1591, CS3021, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
+#pragma warning disable CS0612, CS0618, CS1591, CS3021, CS8981, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
 namespace SteamKit2.GC.Dota.Internal
 {
 
@@ -1040,6 +1040,16 @@ namespace SteamKit2.GC.Dota.Internal
         public void Resetuses_charges() => __pbn__uses_charges = null;
         private bool? __pbn__uses_charges;
 
+        [global::ProtoBuf.ProtoMember(80)]
+        public uint tracked_stat_id
+        {
+            get => __pbn__tracked_stat_id.GetValueOrDefault();
+            set => __pbn__tracked_stat_id = value;
+        }
+        public bool ShouldSerializetracked_stat_id() => __pbn__tracked_stat_id != null;
+        public void Resettracked_stat_id() => __pbn__tracked_stat_id = null;
+        private uint? __pbn__tracked_stat_id;
+
     }
 
     [global::ProtoBuf.ProtoContract()]
@@ -1234,6 +1244,8 @@ namespace SteamKit2.GC.Dota.Internal
         EVENT_ID_10TH_ANNIVERSARY = 46,
         EVENT_ID_CROWNFALL = 47,
         EVENT_ID_FROSTIVUS_2023 = 48,
+        EVENT_ID_INTERNATIONAL_2024 = 49,
+        EVENT_ID_FROSTIVUS_2024 = 50,
     }
 
     [global::ProtoBuf.ProtoContract()]
@@ -1264,6 +1276,7 @@ namespace SteamKit2.GC.Dota.Internal
         DOTA_LEAVER_NEVER_CONNECTED_TOO_LONG = 6,
         DOTA_LEAVER_FAILED_TO_READY_UP = 7,
         DOTA_LEAVER_DECLINED = 8,
+        DOTA_LEAVER_DECLINED_REQUEUE = 9,
     }
 
     [global::ProtoBuf.ProtoContract()]
@@ -1304,7 +1317,7 @@ namespace SteamKit2.GC.Dota.Internal
         FANTASY_SCORING_FIRST_BLOOD = 10,
         FANTASY_SCORING_STUNS = 11,
         FANTASY_SCORING_SMOKES_USED = 12,
-        FANTASY_SCORING_NEUTRAL_TOKENS_FOUND = 13,
+        FANTASY_SCORING_MADSTONE = 13,
         FANTASY_SCORING_WATCHERS_TAKEN = 14,
         FANTASY_SCORING_LOTUSES_GAINED = 15,
         FANTASY_SCORING_TORMENTOR_KILLS = 16,
@@ -1471,6 +1484,7 @@ namespace SteamKit2.GC.Dota.Internal
         DOTALobbyReadyState_UNDECLARED = 0,
         DOTALobbyReadyState_ACCEPTED = 1,
         DOTALobbyReadyState_DECLINED = 2,
+        DOTALobbyReadyState_DECLINED_REQUEUE = 3,
     }
 
     [global::ProtoBuf.ProtoContract()]
@@ -1682,6 +1696,10 @@ namespace SteamKit2.GC.Dota.Internal
         k_EBadgeType_TI12_PlayoffsDay3 = 15,
         k_EBadgeType_TI12_FinalsWeekend = 16,
         k_EBadgeType_TI12_Special = 17,
+        k_EBadgeType_TI13_FinalsDay1 = 18,
+        k_EBadgeType_TI13_FinalsDay2 = 19,
+        k_EBadgeType_TI13_FinalsDay3 = 20,
+        k_EBadgeType_TI13_Special = 21,
     }
 
     [global::ProtoBuf.ProtoContract()]
@@ -1853,6 +1871,7 @@ namespace SteamKit2.GC.Dota.Internal
         DOTA_COMBATLOG_UNIT_TELEPORTED = 41,
         DOTA_COMBATLOG_KILL_EATER_EVENT = 42,
         DOTA_COMBATLOG_NEUTRAL_ITEM_EARNED = 43,
+        DOTA_COMBATLOG_STAT_TRACKER_PLAYER = 44,
     }
 
     [global::ProtoBuf.ProtoContract()]
@@ -1909,7 +1928,34 @@ namespace SteamKit2.GC.Dota.Internal
         k_EOverwatchReportReason_AbilityAbuse = 5,
     }
 
+    [global::ProtoBuf.ProtoContract()]
+    public enum ECandyShopUpgrade
+    {
+        k_ECandyShopUpgradeInvalid = -1,
+        k_ECandyShopUpgrade_InventorySize = 0,
+        k_ECandyShopUpgrade_RewardShelf = 1,
+        k_ECandyShopUpgrade_ExtraExchangeRecipe = 2,
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public enum EItemSuggestPreference
+    {
+        k_EItemSuggestPreference_None = 0,
+        k_EItemSuggestPreference_Liked = 1,
+        k_EItemSuggestPreference_Disliked = 2,
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public enum ETimerAlertType
+    {
+        k_TimerAlertType_PowerRune = 1,
+        k_TimerAlertType_BountyRune = 2,
+        k_TimerAlertType_WisdomShrine = 3,
+        k_TimerAlertType_JungleCamps = 4,
+        k_TimerAlertType_LotusPool = 5,
+    }
+
 }
 
-#pragma warning restore CS0612, CS0618, CS1591, CS3021, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
+#pragma warning restore CS0612, CS0618, CS1591, CS3021, CS8981, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
 #endregion

@@ -6,20 +6,26 @@ namespace FO4Down.SteamJson
 {
     public class SteamJsonObject
     {
-        private Dictionary<string, string> properties = new Dictionary<string, string>();
+        private Dictionary<string, string?> properties = new Dictionary<string, string?>();
         private List<string> strings = new List<string>();
 
-        public string this[string key]
+        public string? this[string key]
         {
-            get => properties[key];
+            get
+            {
+                if (properties.TryGetValue(key, out var value))
+                    return value;
+
+                return null;
+            }
             set => properties[key] = value;
         }
 
         public IReadOnlyList<string> Strings => strings;
-        public IReadOnlyDictionary<string, string> Properties => properties;
-        public string Identifier { get; set; }
+        public IReadOnlyDictionary<string, string?> Properties => properties;
+        public string? Identifier { get; set; }
         public List<SteamJsonObject> Children { get; set; } = new List<SteamJsonObject>();
-        public SteamJsonObject Parent { get; set; }
+        public SteamJsonObject? Parent { get; set; }
 
         public void MergeWithParent()
         {

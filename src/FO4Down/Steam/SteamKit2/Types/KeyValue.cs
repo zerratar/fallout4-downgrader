@@ -24,6 +24,8 @@ namespace SteamKit2
             // todo: any others?
         };
 
+        private StringBuilder sb = new( 128 );
+
         public KVTextReader( KeyValue kv, Stream input )
             : base( input )
         {
@@ -142,7 +144,7 @@ namespace SteamKit2
                 // "
                 Read();
 
-                var sb = new StringBuilder();
+                sb.Clear();
                 while ( !EndOfStream )
                 {
                     if ( Peek() == '\\' )
@@ -180,7 +182,7 @@ namespace SteamKit2
 
             bool bConditionalStart = false;
             int count = 0;
-            var ret = new StringBuilder();
+            sb.Clear();
             while ( !EndOfStream )
             {
                 next = ( char )Peek();
@@ -199,7 +201,7 @@ namespace SteamKit2
 
                 if ( count < 1023 )
                 {
-                    ret.Append( next );
+                    sb.Append( next );
                 }
                 else
                 {
@@ -209,7 +211,7 @@ namespace SteamKit2
                 Read();
             }
 
-            return ret.ToString();
+            return sb.ToString();
         }
     }
 
@@ -230,6 +232,7 @@ namespace SteamKit2
             UInt64 = 7,
             End = 8,
             Int64 = 10,
+            AlternateEnd = 11,
         }
 
         /// <summary>
@@ -764,7 +767,7 @@ namespace SteamKit2
             {
                 var textToReplace = new string( kvp.Value, 1 );
                 var escapedReplacement = @"\" + kvp.Key;
-                value = value.Replace( textToReplace, escapedReplacement );
+                value = value.Replace( textToReplace, escapedReplacement, StringComparison.Ordinal );
             }
 
             return value;
@@ -777,7 +780,7 @@ namespace SteamKit2
 
         static void WriteString( Stream stream, string str, bool quote = false )
         {
-            byte[] bytes = Encoding.UTF8.GetBytes( ( quote ? "\"" : "" ) + str.Replace( "\"", "\\\"" ) + ( quote ? "\"" : "" ) );
+            byte[] bytes = Encoding.UTF8.GetBytes( ( quote ? "\"" : "" ) + str.Replace( "\"", "\\\"", StringComparison.Ordinal ) + ( quote ? "\"" : "" ) );
             stream.Write( bytes, 0, bytes.Length );
         }
 
@@ -801,7 +804,7 @@ namespace SteamKit2
             {
                 var type = ( Type )input.ReadByte();
 
-                if ( type == Type.End )
+                if ( type is Type.End or Type.AlternateEnd )
                 {
                     break;
                 }

@@ -5,7 +5,7 @@
 // </auto-generated>
 
 #region Designer generated code
-#pragma warning disable CS0612, CS0618, CS1591, CS3021, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
+#pragma warning disable CS0612, CS0618, CS1591, CS3021, CS8981, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
 namespace SteamKit2.GC.Dota.Internal
 {
 
@@ -420,6 +420,23 @@ namespace SteamKit2.GC.Dota.Internal
         [global::ProtoBuf.ProtoMember(3)]
         public global::System.Collections.Generic.List<uint> declined_ids { get; } = new global::System.Collections.Generic.List<uint>();
 
+        [global::ProtoBuf.ProtoMember(4)]
+        public global::System.Collections.Generic.List<uint> accepted_indices { get; } = new global::System.Collections.Generic.List<uint>();
+
+        [global::ProtoBuf.ProtoMember(5)]
+        public global::System.Collections.Generic.List<uint> declined_indices { get; } = new global::System.Collections.Generic.List<uint>();
+
+        [global::ProtoBuf.ProtoMember(6)]
+        [global::System.ComponentModel.DefaultValue(DOTALobbyReadyState.DOTALobbyReadyState_UNDECLARED)]
+        public DOTALobbyReadyState local_ready_state
+        {
+            get => __pbn__local_ready_state ?? DOTALobbyReadyState.DOTALobbyReadyState_UNDECLARED;
+            set => __pbn__local_ready_state = value;
+        }
+        public bool ShouldSerializelocal_ready_state() => __pbn__local_ready_state != null;
+        public void Resetlocal_ready_state() => __pbn__local_ready_state = null;
+        private DOTALobbyReadyState? __pbn__local_ready_state;
+
     }
 
     [global::ProtoBuf.ProtoContract()]
@@ -553,16 +570,6 @@ namespace SteamKit2.GC.Dota.Internal
         public void Resetfill_with_bots() => __pbn__fill_with_bots = null;
         private bool? __pbn__fill_with_bots;
 
-        [global::ProtoBuf.ProtoMember(12)]
-        public bool intro_mode
-        {
-            get => __pbn__intro_mode.GetValueOrDefault();
-            set => __pbn__intro_mode = value;
-        }
-        public bool ShouldSerializeintro_mode() => __pbn__intro_mode != null;
-        public void Resetintro_mode() => __pbn__intro_mode = null;
-        private bool? __pbn__intro_mode;
-
         [global::ProtoBuf.ProtoMember(13)]
         public bool allow_spectating
         {
@@ -613,16 +620,6 @@ namespace SteamKit2.GC.Dota.Internal
         public bool ShouldSerializepenalty_level_dire() => __pbn__penalty_level_dire != null;
         public void Resetpenalty_level_dire() => __pbn__penalty_level_dire = null;
         private uint? __pbn__penalty_level_dire;
-
-        [global::ProtoBuf.ProtoMember(19)]
-        public uint load_game_id
-        {
-            get => __pbn__load_game_id.GetValueOrDefault();
-            set => __pbn__load_game_id = value;
-        }
-        public bool ShouldSerializeload_game_id() => __pbn__load_game_id != null;
-        public void Resetload_game_id() => __pbn__load_game_id = null;
-        private uint? __pbn__load_game_id;
 
         [global::ProtoBuf.ProtoMember(20)]
         public uint series_type
@@ -874,7 +871,7 @@ namespace SteamKit2.GC.Dota.Internal
         private uint? __pbn__league_node_id;
 
         [global::ProtoBuf.ProtoMember(50)]
-        public global::System.Collections.Generic.List<uint> requested_hero_ids { get; } = new global::System.Collections.Generic.List<uint>();
+        public global::System.Collections.Generic.List<int> requested_hero_ids { get; } = new global::System.Collections.Generic.List<int>();
 
         [global::ProtoBuf.ProtoMember(51)]
         public CMsgLobbyScenarioSave scenario_save { get; set; }
@@ -891,6 +888,9 @@ namespace SteamKit2.GC.Dota.Internal
         public bool ShouldSerializedo_player_draft() => __pbn__do_player_draft != null;
         public void Resetdo_player_draft() => __pbn__do_player_draft = null;
         private bool? __pbn__do_player_draft;
+
+        [global::ProtoBuf.ProtoMember(54)]
+        public global::System.Collections.Generic.List<int> requested_hero_teams { get; } = new global::System.Collections.Generic.List<int>();
 
         [global::ProtoBuf.ProtoContract()]
         public partial class AbilityDraftSpecificDetails : global::ProtoBuf.IExtensible
@@ -954,58 +954,6 @@ namespace SteamKit2.GC.Dota.Internal
 
         [global::ProtoBuf.ProtoMember(7)]
         public CMsgPracticeLobbySetDetails lobby_details { get; set; }
-
-        [global::ProtoBuf.ProtoMember(8)]
-        public SaveGame save_game { get; set; }
-
-        [global::ProtoBuf.ProtoContract()]
-        public partial class SaveGame : global::ProtoBuf.IExtensible
-        {
-            private global::ProtoBuf.IExtension __pbn__extensionData;
-            global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-                => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
-
-            [global::ProtoBuf.ProtoMember(1)]
-            public byte[] data
-            {
-                get => __pbn__data;
-                set => __pbn__data = value;
-            }
-            public bool ShouldSerializedata() => __pbn__data != null;
-            public void Resetdata() => __pbn__data = null;
-            private byte[] __pbn__data;
-
-            [global::ProtoBuf.ProtoMember(2)]
-            public int version
-            {
-                get => __pbn__version.GetValueOrDefault();
-                set => __pbn__version = value;
-            }
-            public bool ShouldSerializeversion() => __pbn__version != null;
-            public void Resetversion() => __pbn__version = null;
-            private int? __pbn__version;
-
-            [global::ProtoBuf.ProtoMember(3, DataFormat = global::ProtoBuf.DataFormat.FixedSize)]
-            public ulong steam_id
-            {
-                get => __pbn__steam_id.GetValueOrDefault();
-                set => __pbn__steam_id = value;
-            }
-            public bool ShouldSerializesteam_id() => __pbn__steam_id != null;
-            public void Resetsteam_id() => __pbn__steam_id = null;
-            private ulong? __pbn__steam_id;
-
-            [global::ProtoBuf.ProtoMember(4, DataFormat = global::ProtoBuf.DataFormat.FixedSize)]
-            public ulong signature
-            {
-                get => __pbn__signature.GetValueOrDefault();
-                set => __pbn__signature = value;
-            }
-            public bool ShouldSerializesignature() => __pbn__signature != null;
-            public void Resetsignature() => __pbn__signature = null;
-            private ulong? __pbn__signature;
-
-        }
 
     }
 
@@ -2792,9 +2740,11 @@ namespace SteamKit2.GC.Dota.Internal
         k_EStartFindingMatchResult_SteamChinaBanned = 133,
         k_EStartFindingMatchResult_SteamChinaInvalidMixedParty = 134,
         k_EStartFindingMatchResult_RestrictedFromRanked = 135,
+        k_EStartFindingMatchResult_RankPreventsParties = 136,
+        k_EStartFindingMatchResult_RegisteredNameRequired = 137,
     }
 
 }
 
-#pragma warning restore CS0612, CS0618, CS1591, CS3021, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
+#pragma warning restore CS0612, CS0618, CS1591, CS3021, CS8981, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
 #endregion

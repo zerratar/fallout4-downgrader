@@ -5,7 +5,7 @@
 // </auto-generated>
 
 #region Designer generated code
-#pragma warning disable CS0612, CS0618, CS1591, CS3021, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
+#pragma warning disable CS0612, CS0618, CS1591, CS3021, CS8981, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
 namespace SteamKit2.Internal
 {
 
@@ -55,6 +55,16 @@ namespace SteamKit2.Internal
         public bool ShouldSerializefamily_groupid() => __pbn__family_groupid != null;
         public void Resetfamily_groupid() => __pbn__family_groupid = null;
         private ulong? __pbn__family_groupid;
+
+        [global::ProtoBuf.ProtoMember(2)]
+        public bool cooldown_skip_granted
+        {
+            get => __pbn__cooldown_skip_granted.GetValueOrDefault();
+            set => __pbn__cooldown_skip_granted = value;
+        }
+        public bool ShouldSerializecooldown_skip_granted() => __pbn__cooldown_skip_granted != null;
+        public void Resetcooldown_skip_granted() => __pbn__cooldown_skip_granted = null;
+        private bool? __pbn__cooldown_skip_granted;
 
     }
 
@@ -323,6 +333,16 @@ namespace SteamKit2.Internal
         public void Resetinviter_steamid() => __pbn__inviter_steamid = null;
         private ulong? __pbn__inviter_steamid;
 
+        [global::ProtoBuf.ProtoMember(4)]
+        public bool awaiting_2fa
+        {
+            get => __pbn__awaiting_2fa.GetValueOrDefault();
+            set => __pbn__awaiting_2fa = value;
+        }
+        public bool ShouldSerializeawaiting_2fa() => __pbn__awaiting_2fa != null;
+        public void Resetawaiting_2fa() => __pbn__awaiting_2fa = null;
+        private bool? __pbn__awaiting_2fa;
+
     }
 
     [global::ProtoBuf.ProtoContract()]
@@ -397,6 +417,16 @@ namespace SteamKit2.Internal
 
         [global::ProtoBuf.ProtoMember(8)]
         public CFamilyGroups_GetFamilyGroup_Response family_group { get; set; }
+
+        [global::ProtoBuf.ProtoMember(9)]
+        public bool can_undelete_last_joined_family
+        {
+            get => __pbn__can_undelete_last_joined_family.GetValueOrDefault();
+            set => __pbn__can_undelete_last_joined_family = value;
+        }
+        public bool ShouldSerializecan_undelete_last_joined_family() => __pbn__can_undelete_last_joined_family != null;
+        public void Resetcan_undelete_last_joined_family() => __pbn__can_undelete_last_joined_family = null;
+        private bool? __pbn__can_undelete_last_joined_family;
 
     }
 
@@ -642,6 +672,26 @@ namespace SteamKit2.Internal
         public void Resettwo_factor_method() => __pbn__two_factor_method = null;
         private EFamilyGroupsTwoFactorMethod? __pbn__two_factor_method;
 
+        [global::ProtoBuf.ProtoMember(3)]
+        public bool cooldown_skip_granted
+        {
+            get => __pbn__cooldown_skip_granted.GetValueOrDefault();
+            set => __pbn__cooldown_skip_granted = value;
+        }
+        public bool ShouldSerializecooldown_skip_granted() => __pbn__cooldown_skip_granted != null;
+        public void Resetcooldown_skip_granted() => __pbn__cooldown_skip_granted = null;
+        private bool? __pbn__cooldown_skip_granted;
+
+        [global::ProtoBuf.ProtoMember(4)]
+        public bool invite_already_accepted
+        {
+            get => __pbn__invite_already_accepted.GetValueOrDefault();
+            set => __pbn__invite_already_accepted = value;
+        }
+        public bool ShouldSerializeinvite_already_accepted() => __pbn__invite_already_accepted != null;
+        public void Resetinvite_already_accepted() => __pbn__invite_already_accepted = null;
+        private bool? __pbn__invite_already_accepted;
+
     }
 
     [global::ProtoBuf.ProtoContract()]
@@ -838,6 +888,34 @@ namespace SteamKit2.Internal
     }
 
     [global::ProtoBuf.ProtoContract()]
+    public partial class CFamilyGroups_UndeleteFamilyGroup_Request : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1)]
+        public ulong family_groupid
+        {
+            get => __pbn__family_groupid.GetValueOrDefault();
+            set => __pbn__family_groupid = value;
+        }
+        public bool ShouldSerializefamily_groupid() => __pbn__family_groupid != null;
+        public void Resetfamily_groupid() => __pbn__family_groupid = null;
+        private ulong? __pbn__family_groupid;
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class CFamilyGroups_UndeleteFamilyGroup_Response : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
     public partial class CFamilyGroups_GetPlaytimeSummary_Request : global::ProtoBuf.IExtensible
     {
         private global::ProtoBuf.IExtension __pbn__extensionData;
@@ -924,6 +1002,9 @@ namespace SteamKit2.Internal
 
         [global::ProtoBuf.ProtoMember(1)]
         public global::System.Collections.Generic.List<CFamilyGroups_PlaytimeEntry> entries { get; } = new global::System.Collections.Generic.List<CFamilyGroups_PlaytimeEntry>();
+
+        [global::ProtoBuf.ProtoMember(2)]
+        public global::System.Collections.Generic.List<CFamilyGroups_PlaytimeEntry> entries_by_owner { get; } = new global::System.Collections.Generic.List<CFamilyGroups_PlaytimeEntry>();
 
     }
 
@@ -1389,6 +1470,26 @@ namespace SteamKit2.Internal
         public void Resetmax_apps() => __pbn__max_apps = null;
         private uint? __pbn__max_apps;
 
+        [global::ProtoBuf.ProtoMember(7)]
+        public bool include_non_games
+        {
+            get => __pbn__include_non_games.GetValueOrDefault();
+            set => __pbn__include_non_games = value;
+        }
+        public bool ShouldSerializeinclude_non_games() => __pbn__include_non_games != null;
+        public void Resetinclude_non_games() => __pbn__include_non_games = null;
+        private bool? __pbn__include_non_games;
+
+        [global::ProtoBuf.ProtoMember(8, DataFormat = global::ProtoBuf.DataFormat.FixedSize)]
+        public ulong steamid
+        {
+            get => __pbn__steamid.GetValueOrDefault();
+            set => __pbn__steamid = value;
+        }
+        public bool ShouldSerializesteamid() => __pbn__steamid != null;
+        public void Resetsteamid() => __pbn__steamid = null;
+        private ulong? __pbn__steamid;
+
     }
 
     [global::ProtoBuf.ProtoContract()]
@@ -1400,6 +1501,16 @@ namespace SteamKit2.Internal
 
         [global::ProtoBuf.ProtoMember(1)]
         public global::System.Collections.Generic.List<SharedApp> apps { get; } = new global::System.Collections.Generic.List<SharedApp>();
+
+        [global::ProtoBuf.ProtoMember(2, DataFormat = global::ProtoBuf.DataFormat.FixedSize)]
+        public ulong owner_steamid
+        {
+            get => __pbn__owner_steamid.GetValueOrDefault();
+            set => __pbn__owner_steamid = value;
+        }
+        public bool ShouldSerializeowner_steamid() => __pbn__owner_steamid != null;
+        public void Resetowner_steamid() => __pbn__owner_steamid = null;
+        private ulong? __pbn__owner_steamid;
 
         [global::ProtoBuf.ProtoContract()]
         public partial class SharedApp : global::ProtoBuf.IExtensible
@@ -1505,6 +1616,20 @@ namespace SteamKit2.Internal
             public bool ShouldSerializert_playtime() => __pbn__rt_playtime != null;
             public void Resetrt_playtime() => __pbn__rt_playtime = null;
             private uint? __pbn__rt_playtime;
+
+            [global::ProtoBuf.ProtoMember(14)]
+            [global::System.ComponentModel.DefaultValue(EProtoAppType.k_EAppTypeGame)]
+            public EProtoAppType app_type
+            {
+                get => __pbn__app_type ?? EProtoAppType.k_EAppTypeGame;
+                set => __pbn__app_type = value;
+            }
+            public bool ShouldSerializeapp_type() => __pbn__app_type != null;
+            public void Resetapp_type() => __pbn__app_type = null;
+            private EProtoAppType? __pbn__app_type;
+
+            [global::ProtoBuf.ProtoMember(15)]
+            public global::System.Collections.Generic.List<uint> content_descriptors { get; } = new global::System.Collections.Generic.List<uint>();
 
         }
 
@@ -1612,7 +1737,7 @@ namespace SteamKit2.Internal
     }
 
     [global::ProtoBuf.ProtoContract()]
-    public partial class CFamilyGroups_GetDispersionForFamily_Request : global::ProtoBuf.IExtensible
+    public partial class CFamilyGroups_ForceAcceptInvite_Request : global::ProtoBuf.IExtensible
     {
         private global::ProtoBuf.IExtension __pbn__extensionData;
         global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
@@ -1628,78 +1753,130 @@ namespace SteamKit2.Internal
         public void Resetfamily_groupid() => __pbn__family_groupid = null;
         private ulong? __pbn__family_groupid;
 
+        [global::ProtoBuf.ProtoMember(2, DataFormat = global::ProtoBuf.DataFormat.FixedSize)]
+        public ulong steamid
+        {
+            get => __pbn__steamid.GetValueOrDefault();
+            set => __pbn__steamid = value;
+        }
+        public bool ShouldSerializesteamid() => __pbn__steamid != null;
+        public void Resetsteamid() => __pbn__steamid = null;
+        private ulong? __pbn__steamid;
+
     }
 
     [global::ProtoBuf.ProtoContract()]
-    public partial class CFamilyGroups_FamilyDispersionGraph : global::ProtoBuf.IExtensible
+    public partial class CFamilyGroups_ForceAcceptInvite_Response : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class CFamilyGroups_GetInviteCheckResults_Request : global::ProtoBuf.IExtensible
     {
         private global::ProtoBuf.IExtension __pbn__extensionData;
         global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
             => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
         [global::ProtoBuf.ProtoMember(1)]
-        public global::System.Collections.Generic.List<Edge> edges { get; } = new global::System.Collections.Generic.List<Edge>();
-
-        [global::ProtoBuf.ProtoContract()]
-        public partial class Edge : global::ProtoBuf.IExtensible
+        public ulong family_groupid
         {
-            private global::ProtoBuf.IExtension __pbn__extensionData;
-            global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-                => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
-
-            [global::ProtoBuf.ProtoMember(1)]
-            public uint accountid1
-            {
-                get => __pbn__accountid1.GetValueOrDefault();
-                set => __pbn__accountid1 = value;
-            }
-            public bool ShouldSerializeaccountid1() => __pbn__accountid1 != null;
-            public void Resetaccountid1() => __pbn__accountid1 = null;
-            private uint? __pbn__accountid1;
-
-            [global::ProtoBuf.ProtoMember(2)]
-            public uint accountid2
-            {
-                get => __pbn__accountid2.GetValueOrDefault();
-                set => __pbn__accountid2 = value;
-            }
-            public bool ShouldSerializeaccountid2() => __pbn__accountid2 != null;
-            public void Resetaccountid2() => __pbn__accountid2 = null;
-            private uint? __pbn__accountid2;
-
-            [global::ProtoBuf.ProtoMember(3)]
-            public double distance
-            {
-                get => __pbn__distance.GetValueOrDefault();
-                set => __pbn__distance = value;
-            }
-            public bool ShouldSerializedistance() => __pbn__distance != null;
-            public void Resetdistance() => __pbn__distance = null;
-            private double? __pbn__distance;
-
+            get => __pbn__family_groupid.GetValueOrDefault();
+            set => __pbn__family_groupid = value;
         }
+        public bool ShouldSerializefamily_groupid() => __pbn__family_groupid != null;
+        public void Resetfamily_groupid() => __pbn__family_groupid = null;
+        private ulong? __pbn__family_groupid;
+
+        [global::ProtoBuf.ProtoMember(2, DataFormat = global::ProtoBuf.DataFormat.FixedSize)]
+        public ulong steamid
+        {
+            get => __pbn__steamid.GetValueOrDefault();
+            set => __pbn__steamid = value;
+        }
+        public bool ShouldSerializesteamid() => __pbn__steamid != null;
+        public void Resetsteamid() => __pbn__steamid = null;
+        private ulong? __pbn__steamid;
 
     }
 
     [global::ProtoBuf.ProtoContract()]
-    public partial class CFamilyGroups_GetDispersionForFamily_Response : global::ProtoBuf.IExtensible
+    public partial class CFamilyGroups_GetInviteCheckResults_Response : global::ProtoBuf.IExtensible
     {
         private global::ProtoBuf.IExtension __pbn__extensionData;
         global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
             => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
         [global::ProtoBuf.ProtoMember(1)]
-        public double total_dispersion
+        public bool wallet_country_matches
         {
-            get => __pbn__total_dispersion.GetValueOrDefault();
-            set => __pbn__total_dispersion = value;
+            get => __pbn__wallet_country_matches.GetValueOrDefault();
+            set => __pbn__wallet_country_matches = value;
         }
-        public bool ShouldSerializetotal_dispersion() => __pbn__total_dispersion != null;
-        public void Resettotal_dispersion() => __pbn__total_dispersion = null;
-        private double? __pbn__total_dispersion;
+        public bool ShouldSerializewallet_country_matches() => __pbn__wallet_country_matches != null;
+        public void Resetwallet_country_matches() => __pbn__wallet_country_matches = null;
+        private bool? __pbn__wallet_country_matches;
 
         [global::ProtoBuf.ProtoMember(2)]
-        public CFamilyGroups_FamilyDispersionGraph graph { get; set; }
+        public bool ip_match
+        {
+            get => __pbn__ip_match.GetValueOrDefault();
+            set => __pbn__ip_match = value;
+        }
+        public bool ShouldSerializeip_match() => __pbn__ip_match != null;
+        public void Resetip_match() => __pbn__ip_match = null;
+        private bool? __pbn__ip_match;
+
+        [global::ProtoBuf.ProtoMember(3)]
+        public uint join_restriction
+        {
+            get => __pbn__join_restriction.GetValueOrDefault();
+            set => __pbn__join_restriction = value;
+        }
+        public bool ShouldSerializejoin_restriction() => __pbn__join_restriction != null;
+        public void Resetjoin_restriction() => __pbn__join_restriction = null;
+        private uint? __pbn__join_restriction;
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class CFamilyGroups_ClearCooldownSkip_Request : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1, DataFormat = global::ProtoBuf.DataFormat.FixedSize)]
+        public ulong steamid
+        {
+            get => __pbn__steamid.GetValueOrDefault();
+            set => __pbn__steamid = value;
+        }
+        public bool ShouldSerializesteamid() => __pbn__steamid != null;
+        public void Resetsteamid() => __pbn__steamid = null;
+        private ulong? __pbn__steamid;
+
+        [global::ProtoBuf.ProtoMember(2)]
+        public ulong invite_id
+        {
+            get => __pbn__invite_id.GetValueOrDefault();
+            set => __pbn__invite_id = value;
+        }
+        public bool ShouldSerializeinvite_id() => __pbn__invite_id != null;
+        public void Resetinvite_id() => __pbn__invite_id = null;
+        private ulong? __pbn__invite_id;
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class CFamilyGroups_ClearCooldownSkip_Response : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     }
 
@@ -1857,6 +2034,10 @@ namespace SteamKit2.Internal
         k_PurchaseRequestCanceled = 19,
         k_PurchaseRequestApproved = 20,
         k_PurchaseRequestDeclined = 21,
+        k_CooldownSkipConsumed = 22,
+        k_FamilyGroupRestored = 23,
+        k_JoinDenied = 24,
+        k_SupportForceAcceptedInvite = 25,
     }
 
     [global::ProtoBuf.ProtoContract()]
@@ -1875,7 +2056,6 @@ namespace SteamKit2.Internal
         k_ESharedLibrary_PackageExcluded_Special = 11,
         k_ESharedLibrary_PackageExcluded_Dev = 12,
         k_ESharedLibrary_PackageExcluded_FreeWeekend = 13,
-        k_ESharedLibrary_PackageExcluded_FreePromotion = 14,
         k_ESharedLibrary_PackageExcluded_Invalid = 15,
         k_ESharedLibrary_PackageExcluded_RecurringLicense = 16,
         k_ESharedLibrary_PackageExcluded_WrongLicenseType = 17,
@@ -1894,41 +2074,271 @@ namespace SteamKit2.Internal
         k_ESharedLibrary_LicenseExcluded_Inactive = 30,
     }
 
-    public interface IFamilyGroups
+    public class FamilyGroups : SteamUnifiedMessages.UnifiedService
     {
-        CFamilyGroups_CreateFamilyGroup_Response CreateFamilyGroup(CFamilyGroups_CreateFamilyGroup_Request request);
-        CFamilyGroups_GetFamilyGroup_Response GetFamilyGroup(CFamilyGroups_GetFamilyGroup_Request request);
-        CFamilyGroups_GetFamilyGroupForUser_Response GetFamilyGroupForUser(CFamilyGroups_GetFamilyGroupForUser_Request request);
-        CFamilyGroups_ModifyFamilyGroupDetails_Response ModifyFamilyGroupDetails(CFamilyGroups_ModifyFamilyGroupDetails_Request request);
-        CFamilyGroups_InviteToFamilyGroup_Response InviteToFamilyGroup(CFamilyGroups_InviteToFamilyGroup_Request request);
-        CFamilyGroups_ConfirmInviteToFamilyGroup_Response ConfirmInviteToFamilyGroup(CFamilyGroups_ConfirmInviteToFamilyGroup_Request request);
-        CFamilyGroups_ResendInvitationToFamilyGroup_Response ResendInvitationToFamilyGroup(CFamilyGroups_ResendInvitationToFamilyGroup_Request request);
-        CFamilyGroups_JoinFamilyGroup_Response JoinFamilyGroup(CFamilyGroups_JoinFamilyGroup_Request request);
-        CFamilyGroups_ConfirmJoinFamilyGroup_Response ConfirmJoinFamilyGroup(CFamilyGroups_ConfirmJoinFamilyGroup_Request request);
-        CFamilyGroups_RemoveFromFamilyGroup_Response RemoveFromFamilyGroup(CFamilyGroups_RemoveFromFamilyGroup_Request request);
-        CFamilyGroups_CancelFamilyGroupInvite_Response CancelFamilyGroupInvite(CFamilyGroups_CancelFamilyGroupInvite_Request request);
-        CFamilyGroups_GetUsersSharingDevice_Response GetUsersSharingDevice(CFamilyGroups_GetUsersSharingDevice_Request request);
-        CFamilyGroups_DeleteFamilyGroup_Response DeleteFamilyGroup(CFamilyGroups_DeleteFamilyGroup_Request request);
-        CFamilyGroups_GetPlaytimeSummary_Response GetPlaytimeSummary(CFamilyGroups_GetPlaytimeSummary_Request request);
-        CFamilyGroups_RequestPurchase_Response RequestPurchase(CFamilyGroups_RequestPurchase_Request request);
-        CFamilyGroups_GetPurchaseRequests_Response GetPurchaseRequests(CFamilyGroups_GetPurchaseRequests_Request request);
-        CFamilyGroups_RespondToRequestedPurchase_Response RespondToRequestedPurchase(CFamilyGroups_RespondToRequestedPurchase_Request request);
-        CFamilyGroups_GetChangeLog_Response GetChangeLog(CFamilyGroups_GetChangeLog_Request request);
-        CFamilyGroups_SetFamilyCooldownOverrides_Response SetFamilyCooldownOverrides(CFamilyGroups_SetFamilyCooldownOverrides_Request request);
-        CFamilyGroups_GetSharedLibraryApps_Response GetSharedLibraryApps(CFamilyGroups_GetSharedLibraryApps_Request request);
-        CFamilyGroups_SetPreferredLender_Response SetPreferredLender(CFamilyGroups_SetPreferredLender_Request request);
-        CFamilyGroups_GetPreferredLenders_Response GetPreferredLenders(CFamilyGroups_GetPreferredLenders_Request request);
-        CFamilyGroups_GetDispersionForFamily_Response GetDispersionForFamily(CFamilyGroups_GetDispersionForFamily_Request request);
+        public override string ServiceName { get; } = "FamilyGroups";
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CFamilyGroups_CreateFamilyGroup_Response>> CreateFamilyGroup( CFamilyGroups_CreateFamilyGroup_Request request )
+        {
+            return UnifiedMessages.SendMessage<CFamilyGroups_CreateFamilyGroup_Request, CFamilyGroups_CreateFamilyGroup_Response>( "FamilyGroups.CreateFamilyGroup#1", request );
+        }
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CFamilyGroups_GetFamilyGroup_Response>> GetFamilyGroup( CFamilyGroups_GetFamilyGroup_Request request )
+        {
+            return UnifiedMessages.SendMessage<CFamilyGroups_GetFamilyGroup_Request, CFamilyGroups_GetFamilyGroup_Response>( "FamilyGroups.GetFamilyGroup#1", request );
+        }
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CFamilyGroups_GetFamilyGroupForUser_Response>> GetFamilyGroupForUser( CFamilyGroups_GetFamilyGroupForUser_Request request )
+        {
+            return UnifiedMessages.SendMessage<CFamilyGroups_GetFamilyGroupForUser_Request, CFamilyGroups_GetFamilyGroupForUser_Response>( "FamilyGroups.GetFamilyGroupForUser#1", request );
+        }
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CFamilyGroups_ModifyFamilyGroupDetails_Response>> ModifyFamilyGroupDetails( CFamilyGroups_ModifyFamilyGroupDetails_Request request )
+        {
+            return UnifiedMessages.SendMessage<CFamilyGroups_ModifyFamilyGroupDetails_Request, CFamilyGroups_ModifyFamilyGroupDetails_Response>( "FamilyGroups.ModifyFamilyGroupDetails#1", request );
+        }
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CFamilyGroups_InviteToFamilyGroup_Response>> InviteToFamilyGroup( CFamilyGroups_InviteToFamilyGroup_Request request )
+        {
+            return UnifiedMessages.SendMessage<CFamilyGroups_InviteToFamilyGroup_Request, CFamilyGroups_InviteToFamilyGroup_Response>( "FamilyGroups.InviteToFamilyGroup#1", request );
+        }
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CFamilyGroups_ConfirmInviteToFamilyGroup_Response>> ConfirmInviteToFamilyGroup( CFamilyGroups_ConfirmInviteToFamilyGroup_Request request )
+        {
+            return UnifiedMessages.SendMessage<CFamilyGroups_ConfirmInviteToFamilyGroup_Request, CFamilyGroups_ConfirmInviteToFamilyGroup_Response>( "FamilyGroups.ConfirmInviteToFamilyGroup#1", request );
+        }
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CFamilyGroups_ResendInvitationToFamilyGroup_Response>> ResendInvitationToFamilyGroup( CFamilyGroups_ResendInvitationToFamilyGroup_Request request )
+        {
+            return UnifiedMessages.SendMessage<CFamilyGroups_ResendInvitationToFamilyGroup_Request, CFamilyGroups_ResendInvitationToFamilyGroup_Response>( "FamilyGroups.ResendInvitationToFamilyGroup#1", request );
+        }
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CFamilyGroups_JoinFamilyGroup_Response>> JoinFamilyGroup( CFamilyGroups_JoinFamilyGroup_Request request )
+        {
+            return UnifiedMessages.SendMessage<CFamilyGroups_JoinFamilyGroup_Request, CFamilyGroups_JoinFamilyGroup_Response>( "FamilyGroups.JoinFamilyGroup#1", request );
+        }
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CFamilyGroups_ConfirmJoinFamilyGroup_Response>> ConfirmJoinFamilyGroup( CFamilyGroups_ConfirmJoinFamilyGroup_Request request )
+        {
+            return UnifiedMessages.SendMessage<CFamilyGroups_ConfirmJoinFamilyGroup_Request, CFamilyGroups_ConfirmJoinFamilyGroup_Response>( "FamilyGroups.ConfirmJoinFamilyGroup#1", request );
+        }
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CFamilyGroups_RemoveFromFamilyGroup_Response>> RemoveFromFamilyGroup( CFamilyGroups_RemoveFromFamilyGroup_Request request )
+        {
+            return UnifiedMessages.SendMessage<CFamilyGroups_RemoveFromFamilyGroup_Request, CFamilyGroups_RemoveFromFamilyGroup_Response>( "FamilyGroups.RemoveFromFamilyGroup#1", request );
+        }
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CFamilyGroups_CancelFamilyGroupInvite_Response>> CancelFamilyGroupInvite( CFamilyGroups_CancelFamilyGroupInvite_Request request )
+        {
+            return UnifiedMessages.SendMessage<CFamilyGroups_CancelFamilyGroupInvite_Request, CFamilyGroups_CancelFamilyGroupInvite_Response>( "FamilyGroups.CancelFamilyGroupInvite#1", request );
+        }
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CFamilyGroups_GetUsersSharingDevice_Response>> GetUsersSharingDevice( CFamilyGroups_GetUsersSharingDevice_Request request )
+        {
+            return UnifiedMessages.SendMessage<CFamilyGroups_GetUsersSharingDevice_Request, CFamilyGroups_GetUsersSharingDevice_Response>( "FamilyGroups.GetUsersSharingDevice#1", request );
+        }
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CFamilyGroups_DeleteFamilyGroup_Response>> DeleteFamilyGroup( CFamilyGroups_DeleteFamilyGroup_Request request )
+        {
+            return UnifiedMessages.SendMessage<CFamilyGroups_DeleteFamilyGroup_Request, CFamilyGroups_DeleteFamilyGroup_Response>( "FamilyGroups.DeleteFamilyGroup#1", request );
+        }
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CFamilyGroups_UndeleteFamilyGroup_Response>> UndeleteFamilyGroup( CFamilyGroups_UndeleteFamilyGroup_Request request )
+        {
+            return UnifiedMessages.SendMessage<CFamilyGroups_UndeleteFamilyGroup_Request, CFamilyGroups_UndeleteFamilyGroup_Response>( "FamilyGroups.UndeleteFamilyGroup#1", request );
+        }
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CFamilyGroups_GetPlaytimeSummary_Response>> GetPlaytimeSummary( CFamilyGroups_GetPlaytimeSummary_Request request )
+        {
+            return UnifiedMessages.SendMessage<CFamilyGroups_GetPlaytimeSummary_Request, CFamilyGroups_GetPlaytimeSummary_Response>( "FamilyGroups.GetPlaytimeSummary#1", request );
+        }
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CFamilyGroups_RequestPurchase_Response>> RequestPurchase( CFamilyGroups_RequestPurchase_Request request )
+        {
+            return UnifiedMessages.SendMessage<CFamilyGroups_RequestPurchase_Request, CFamilyGroups_RequestPurchase_Response>( "FamilyGroups.RequestPurchase#1", request );
+        }
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CFamilyGroups_GetPurchaseRequests_Response>> GetPurchaseRequests( CFamilyGroups_GetPurchaseRequests_Request request )
+        {
+            return UnifiedMessages.SendMessage<CFamilyGroups_GetPurchaseRequests_Request, CFamilyGroups_GetPurchaseRequests_Response>( "FamilyGroups.GetPurchaseRequests#1", request );
+        }
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CFamilyGroups_RespondToRequestedPurchase_Response>> RespondToRequestedPurchase( CFamilyGroups_RespondToRequestedPurchase_Request request )
+        {
+            return UnifiedMessages.SendMessage<CFamilyGroups_RespondToRequestedPurchase_Request, CFamilyGroups_RespondToRequestedPurchase_Response>( "FamilyGroups.RespondToRequestedPurchase#1", request );
+        }
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CFamilyGroups_GetChangeLog_Response>> GetChangeLog( CFamilyGroups_GetChangeLog_Request request )
+        {
+            return UnifiedMessages.SendMessage<CFamilyGroups_GetChangeLog_Request, CFamilyGroups_GetChangeLog_Response>( "FamilyGroups.GetChangeLog#1", request );
+        }
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CFamilyGroups_SetFamilyCooldownOverrides_Response>> SetFamilyCooldownOverrides( CFamilyGroups_SetFamilyCooldownOverrides_Request request )
+        {
+            return UnifiedMessages.SendMessage<CFamilyGroups_SetFamilyCooldownOverrides_Request, CFamilyGroups_SetFamilyCooldownOverrides_Response>( "FamilyGroups.SetFamilyCooldownOverrides#1", request );
+        }
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CFamilyGroups_GetSharedLibraryApps_Response>> GetSharedLibraryApps( CFamilyGroups_GetSharedLibraryApps_Request request )
+        {
+            return UnifiedMessages.SendMessage<CFamilyGroups_GetSharedLibraryApps_Request, CFamilyGroups_GetSharedLibraryApps_Response>( "FamilyGroups.GetSharedLibraryApps#1", request );
+        }
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CFamilyGroups_SetPreferredLender_Response>> SetPreferredLender( CFamilyGroups_SetPreferredLender_Request request )
+        {
+            return UnifiedMessages.SendMessage<CFamilyGroups_SetPreferredLender_Request, CFamilyGroups_SetPreferredLender_Response>( "FamilyGroups.SetPreferredLender#1", request );
+        }
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CFamilyGroups_GetPreferredLenders_Response>> GetPreferredLenders( CFamilyGroups_GetPreferredLenders_Request request )
+        {
+            return UnifiedMessages.SendMessage<CFamilyGroups_GetPreferredLenders_Request, CFamilyGroups_GetPreferredLenders_Response>( "FamilyGroups.GetPreferredLenders#1", request );
+        }
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CFamilyGroups_ForceAcceptInvite_Response>> ForceAcceptInvite( CFamilyGroups_ForceAcceptInvite_Request request )
+        {
+            return UnifiedMessages.SendMessage<CFamilyGroups_ForceAcceptInvite_Request, CFamilyGroups_ForceAcceptInvite_Response>( "FamilyGroups.ForceAcceptInvite#1", request );
+        }
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CFamilyGroups_GetInviteCheckResults_Response>> GetInviteCheckResults( CFamilyGroups_GetInviteCheckResults_Request request )
+        {
+            return UnifiedMessages.SendMessage<CFamilyGroups_GetInviteCheckResults_Request, CFamilyGroups_GetInviteCheckResults_Response>( "FamilyGroups.GetInviteCheckResults#1", request );
+        }
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CFamilyGroups_ClearCooldownSkip_Response>> ClearCooldownSkip( CFamilyGroups_ClearCooldownSkip_Request request )
+        {
+            return UnifiedMessages.SendMessage<CFamilyGroups_ClearCooldownSkip_Request, CFamilyGroups_ClearCooldownSkip_Response>( "FamilyGroups.ClearCooldownSkip#1", request );
+        }
+
+        public override void HandleResponseMsg( string methodName, PacketClientMsgProtobuf packetMsg )
+        {
+            switch ( methodName )
+            {
+                case "CreateFamilyGroup":
+                    PostResponseMsg<CFamilyGroups_CreateFamilyGroup_Response>( packetMsg );
+                    break;
+                case "GetFamilyGroup":
+                    PostResponseMsg<CFamilyGroups_GetFamilyGroup_Response>( packetMsg );
+                    break;
+                case "GetFamilyGroupForUser":
+                    PostResponseMsg<CFamilyGroups_GetFamilyGroupForUser_Response>( packetMsg );
+                    break;
+                case "ModifyFamilyGroupDetails":
+                    PostResponseMsg<CFamilyGroups_ModifyFamilyGroupDetails_Response>( packetMsg );
+                    break;
+                case "InviteToFamilyGroup":
+                    PostResponseMsg<CFamilyGroups_InviteToFamilyGroup_Response>( packetMsg );
+                    break;
+                case "ConfirmInviteToFamilyGroup":
+                    PostResponseMsg<CFamilyGroups_ConfirmInviteToFamilyGroup_Response>( packetMsg );
+                    break;
+                case "ResendInvitationToFamilyGroup":
+                    PostResponseMsg<CFamilyGroups_ResendInvitationToFamilyGroup_Response>( packetMsg );
+                    break;
+                case "JoinFamilyGroup":
+                    PostResponseMsg<CFamilyGroups_JoinFamilyGroup_Response>( packetMsg );
+                    break;
+                case "ConfirmJoinFamilyGroup":
+                    PostResponseMsg<CFamilyGroups_ConfirmJoinFamilyGroup_Response>( packetMsg );
+                    break;
+                case "RemoveFromFamilyGroup":
+                    PostResponseMsg<CFamilyGroups_RemoveFromFamilyGroup_Response>( packetMsg );
+                    break;
+                case "CancelFamilyGroupInvite":
+                    PostResponseMsg<CFamilyGroups_CancelFamilyGroupInvite_Response>( packetMsg );
+                    break;
+                case "GetUsersSharingDevice":
+                    PostResponseMsg<CFamilyGroups_GetUsersSharingDevice_Response>( packetMsg );
+                    break;
+                case "DeleteFamilyGroup":
+                    PostResponseMsg<CFamilyGroups_DeleteFamilyGroup_Response>( packetMsg );
+                    break;
+                case "UndeleteFamilyGroup":
+                    PostResponseMsg<CFamilyGroups_UndeleteFamilyGroup_Response>( packetMsg );
+                    break;
+                case "GetPlaytimeSummary":
+                    PostResponseMsg<CFamilyGroups_GetPlaytimeSummary_Response>( packetMsg );
+                    break;
+                case "RequestPurchase":
+                    PostResponseMsg<CFamilyGroups_RequestPurchase_Response>( packetMsg );
+                    break;
+                case "GetPurchaseRequests":
+                    PostResponseMsg<CFamilyGroups_GetPurchaseRequests_Response>( packetMsg );
+                    break;
+                case "RespondToRequestedPurchase":
+                    PostResponseMsg<CFamilyGroups_RespondToRequestedPurchase_Response>( packetMsg );
+                    break;
+                case "GetChangeLog":
+                    PostResponseMsg<CFamilyGroups_GetChangeLog_Response>( packetMsg );
+                    break;
+                case "SetFamilyCooldownOverrides":
+                    PostResponseMsg<CFamilyGroups_SetFamilyCooldownOverrides_Response>( packetMsg );
+                    break;
+                case "GetSharedLibraryApps":
+                    PostResponseMsg<CFamilyGroups_GetSharedLibraryApps_Response>( packetMsg );
+                    break;
+                case "SetPreferredLender":
+                    PostResponseMsg<CFamilyGroups_SetPreferredLender_Response>( packetMsg );
+                    break;
+                case "GetPreferredLenders":
+                    PostResponseMsg<CFamilyGroups_GetPreferredLenders_Response>( packetMsg );
+                    break;
+                case "ForceAcceptInvite":
+                    PostResponseMsg<CFamilyGroups_ForceAcceptInvite_Response>( packetMsg );
+                    break;
+                case "GetInviteCheckResults":
+                    PostResponseMsg<CFamilyGroups_GetInviteCheckResults_Response>( packetMsg );
+                    break;
+                case "ClearCooldownSkip":
+                    PostResponseMsg<CFamilyGroups_ClearCooldownSkip_Response>( packetMsg );
+                    break;
+            }
+        }
+
+        public override void HandleNotificationMsg( string methodName, PacketClientMsgProtobuf packetMsg )
+        {
+        }
     }
 
-    public interface IFamilyGroupsClient
+    public class FamilyGroupsClient : SteamUnifiedMessages.UnifiedService
     {
-        NoResponse NotifyRunningApps(CFamilyGroupsClient_NotifyRunningApps_Notification request);
-        NoResponse NotifyInviteStatus(CFamilyGroupsClient_InviteStatus_Notification request);
-        NoResponse NotifyGroupChanged(CFamilyGroupsClient_GroupChanged_Notification request);
+        public override string ServiceName { get; } = "FamilyGroupsClient";
+
+        public void NotifyRunningApps(CFamilyGroupsClient_NotifyRunningApps_Notification request )
+        {
+            UnifiedMessages.SendNotification<CFamilyGroupsClient_NotifyRunningApps_Notification>( "FamilyGroupsClient.NotifyRunningApps#1", request );
+        }
+
+        public void NotifyInviteStatus(CFamilyGroupsClient_InviteStatus_Notification request )
+        {
+            UnifiedMessages.SendNotification<CFamilyGroupsClient_InviteStatus_Notification>( "FamilyGroupsClient.NotifyInviteStatus#1", request );
+        }
+
+        public void NotifyGroupChanged(CFamilyGroupsClient_GroupChanged_Notification request )
+        {
+            UnifiedMessages.SendNotification<CFamilyGroupsClient_GroupChanged_Notification>( "FamilyGroupsClient.NotifyGroupChanged#1", request );
+        }
+
+        public override void HandleResponseMsg( string methodName, PacketClientMsgProtobuf packetMsg )
+        {
+        }
+
+        public override void HandleNotificationMsg( string methodName, PacketClientMsgProtobuf packetMsg )
+        {
+            switch ( methodName )
+            {
+                case "NotifyRunningApps":
+                    PostNotificationMsg<CFamilyGroupsClient_NotifyRunningApps_Notification>( packetMsg );
+                    break;
+                case "NotifyInviteStatus":
+                    PostNotificationMsg<CFamilyGroupsClient_InviteStatus_Notification>( packetMsg );
+                    break;
+                case "NotifyGroupChanged":
+                    PostNotificationMsg<CFamilyGroupsClient_GroupChanged_Notification>( packetMsg );
+                    break;
+            }
+        }
     }
 
 }
 
-#pragma warning restore CS0612, CS0618, CS1591, CS3021, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
+#pragma warning restore CS0612, CS0618, CS1591, CS3021, CS8981, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
 #endregion

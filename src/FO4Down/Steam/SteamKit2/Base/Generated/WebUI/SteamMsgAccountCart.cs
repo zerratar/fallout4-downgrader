@@ -5,7 +5,7 @@
 // </auto-generated>
 
 #region Designer generated code
-#pragma warning disable CS0612, CS0618, CS1591, CS3021, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
+#pragma warning disable CS0612, CS0618, CS1591, CS3021, CS8981, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
 namespace SteamKit2.WebUI.Internal
 {
 
@@ -251,76 +251,28 @@ namespace SteamKit2.WebUI.Internal
         [global::ProtoBuf.ProtoMember(2)]
         public AccountCartContents cart { get; set; }
 
-    }
+        [global::ProtoBuf.ProtoMember(3)]
+        public global::System.Collections.Generic.List<uint> replaced_packages { get; } = new global::System.Collections.Generic.List<uint>();
 
-    [global::ProtoBuf.ProtoContract()]
-    public partial class CAccountCart_AddItemToCart_Request : global::ProtoBuf.IExtensible
-    {
-        private global::ProtoBuf.IExtension __pbn__extensionData;
-        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
-
-        [global::ProtoBuf.ProtoMember(1)]
-        public uint packageid
+        [global::ProtoBuf.ProtoMember(4)]
+        public ulong existing_billing_agreementid
         {
-            get => __pbn__packageid.GetValueOrDefault();
-            set => __pbn__packageid = value;
+            get => __pbn__existing_billing_agreementid.GetValueOrDefault();
+            set => __pbn__existing_billing_agreementid = value;
         }
-        public bool ShouldSerializepackageid() => __pbn__packageid != null;
-        public void Resetpackageid() => __pbn__packageid = null;
-        private uint? __pbn__packageid;
+        public bool ShouldSerializeexisting_billing_agreementid() => __pbn__existing_billing_agreementid != null;
+        public void Resetexisting_billing_agreementid() => __pbn__existing_billing_agreementid = null;
+        private ulong? __pbn__existing_billing_agreementid;
 
-        [global::ProtoBuf.ProtoMember(2)]
-        public uint bundleid
+        [global::ProtoBuf.ProtoMember(5)]
+        public uint new_billing_agreement_recurring_packageid
         {
-            get => __pbn__bundleid.GetValueOrDefault();
-            set => __pbn__bundleid = value;
+            get => __pbn__new_billing_agreement_recurring_packageid.GetValueOrDefault();
+            set => __pbn__new_billing_agreement_recurring_packageid = value;
         }
-        public bool ShouldSerializebundleid() => __pbn__bundleid != null;
-        public void Resetbundleid() => __pbn__bundleid = null;
-        private uint? __pbn__bundleid;
-
-        [global::ProtoBuf.ProtoMember(10)]
-        [global::System.ComponentModel.DefaultValue("")]
-        public string user_country
-        {
-            get => __pbn__user_country ?? "";
-            set => __pbn__user_country = value;
-        }
-        public bool ShouldSerializeuser_country() => __pbn__user_country != null;
-        public void Resetuser_country() => __pbn__user_country = null;
-        private string __pbn__user_country;
-
-        [global::ProtoBuf.ProtoMember(11)]
-        public CartGiftInfo gift_info { get; set; }
-
-        [global::ProtoBuf.ProtoMember(12)]
-        public AccountCartLineItemFlags flags { get; set; }
-
-        [global::ProtoBuf.ProtoMember(13)]
-        public CUserInterface_NavData navdata { get; set; }
-
-    }
-
-    [global::ProtoBuf.ProtoContract()]
-    public partial class CAccountCart_AddItemToCart_Response : global::ProtoBuf.IExtensible
-    {
-        private global::ProtoBuf.IExtension __pbn__extensionData;
-        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
-
-        [global::ProtoBuf.ProtoMember(1)]
-        public ulong line_item_id
-        {
-            get => __pbn__line_item_id.GetValueOrDefault();
-            set => __pbn__line_item_id = value;
-        }
-        public bool ShouldSerializeline_item_id() => __pbn__line_item_id != null;
-        public void Resetline_item_id() => __pbn__line_item_id = null;
-        private ulong? __pbn__line_item_id;
-
-        [global::ProtoBuf.ProtoMember(2)]
-        public AccountCartContents cart { get; set; }
+        public bool ShouldSerializenew_billing_agreement_recurring_packageid() => __pbn__new_billing_agreement_recurring_packageid != null;
+        public void Resetnew_billing_agreement_recurring_packageid() => __pbn__new_billing_agreement_recurring_packageid = null;
+        private uint? __pbn__new_billing_agreement_recurring_packageid;
 
     }
 
@@ -569,176 +521,79 @@ namespace SteamKit2.WebUI.Internal
 
     }
 
-    [global::ProtoBuf.ProtoContract()]
-    public partial class CUserInterface_CuratorData : global::ProtoBuf.IExtensible
+    public class AccountCart : SteamUnifiedMessages.UnifiedService
     {
-        private global::ProtoBuf.IExtension __pbn__extensionData;
-        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+        public override string ServiceName { get; } = "AccountCart";
 
-        [global::ProtoBuf.ProtoMember(1)]
-        public uint clanid
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CAccountCart_AddItemsToCart_Response>> AddItemsToCart( CAccountCart_AddItemsToCart_Request request )
         {
-            get => __pbn__clanid.GetValueOrDefault();
-            set => __pbn__clanid = value;
+            return UnifiedMessages.SendMessage<CAccountCart_AddItemsToCart_Request, CAccountCart_AddItemsToCart_Response>( "AccountCart.AddItemsToCart#1", request );
         }
-        public bool ShouldSerializeclanid() => __pbn__clanid != null;
-        public void Resetclanid() => __pbn__clanid = null;
-        private uint? __pbn__clanid;
 
-        [global::ProtoBuf.ProtoMember(2)]
-        public ulong listid
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CAccountCart_DeleteCart_Response>> DeleteCart( CAccountCart_DeleteCart_Request request )
         {
-            get => __pbn__listid.GetValueOrDefault();
-            set => __pbn__listid = value;
+            return UnifiedMessages.SendMessage<CAccountCart_DeleteCart_Request, CAccountCart_DeleteCart_Response>( "AccountCart.DeleteCart#1", request );
         }
-        public bool ShouldSerializelistid() => __pbn__listid != null;
-        public void Resetlistid() => __pbn__listid = null;
-        private ulong? __pbn__listid;
 
-    }
-
-    [global::ProtoBuf.ProtoContract()]
-    public partial class CUserInterface_NavData : global::ProtoBuf.IExtensible
-    {
-        private global::ProtoBuf.IExtension __pbn__extensionData;
-        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
-
-        [global::ProtoBuf.ProtoMember(1)]
-        [global::System.ComponentModel.DefaultValue("")]
-        public string domain
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CAccountCart_GetCart_Response>> GetCart( CAccountCart_GetCart_Request request )
         {
-            get => __pbn__domain ?? "";
-            set => __pbn__domain = value;
+            return UnifiedMessages.SendMessage<CAccountCart_GetCart_Request, CAccountCart_GetCart_Response>( "AccountCart.GetCart#1", request );
         }
-        public bool ShouldSerializedomain() => __pbn__domain != null;
-        public void Resetdomain() => __pbn__domain = null;
-        private string __pbn__domain;
 
-        [global::ProtoBuf.ProtoMember(2)]
-        [global::System.ComponentModel.DefaultValue("")]
-        public string controller
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CAccountCart_GetRelevantCoupons_Response>> GetRelevantCoupons( CAccountCart_GetRelevantCoupons_Request request )
         {
-            get => __pbn__controller ?? "";
-            set => __pbn__controller = value;
+            return UnifiedMessages.SendMessage<CAccountCart_GetRelevantCoupons_Request, CAccountCart_GetRelevantCoupons_Response>( "AccountCart.GetRelevantCoupons#1", request );
         }
-        public bool ShouldSerializecontroller() => __pbn__controller != null;
-        public void Resetcontroller() => __pbn__controller = null;
-        private string __pbn__controller;
 
-        [global::ProtoBuf.ProtoMember(3)]
-        [global::System.ComponentModel.DefaultValue("")]
-        public string method
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CAccountCart_MergeShoppingCartContents_Response>> MergeShoppingCartContents( CAccountCart_MergeShoppingCartContents_Request request )
         {
-            get => __pbn__method ?? "";
-            set => __pbn__method = value;
+            return UnifiedMessages.SendMessage<CAccountCart_MergeShoppingCartContents_Request, CAccountCart_MergeShoppingCartContents_Response>( "AccountCart.MergeShoppingCartContents#1", request );
         }
-        public bool ShouldSerializemethod() => __pbn__method != null;
-        public void Resetmethod() => __pbn__method = null;
-        private string __pbn__method;
 
-        [global::ProtoBuf.ProtoMember(4)]
-        [global::System.ComponentModel.DefaultValue("")]
-        public string submethod
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CAccountCart_ModifyLineItem_Response>> ModifyLineItem( CAccountCart_ModifyLineItem_Request request )
         {
-            get => __pbn__submethod ?? "";
-            set => __pbn__submethod = value;
+            return UnifiedMessages.SendMessage<CAccountCart_ModifyLineItem_Request, CAccountCart_ModifyLineItem_Response>( "AccountCart.ModifyLineItem#1", request );
         }
-        public bool ShouldSerializesubmethod() => __pbn__submethod != null;
-        public void Resetsubmethod() => __pbn__submethod = null;
-        private string __pbn__submethod;
 
-        [global::ProtoBuf.ProtoMember(5)]
-        [global::System.ComponentModel.DefaultValue("")]
-        public string feature
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CAccountCart_RemoveItemFromCart_Response>> RemoveItemFromCart( CAccountCart_RemoveItemFromCart_Request request )
         {
-            get => __pbn__feature ?? "";
-            set => __pbn__feature = value;
+            return UnifiedMessages.SendMessage<CAccountCart_RemoveItemFromCart_Request, CAccountCart_RemoveItemFromCart_Response>( "AccountCart.RemoveItemFromCart#1", request );
         }
-        public bool ShouldSerializefeature() => __pbn__feature != null;
-        public void Resetfeature() => __pbn__feature = null;
-        private string __pbn__feature;
 
-        [global::ProtoBuf.ProtoMember(6)]
-        public uint depth
+        public override void HandleResponseMsg( string methodName, PacketClientMsgProtobuf packetMsg )
         {
-            get => __pbn__depth.GetValueOrDefault();
-            set => __pbn__depth = value;
+            switch ( methodName )
+            {
+                case "AddItemsToCart":
+                    PostResponseMsg<CAccountCart_AddItemsToCart_Response>( packetMsg );
+                    break;
+                case "DeleteCart":
+                    PostResponseMsg<CAccountCart_DeleteCart_Response>( packetMsg );
+                    break;
+                case "GetCart":
+                    PostResponseMsg<CAccountCart_GetCart_Response>( packetMsg );
+                    break;
+                case "GetRelevantCoupons":
+                    PostResponseMsg<CAccountCart_GetRelevantCoupons_Response>( packetMsg );
+                    break;
+                case "MergeShoppingCartContents":
+                    PostResponseMsg<CAccountCart_MergeShoppingCartContents_Response>( packetMsg );
+                    break;
+                case "ModifyLineItem":
+                    PostResponseMsg<CAccountCart_ModifyLineItem_Response>( packetMsg );
+                    break;
+                case "RemoveItemFromCart":
+                    PostResponseMsg<CAccountCart_RemoveItemFromCart_Response>( packetMsg );
+                    break;
+            }
         }
-        public bool ShouldSerializedepth() => __pbn__depth != null;
-        public void Resetdepth() => __pbn__depth = null;
-        private uint? __pbn__depth;
 
-        [global::ProtoBuf.ProtoMember(7)]
-        [global::System.ComponentModel.DefaultValue("")]
-        public string countrycode
+        public override void HandleNotificationMsg( string methodName, PacketClientMsgProtobuf packetMsg )
         {
-            get => __pbn__countrycode ?? "";
-            set => __pbn__countrycode = value;
         }
-        public bool ShouldSerializecountrycode() => __pbn__countrycode != null;
-        public void Resetcountrycode() => __pbn__countrycode = null;
-        private string __pbn__countrycode;
-
-        [global::ProtoBuf.ProtoMember(8)]
-        public ulong webkey
-        {
-            get => __pbn__webkey.GetValueOrDefault();
-            set => __pbn__webkey = value;
-        }
-        public bool ShouldSerializewebkey() => __pbn__webkey != null;
-        public void Resetwebkey() => __pbn__webkey = null;
-        private ulong? __pbn__webkey;
-
-        [global::ProtoBuf.ProtoMember(9)]
-        public bool is_client
-        {
-            get => __pbn__is_client.GetValueOrDefault();
-            set => __pbn__is_client = value;
-        }
-        public bool ShouldSerializeis_client() => __pbn__is_client != null;
-        public void Resetis_client() => __pbn__is_client = null;
-        private bool? __pbn__is_client;
-
-        [global::ProtoBuf.ProtoMember(10)]
-        public CUserInterface_CuratorData curator_data { get; set; }
-
-        [global::ProtoBuf.ProtoMember(11)]
-        public bool is_likely_bot
-        {
-            get => __pbn__is_likely_bot.GetValueOrDefault();
-            set => __pbn__is_likely_bot = value;
-        }
-        public bool ShouldSerializeis_likely_bot() => __pbn__is_likely_bot != null;
-        public void Resetis_likely_bot() => __pbn__is_likely_bot = null;
-        private bool? __pbn__is_likely_bot;
-
-        [global::ProtoBuf.ProtoMember(12)]
-        public bool is_utm
-        {
-            get => __pbn__is_utm.GetValueOrDefault();
-            set => __pbn__is_utm = value;
-        }
-        public bool ShouldSerializeis_utm() => __pbn__is_utm != null;
-        public void Resetis_utm() => __pbn__is_utm = null;
-        private bool? __pbn__is_utm;
-
-    }
-
-    public interface IAccountCart
-    {
-        CAccountCart_AddItemsToCart_Response AddItemsToCart(CAccountCart_AddItemsToCart_Request request);
-        CAccountCart_AddItemToCart_Response AddItemToCart(CAccountCart_AddItemToCart_Request request);
-        CAccountCart_DeleteCart_Response DeleteCart(CAccountCart_DeleteCart_Request request);
-        CAccountCart_GetCart_Response GetCart(CAccountCart_GetCart_Request request);
-        CAccountCart_GetRelevantCoupons_Response GetRelevantCoupons(CAccountCart_GetRelevantCoupons_Request request);
-        CAccountCart_MergeShoppingCartContents_Response MergeShoppingCartContents(CAccountCart_MergeShoppingCartContents_Request request);
-        CAccountCart_ModifyLineItem_Response ModifyLineItem(CAccountCart_ModifyLineItem_Request request);
-        CAccountCart_RemoveItemFromCart_Response RemoveItemFromCart(CAccountCart_RemoveItemFromCart_Request request);
     }
 
 }
 
-#pragma warning restore CS0612, CS0618, CS1591, CS3021, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
+#pragma warning restore CS0612, CS0618, CS1591, CS3021, CS8981, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
 #endregion

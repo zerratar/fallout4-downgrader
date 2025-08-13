@@ -137,6 +137,18 @@ namespace SteamKit2
             inSeqAcked = 0;
             inSeqHandled = 0;
 
+            if (endPoint is DnsEndPoint dnsEndPoint)
+            {
+                var resolved = Dns.GetHostAddresses(dnsEndPoint.Host, AddressFamily.InterNetwork);
+
+                if (resolved == null || resolved.Length == 0)
+                {
+                    throw new ArgumentException("Failed to resolve given dns endpoint.", nameof(endPoint));
+                }
+
+                endPoint = new IPEndPoint(resolved[0], dnsEndPoint.Port);
+            }
+
             netThread = new Thread( NetLoop )
             {
                 Name = "SK2-UdpConn"
@@ -176,12 +188,12 @@ namespace SteamKit2
         /// Serializes and sends the provided data to the server in as many packets as is necessary.
         /// </summary>
         /// <param name="data">The data to send to the server</param>
-        public void Send( byte[] data )
+        public void Send( Memory<byte> data )
         {
             if ( state != (int)State.Connected )
                 return;
 
-            using var ms = new MemoryStream( data );
+            using var ms = new MemoryStream( data.ToArray() ); // TODO: Remove memorystream
             SendData( ms );
         }
 
@@ -254,10 +266,6 @@ namespace SteamKit2
             packet.Header.DestConnID = remoteConnId;
             packet.Header.SeqAck = inSeqAcked = inSeq;
 
-            log.LogDebug("UdpConnection", "Sent -> {0} Seq {1} Ack {2}; {3} bytes; Message: {4} bytes {5} packets",
-                packet.Header.PacketType, packet.Header.SeqThis, packet.Header.SeqAck,
-                packet.Header.PayloadSize, packet.Header.MsgSize, packet.Header.PacketsInMsg);
-
             byte[] data = packet.GetData();
 
             DebugLog.Assert( CurrentEndPoint != null, nameof( UdpConnection ), "CurrentEndPoint should not be null when connected." );
@@ -268,7 +276,7 @@ namespace SteamKit2
             }
             catch ( SocketException e )
             {
-                log.LogDebug( "UdpConnection", "Critical socket failure: " + e.SocketErrorCode );
+                log.LogDebug( nameof( UdpConnection ), "Critical socket failure: " + e.SocketErrorCode );
 
                 state = ( int )State.Disconnected;
                 return;
@@ -309,7 +317,7 @@ namespace SteamKit2
                         outPackets.Clear();
                     }
 
-                    log.LogDebug( "UdpConnection", "Sequenced packet resend required" );
+                    log.LogDebug( nameof( UdpConnection ), "Sequenced packet resend required" );
 
                     // Don't send more than 3 (Steam behavior?)
                     for ( int i = 0; i < RESEND_COUNT && i < outPackets.Count; i++ )
@@ -368,8 +376,6 @@ namespace SteamKit2
 
             byte[] data = payload.ToArray();
 
-            log.LogDebug("UdpConnection", "Dispatching message; {0} bytes", data.Length);
-
             NetMsgReceived?.Invoke( this, new NetMsgEventArgs( data, CurrentEndPoint! ) );
 
             return true;
@@ -413,7 +419,7 @@ namespace SteamKit2
                     if ( !sock.Poll(150000, SelectMode.SelectRead)
                         && DateTime.Now > timeOut )
                     {
-                        log.LogDebug("UdpConnection", "Connection timed out");
+                        log.LogDebug(nameof( UdpConnection ), "Connection timed out");
 
                         state = (int)State.Disconnected;
                         break;
@@ -440,14 +446,14 @@ namespace SteamKit2
                 }
                 catch ( IOException ex )
                 {
-                    log.LogDebug( "UdpConnection", "Exception occurred while reading packet: {0}", ex );
+                    log.LogDebug( nameof( UdpConnection ), "Exception occurred while reading packet: {0}", ex );
 
                     state = ( int )State.Disconnected;
                     break;
                 }
                 catch ( SocketException e )
                 {
-                    log.LogDebug( "UdpConnection", "Critical socket failure: " + e.SocketErrorCode );
+                    log.LogDebug( nameof( UdpConnection ), "Critical socket failure: " + e.SocketErrorCode );
 
                     state = ( int )State.Disconnected;
                     break;
@@ -467,7 +473,7 @@ namespace SteamKit2
                 // Once it's empty, we exit, since the last packet was our disconnect notification.
                 if ( state == ( int )State.Disconnecting && outPackets.Count == 0 )
                 {
-                    log.LogDebug( "UdpConnection", "Graceful disconnect completed" );
+                    log.LogDebug( nameof( UdpConnection ), "Graceful disconnect completed" );
 
                     state = ( int )State.Disconnected;
                     userRequestedDisconnect = true;
@@ -477,7 +483,7 @@ namespace SteamKit2
 
             sock?.Dispose();
 
-            log.LogDebug("UdpConnection", "Calling OnDisconnected");
+            log.LogDebug(nameof( UdpConnection ), "Calling OnDisconnected");
             Disconnected?.Invoke( this, new DisconnectedEventArgs( userRequestedDisconnect ) );
         }
 
@@ -492,10 +498,6 @@ namespace SteamKit2
                 return;
             else if ( remoteConnId > 0 && packet.Header.SourceConnID != remoteConnId )
                 return;
-
-            log.LogDebug("UdpConnection", "<- Recv'd {0} Seq {1} Ack {2}; {3} bytes; Message: {4} bytes {5} packets",
-                packet.Header.PacketType, packet.Header.SeqThis, packet.Header.SeqAck,
-                packet.Header.PayloadSize, packet.Header.MsgSize, packet.Header.PacketsInMsg);
 
             // Throw away any duplicate messages we've already received, making sure to
             // re-ack it in case it got lost.
@@ -540,7 +542,7 @@ namespace SteamKit2
                     break;
 
                 case EUdpPacketType.Disconnect:
-                    log.LogDebug("UdpConnection", "Disconnected by server");
+                    log.LogDebug(nameof( UdpConnection ), "Disconnected by server");
                     state = (int)State.Disconnected;
                     return;
 
@@ -548,7 +550,7 @@ namespace SteamKit2
                     break;
 
                 default:
-                    log.LogDebug("UdpConnection", "Received unexpected packet type " + packet.Header.PacketType);
+                    log.LogDebug(nameof( UdpConnection ), "Received unexpected packet type " + packet.Header.PacketType);
                     break;
             }
         }
@@ -587,7 +589,7 @@ namespace SteamKit2
             if ( Interlocked.CompareExchange( ref state, (int)State.Connected, (int)State.ConnectSent ) != (int)State.ConnectSent )
                 return;
 
-            log.LogDebug( "UdpConnection", "Connection established" );
+            log.LogDebug( nameof( UdpConnection ), "Connection established" );
             remoteConnId = packet.Header.SourceConnID;
             inSeqHandled = packet.Header.SeqThis;
 
@@ -606,10 +608,8 @@ namespace SteamKit2
 
             // If we receive a packet that we've already processed (e.g. it got resent due to a lost ack)
             // or that is already waiting to be processed, do nothing.
-            if ( packet.Header.SeqThis <= inSeqHandled || inPackets.ContainsKey(packet.Header.SeqThis) )
+            if ( packet.Header.SeqThis <= inSeqHandled || !inPackets.TryAdd( packet.Header.SeqThis, packet ) )
                 return;
-
-            inPackets.Add(packet.Header.SeqThis, packet);
 
             while ( DispatchMessage() ) ;
         }

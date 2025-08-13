@@ -5,7 +5,7 @@
 // </auto-generated>
 
 #region Designer generated code
-#pragma warning disable CS0612, CS0618, CS1591, CS3021, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
+#pragma warning disable CS0612, CS0618, CS1591, CS3021, CS8981, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
 namespace SteamKit2.WebUI.Internal
 {
 
@@ -418,15 +418,55 @@ namespace SteamKit2.WebUI.Internal
 
     }
 
-    public interface IUserGameNotes
+    public class UserGameNotes : SteamUnifiedMessages.UnifiedService
     {
-        CUserGameNotes_DeleteNote_Response DeleteNote(CUserGameNotes_DeleteNote_Request request);
-        CUserGameNotes_GetGamesWithNotes_Response GetGamesWithNotes(CUserGameNotes_GetGamesWithNotes_Request request);
-        CUserGameNotes_GetNotesForGame_Response GetNotesForGame(CUserGameNotes_GetNotesForGame_Request request);
-        CUserGameNotes_SaveNote_Response SaveNote(CUserGameNotes_SaveNote_Request request);
+        public override string ServiceName { get; } = "UserGameNotes";
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CUserGameNotes_DeleteNote_Response>> DeleteNote( CUserGameNotes_DeleteNote_Request request )
+        {
+            return UnifiedMessages.SendMessage<CUserGameNotes_DeleteNote_Request, CUserGameNotes_DeleteNote_Response>( "UserGameNotes.DeleteNote#1", request );
+        }
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CUserGameNotes_GetGamesWithNotes_Response>> GetGamesWithNotes( CUserGameNotes_GetGamesWithNotes_Request request )
+        {
+            return UnifiedMessages.SendMessage<CUserGameNotes_GetGamesWithNotes_Request, CUserGameNotes_GetGamesWithNotes_Response>( "UserGameNotes.GetGamesWithNotes#1", request );
+        }
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CUserGameNotes_GetNotesForGame_Response>> GetNotesForGame( CUserGameNotes_GetNotesForGame_Request request )
+        {
+            return UnifiedMessages.SendMessage<CUserGameNotes_GetNotesForGame_Request, CUserGameNotes_GetNotesForGame_Response>( "UserGameNotes.GetNotesForGame#1", request );
+        }
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CUserGameNotes_SaveNote_Response>> SaveNote( CUserGameNotes_SaveNote_Request request )
+        {
+            return UnifiedMessages.SendMessage<CUserGameNotes_SaveNote_Request, CUserGameNotes_SaveNote_Response>( "UserGameNotes.SaveNote#1", request );
+        }
+
+        public override void HandleResponseMsg( string methodName, PacketClientMsgProtobuf packetMsg )
+        {
+            switch ( methodName )
+            {
+                case "DeleteNote":
+                    PostResponseMsg<CUserGameNotes_DeleteNote_Response>( packetMsg );
+                    break;
+                case "GetGamesWithNotes":
+                    PostResponseMsg<CUserGameNotes_GetGamesWithNotes_Response>( packetMsg );
+                    break;
+                case "GetNotesForGame":
+                    PostResponseMsg<CUserGameNotes_GetNotesForGame_Response>( packetMsg );
+                    break;
+                case "SaveNote":
+                    PostResponseMsg<CUserGameNotes_SaveNote_Response>( packetMsg );
+                    break;
+            }
+        }
+
+        public override void HandleNotificationMsg( string methodName, PacketClientMsgProtobuf packetMsg )
+        {
+        }
     }
 
 }
 
-#pragma warning restore CS0612, CS0618, CS1591, CS3021, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
+#pragma warning restore CS0612, CS0618, CS1591, CS3021, CS8981, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
 #endregion

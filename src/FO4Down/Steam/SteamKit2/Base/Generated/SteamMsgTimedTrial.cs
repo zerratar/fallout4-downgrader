@@ -5,7 +5,7 @@
 // </auto-generated>
 
 #region Designer generated code
-#pragma warning disable CS0612, CS0618, CS1591, CS3021, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
+#pragma warning disable CS0612, CS0618, CS1591, CS3021, CS8981, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
 namespace SteamKit2.Internal
 {
 
@@ -183,14 +183,47 @@ namespace SteamKit2.Internal
 
     }
 
-    public interface ITimedTrial
+    public class TimedTrial : SteamUnifiedMessages.UnifiedService
     {
-        CTimedTrial_GetTimeRemaining_Response GetTimeRemaining(CTimedTrial_GetTimeRemaining_Request request);
-        CTimedTrial_RecordPlaytime_Response RecordPlaytime(CTimedTrial_RecordPlaytime_Request request);
-        CTimedTrial_ResetPlaytime_Response ResetPlaytime(CTimedTrial_ResetPlaytime_Request request);
+        public override string ServiceName { get; } = "TimedTrial";
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CTimedTrial_GetTimeRemaining_Response>> GetTimeRemaining( CTimedTrial_GetTimeRemaining_Request request )
+        {
+            return UnifiedMessages.SendMessage<CTimedTrial_GetTimeRemaining_Request, CTimedTrial_GetTimeRemaining_Response>( "TimedTrial.GetTimeRemaining#1", request );
+        }
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CTimedTrial_RecordPlaytime_Response>> RecordPlaytime( CTimedTrial_RecordPlaytime_Request request )
+        {
+            return UnifiedMessages.SendMessage<CTimedTrial_RecordPlaytime_Request, CTimedTrial_RecordPlaytime_Response>( "TimedTrial.RecordPlaytime#1", request );
+        }
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CTimedTrial_ResetPlaytime_Response>> ResetPlaytime( CTimedTrial_ResetPlaytime_Request request )
+        {
+            return UnifiedMessages.SendMessage<CTimedTrial_ResetPlaytime_Request, CTimedTrial_ResetPlaytime_Response>( "TimedTrial.ResetPlaytime#1", request );
+        }
+
+        public override void HandleResponseMsg( string methodName, PacketClientMsgProtobuf packetMsg )
+        {
+            switch ( methodName )
+            {
+                case "GetTimeRemaining":
+                    PostResponseMsg<CTimedTrial_GetTimeRemaining_Response>( packetMsg );
+                    break;
+                case "RecordPlaytime":
+                    PostResponseMsg<CTimedTrial_RecordPlaytime_Response>( packetMsg );
+                    break;
+                case "ResetPlaytime":
+                    PostResponseMsg<CTimedTrial_ResetPlaytime_Response>( packetMsg );
+                    break;
+            }
+        }
+
+        public override void HandleNotificationMsg( string methodName, PacketClientMsgProtobuf packetMsg )
+        {
+        }
     }
 
 }
 
-#pragma warning restore CS0612, CS0618, CS1591, CS3021, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
+#pragma warning restore CS0612, CS0618, CS1591, CS3021, CS8981, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
 #endregion

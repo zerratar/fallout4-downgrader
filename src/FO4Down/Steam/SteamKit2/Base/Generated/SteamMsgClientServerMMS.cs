@@ -5,7 +5,7 @@
 // </auto-generated>
 
 #region Designer generated code
-#pragma warning disable CS0612, CS0618, CS1591, CS3021, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
+#pragma warning disable CS0612, CS0618, CS1591, CS3021, CS8981, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
 namespace SteamKit2.Internal
 {
 
@@ -149,6 +149,17 @@ namespace SteamKit2.Internal
         [global::ProtoBuf.ProtoMember(9)]
         public CMsgIPAddress public_ip { get; set; }
 
+        [global::ProtoBuf.ProtoMember(10)]
+        [global::System.ComponentModel.DefaultValue("")]
+        public string network_ping_location
+        {
+            get => __pbn__network_ping_location ?? "";
+            set => __pbn__network_ping_location = value;
+        }
+        public bool ShouldSerializenetwork_ping_location() => __pbn__network_ping_location != null;
+        public void Resetnetwork_ping_location() => __pbn__network_ping_location = null;
+        private string __pbn__network_ping_location;
+
     }
 
     [global::ProtoBuf.ProtoContract()]
@@ -228,6 +239,27 @@ namespace SteamKit2.Internal
         public bool ShouldSerializepersona_name() => __pbn__persona_name != null;
         public void Resetpersona_name() => __pbn__persona_name = null;
         private string __pbn__persona_name;
+
+        [global::ProtoBuf.ProtoMember(4)]
+        [global::System.ComponentModel.DefaultValue("")]
+        public string network_ping_location
+        {
+            get => __pbn__network_ping_location ?? "";
+            set => __pbn__network_ping_location = value;
+        }
+        public bool ShouldSerializenetwork_ping_location() => __pbn__network_ping_location != null;
+        public void Resetnetwork_ping_location() => __pbn__network_ping_location = null;
+        private string __pbn__network_ping_location;
+
+        [global::ProtoBuf.ProtoMember(5)]
+        public uint cell_id
+        {
+            get => __pbn__cell_id.GetValueOrDefault();
+            set => __pbn__cell_id = value;
+        }
+        public bool ShouldSerializecell_id() => __pbn__cell_id != null;
+        public void Resetcell_id() => __pbn__cell_id = null;
+        private uint? __pbn__cell_id;
 
     }
 
@@ -485,6 +517,17 @@ namespace SteamKit2.Internal
         [global::ProtoBuf.ProtoMember(7)]
         public CMsgIPAddress public_ip { get; set; }
 
+        [global::ProtoBuf.ProtoMember(8)]
+        [global::System.ComponentModel.DefaultValue("")]
+        public string network_ping_location
+        {
+            get => __pbn__network_ping_location ?? "";
+            set => __pbn__network_ping_location = value;
+        }
+        public bool ShouldSerializenetwork_ping_location() => __pbn__network_ping_location != null;
+        public void Resetnetwork_ping_location() => __pbn__network_ping_location = null;
+        private string __pbn__network_ping_location;
+
         [global::ProtoBuf.ProtoContract()]
         public partial class Filter : global::ProtoBuf.IExtensible
         {
@@ -656,6 +699,26 @@ namespace SteamKit2.Internal
             public void Resetweight() => __pbn__weight = null;
             private long? __pbn__weight;
 
+            [global::ProtoBuf.ProtoMember(9)]
+            public int ping
+            {
+                get => __pbn__ping.GetValueOrDefault();
+                set => __pbn__ping = value;
+            }
+            public bool ShouldSerializeping() => __pbn__ping != null;
+            public void Resetping() => __pbn__ping = null;
+            private int? __pbn__ping;
+
+            [global::ProtoBuf.ProtoMember(10)]
+            public int missing_ping
+            {
+                get => __pbn__missing_ping.GetValueOrDefault();
+                set => __pbn__missing_ping = value;
+            }
+            public bool ShouldSerializemissing_ping() => __pbn__missing_ping != null;
+            public void Resetmissing_ping() => __pbn__missing_ping = null;
+            private int? __pbn__missing_ping;
+
         }
 
     }
@@ -736,6 +799,17 @@ namespace SteamKit2.Internal
         public bool ShouldSerializemetadata() => __pbn__metadata != null;
         public void Resetmetadata() => __pbn__metadata = null;
         private byte[] __pbn__metadata;
+
+        [global::ProtoBuf.ProtoMember(8)]
+        [global::System.ComponentModel.DefaultValue("")]
+        public string network_ping_location
+        {
+            get => __pbn__network_ping_location ?? "";
+            set => __pbn__network_ping_location = value;
+        }
+        public bool ShouldSerializenetwork_ping_location() => __pbn__network_ping_location != null;
+        public void Resetnetwork_ping_location() => __pbn__network_ping_location = null;
+        private string __pbn__network_ping_location;
 
     }
 
@@ -955,6 +1029,17 @@ namespace SteamKit2.Internal
             public bool ShouldSerializemetadata() => __pbn__metadata != null;
             public void Resetmetadata() => __pbn__metadata = null;
             private byte[] __pbn__metadata;
+
+            [global::ProtoBuf.ProtoMember(4)]
+            [global::System.ComponentModel.DefaultValue("")]
+            public string ping_data
+            {
+                get => __pbn__ping_data ?? "";
+                set => __pbn__ping_data = value;
+            }
+            public bool ShouldSerializeping_data() => __pbn__ping_data != null;
+            public void Resetping_data() => __pbn__ping_data = null;
+            private string __pbn__ping_data;
 
         }
 
@@ -1235,6 +1320,17 @@ namespace SteamKit2.Internal
 
         [global::ProtoBuf.ProtoMember(6)]
         public CMsgIPAddress game_server_ip { get; set; }
+
+        [global::ProtoBuf.ProtoMember(7)]
+        [global::System.ComponentModel.DefaultValue("")]
+        public string network_ping_location
+        {
+            get => __pbn__network_ping_location ?? "";
+            set => __pbn__network_ping_location = value;
+        }
+        public bool ShouldSerializenetwork_ping_location() => __pbn__network_ping_location != null;
+        public void Resetnetwork_ping_location() => __pbn__network_ping_location = null;
+        private string __pbn__network_ping_location;
 
     }
 
@@ -1539,5 +1635,5 @@ namespace SteamKit2.Internal
 
 }
 
-#pragma warning restore CS0612, CS0618, CS1591, CS3021, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
+#pragma warning restore CS0612, CS0618, CS1591, CS3021, CS8981, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
 #endregion

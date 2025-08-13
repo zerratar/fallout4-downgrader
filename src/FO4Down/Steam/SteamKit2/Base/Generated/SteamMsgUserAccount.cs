@@ -5,7 +5,7 @@
 // </auto-generated>
 
 #region Designer generated code
-#pragma warning disable CS0612, CS0618, CS1591, CS3021, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
+#pragma warning disable CS0612, CS0618, CS1591, CS3021, CS8981, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
 namespace SteamKit2.Internal
 {
 
@@ -791,154 +791,6 @@ namespace SteamKit2.Internal
     }
 
     [global::ProtoBuf.ProtoContract()]
-    public partial class CAccountLinking_GetLinkedAccountInfo_Request : global::ProtoBuf.IExtensible
-    {
-        private global::ProtoBuf.IExtension __pbn__extensionData;
-        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
-
-        [global::ProtoBuf.ProtoMember(1)]
-        [global::System.ComponentModel.DefaultValue(EInternalAccountType.k_EInternalSteamAccountType)]
-        public EInternalAccountType account_type
-        {
-            get => __pbn__account_type ?? EInternalAccountType.k_EInternalSteamAccountType;
-            set => __pbn__account_type = value;
-        }
-        public bool ShouldSerializeaccount_type() => __pbn__account_type != null;
-        public void Resetaccount_type() => __pbn__account_type = null;
-        private EInternalAccountType? __pbn__account_type;
-
-        [global::ProtoBuf.ProtoMember(2)]
-        public ulong account_id
-        {
-            get => __pbn__account_id.GetValueOrDefault();
-            set => __pbn__account_id = value;
-        }
-        public bool ShouldSerializeaccount_id() => __pbn__account_id != null;
-        public void Resetaccount_id() => __pbn__account_id = null;
-        private ulong? __pbn__account_id;
-
-        [global::ProtoBuf.ProtoMember(3)]
-        [global::System.ComponentModel.DefaultValue(EExternalAccountType.k_EExternalNone)]
-        public EExternalAccountType filter
-        {
-            get => __pbn__filter ?? EExternalAccountType.k_EExternalNone;
-            set => __pbn__filter = value;
-        }
-        public bool ShouldSerializefilter() => __pbn__filter != null;
-        public void Resetfilter() => __pbn__filter = null;
-        private EExternalAccountType? __pbn__filter;
-
-        [global::ProtoBuf.ProtoMember(4)]
-        public bool return_access_token
-        {
-            get => __pbn__return_access_token.GetValueOrDefault();
-            set => __pbn__return_access_token = value;
-        }
-        public bool ShouldSerializereturn_access_token() => __pbn__return_access_token != null;
-        public void Resetreturn_access_token() => __pbn__return_access_token = null;
-        private bool? __pbn__return_access_token;
-
-    }
-
-    [global::ProtoBuf.ProtoContract()]
-    public partial class CAccountLinking_GetLinkedAccountInfo_Response : global::ProtoBuf.IExtensible
-    {
-        private global::ProtoBuf.IExtension __pbn__extensionData;
-        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
-
-        [global::ProtoBuf.ProtoMember(1)]
-        public global::System.Collections.Generic.List<CExternalAccountTuple_Response> external_accounts { get; } = new global::System.Collections.Generic.List<CExternalAccountTuple_Response>();
-
-        [global::ProtoBuf.ProtoContract()]
-        public partial class CExternalAccountTuple_Response : global::ProtoBuf.IExtensible
-        {
-            private global::ProtoBuf.IExtension __pbn__extensionData;
-            global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-                => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
-
-            [global::ProtoBuf.ProtoMember(1)]
-            [global::System.ComponentModel.DefaultValue(EExternalAccountType.k_EExternalNone)]
-            public EExternalAccountType external_type
-            {
-                get => __pbn__external_type ?? EExternalAccountType.k_EExternalNone;
-                set => __pbn__external_type = value;
-            }
-            public bool ShouldSerializeexternal_type() => __pbn__external_type != null;
-            public void Resetexternal_type() => __pbn__external_type = null;
-            private EExternalAccountType? __pbn__external_type;
-
-            [global::ProtoBuf.ProtoMember(2)]
-            [global::System.ComponentModel.DefaultValue("")]
-            public string external_id
-            {
-                get => __pbn__external_id ?? "";
-                set => __pbn__external_id = value;
-            }
-            public bool ShouldSerializeexternal_id() => __pbn__external_id != null;
-            public void Resetexternal_id() => __pbn__external_id = null;
-            private string __pbn__external_id;
-
-            [global::ProtoBuf.ProtoMember(3)]
-            [global::System.ComponentModel.DefaultValue("")]
-            public string external_user_name
-            {
-                get => __pbn__external_user_name ?? "";
-                set => __pbn__external_user_name = value;
-            }
-            public bool ShouldSerializeexternal_user_name() => __pbn__external_user_name != null;
-            public void Resetexternal_user_name() => __pbn__external_user_name = null;
-            private string __pbn__external_user_name;
-
-            [global::ProtoBuf.ProtoMember(4)]
-            [global::System.ComponentModel.DefaultValue("")]
-            public string external_url
-            {
-                get => __pbn__external_url ?? "";
-                set => __pbn__external_url = value;
-            }
-            public bool ShouldSerializeexternal_url() => __pbn__external_url != null;
-            public void Resetexternal_url() => __pbn__external_url = null;
-            private string __pbn__external_url;
-
-            [global::ProtoBuf.ProtoMember(5)]
-            [global::System.ComponentModel.DefaultValue("")]
-            public string access_token
-            {
-                get => __pbn__access_token ?? "";
-                set => __pbn__access_token = value;
-            }
-            public bool ShouldSerializeaccess_token() => __pbn__access_token != null;
-            public void Resetaccess_token() => __pbn__access_token = null;
-            private string __pbn__access_token;
-
-            [global::ProtoBuf.ProtoMember(6)]
-            [global::System.ComponentModel.DefaultValue("")]
-            public string access_token_secret
-            {
-                get => __pbn__access_token_secret ?? "";
-                set => __pbn__access_token_secret = value;
-            }
-            public bool ShouldSerializeaccess_token_secret() => __pbn__access_token_secret != null;
-            public void Resetaccess_token_secret() => __pbn__access_token_secret = null;
-            private string __pbn__access_token_secret;
-
-            [global::ProtoBuf.ProtoMember(7)]
-            public bool is_valid
-            {
-                get => __pbn__is_valid.GetValueOrDefault();
-                set => __pbn__is_valid = value;
-            }
-            public bool ShouldSerializeis_valid() => __pbn__is_valid != null;
-            public void Resetis_valid() => __pbn__is_valid = null;
-            private bool? __pbn__is_valid;
-
-        }
-
-    }
-
-    [global::ProtoBuf.ProtoContract()]
     public partial class CEmbeddedClient_AuthorizeCurrentDevice_Request : global::ProtoBuf.IExtensible
     {
         private global::ProtoBuf.IExtension __pbn__extensionData;
@@ -1059,54 +911,135 @@ namespace SteamKit2.Internal
 
     }
 
-    [global::ProtoBuf.ProtoContract()]
-    public enum EInternalAccountType
+    public class UserAccount : SteamUnifiedMessages.UnifiedService
     {
-        k_EInternalSteamAccountType = 1,
-        k_EInternalClanType = 2,
-        k_EInternalAppType = 3,
-        k_EInternalBroadcastChannelType = 4,
+        public override string ServiceName { get; } = "UserAccount";
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CUserAccount_GetAvailableValveDiscountPromotions_Response>> GetAvailableValveDiscountPromotions( CUserAccount_GetAvailableValveDiscountPromotions_Request request )
+        {
+            return UnifiedMessages.SendMessage<CUserAccount_GetAvailableValveDiscountPromotions_Request, CUserAccount_GetAvailableValveDiscountPromotions_Response>( "UserAccount.GetAvailableValveDiscountPromotions#1", request );
+        }
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CUserAccount_GetWalletDetails_Response>> GetClientWalletDetails( CUserAccount_GetClientWalletDetails_Request request )
+        {
+            return UnifiedMessages.SendMessage<CUserAccount_GetClientWalletDetails_Request, CUserAccount_GetWalletDetails_Response>( "UserAccount.GetClientWalletDetails#1", request );
+        }
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CUserAccount_GetAccountLinkStatus_Response>> GetAccountLinkStatus( CUserAccount_GetAccountLinkStatus_Request request )
+        {
+            return UnifiedMessages.SendMessage<CUserAccount_GetAccountLinkStatus_Request, CUserAccount_GetAccountLinkStatus_Response>( "UserAccount.GetAccountLinkStatus#1", request );
+        }
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CUserAccount_CancelLicenseForApp_Response>> CancelLicenseForApp( CUserAccount_CancelLicenseForApp_Request request )
+        {
+            return UnifiedMessages.SendMessage<CUserAccount_CancelLicenseForApp_Request, CUserAccount_CancelLicenseForApp_Response>( "UserAccount.CancelLicenseForApp#1", request );
+        }
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CUserAccount_GetUserCountry_Response>> GetUserCountry( CUserAccount_GetUserCountry_Request request )
+        {
+            return UnifiedMessages.SendMessage<CUserAccount_GetUserCountry_Request, CUserAccount_GetUserCountry_Response>( "UserAccount.GetUserCountry#1", request );
+        }
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CUserAccount_CreateFriendInviteToken_Response>> CreateFriendInviteToken( CUserAccount_CreateFriendInviteToken_Request request )
+        {
+            return UnifiedMessages.SendMessage<CUserAccount_CreateFriendInviteToken_Request, CUserAccount_CreateFriendInviteToken_Response>( "UserAccount.CreateFriendInviteToken#1", request );
+        }
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CUserAccount_GetFriendInviteTokens_Response>> GetFriendInviteTokens( CUserAccount_GetFriendInviteTokens_Request request )
+        {
+            return UnifiedMessages.SendMessage<CUserAccount_GetFriendInviteTokens_Request, CUserAccount_GetFriendInviteTokens_Response>( "UserAccount.GetFriendInviteTokens#1", request );
+        }
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CUserAccount_ViewFriendInviteToken_Response>> ViewFriendInviteToken( CUserAccount_ViewFriendInviteToken_Request request )
+        {
+            return UnifiedMessages.SendMessage<CUserAccount_ViewFriendInviteToken_Request, CUserAccount_ViewFriendInviteToken_Response>( "UserAccount.ViewFriendInviteToken#1", request );
+        }
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CUserAccount_RedeemFriendInviteToken_Response>> RedeemFriendInviteToken( CUserAccount_RedeemFriendInviteToken_Request request )
+        {
+            return UnifiedMessages.SendMessage<CUserAccount_RedeemFriendInviteToken_Request, CUserAccount_RedeemFriendInviteToken_Response>( "UserAccount.RedeemFriendInviteToken#1", request );
+        }
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CUserAccount_RevokeFriendInviteToken_Response>> RevokeFriendInviteToken( CUserAccount_RevokeFriendInviteToken_Request request )
+        {
+            return UnifiedMessages.SendMessage<CUserAccount_RevokeFriendInviteToken_Request, CUserAccount_RevokeFriendInviteToken_Response>( "UserAccount.RevokeFriendInviteToken#1", request );
+        }
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CUserAccount_RegisterCompatTool_Response>> RegisterCompatTool( CUserAccount_RegisterCompatTool_Request request )
+        {
+            return UnifiedMessages.SendMessage<CUserAccount_RegisterCompatTool_Request, CUserAccount_RegisterCompatTool_Response>( "UserAccount.RegisterCompatTool#1", request );
+        }
+
+        public override void HandleResponseMsg( string methodName, PacketClientMsgProtobuf packetMsg )
+        {
+            switch ( methodName )
+            {
+                case "GetAvailableValveDiscountPromotions":
+                    PostResponseMsg<CUserAccount_GetAvailableValveDiscountPromotions_Response>( packetMsg );
+                    break;
+                case "GetClientWalletDetails":
+                    PostResponseMsg<CUserAccount_GetWalletDetails_Response>( packetMsg );
+                    break;
+                case "GetAccountLinkStatus":
+                    PostResponseMsg<CUserAccount_GetAccountLinkStatus_Response>( packetMsg );
+                    break;
+                case "CancelLicenseForApp":
+                    PostResponseMsg<CUserAccount_CancelLicenseForApp_Response>( packetMsg );
+                    break;
+                case "GetUserCountry":
+                    PostResponseMsg<CUserAccount_GetUserCountry_Response>( packetMsg );
+                    break;
+                case "CreateFriendInviteToken":
+                    PostResponseMsg<CUserAccount_CreateFriendInviteToken_Response>( packetMsg );
+                    break;
+                case "GetFriendInviteTokens":
+                    PostResponseMsg<CUserAccount_GetFriendInviteTokens_Response>( packetMsg );
+                    break;
+                case "ViewFriendInviteToken":
+                    PostResponseMsg<CUserAccount_ViewFriendInviteToken_Response>( packetMsg );
+                    break;
+                case "RedeemFriendInviteToken":
+                    PostResponseMsg<CUserAccount_RedeemFriendInviteToken_Response>( packetMsg );
+                    break;
+                case "RevokeFriendInviteToken":
+                    PostResponseMsg<CUserAccount_RevokeFriendInviteToken_Response>( packetMsg );
+                    break;
+                case "RegisterCompatTool":
+                    PostResponseMsg<CUserAccount_RegisterCompatTool_Response>( packetMsg );
+                    break;
+            }
+        }
+
+        public override void HandleNotificationMsg( string methodName, PacketClientMsgProtobuf packetMsg )
+        {
+        }
     }
 
-    [global::ProtoBuf.ProtoContract()]
-    public enum EExternalAccountType
+    public class EmbeddedClient : SteamUnifiedMessages.UnifiedService
     {
-        k_EExternalNone = 0,
-        k_EExternalSteamAccount = 1,
-        k_EExternalGoogleAccount = 2,
-        k_EExternalFacebookAccount = 3,
-        k_EExternalTwitterAccount = 4,
-        k_EExternalTwitchAccount = 5,
-        k_EExternalYouTubeChannelAccount = 6,
-        k_EExternalFacebookPage = 7,
-    }
+        public override string ServiceName { get; } = "EmbeddedClient";
 
-    public interface IUserAccount
-    {
-        CUserAccount_GetAvailableValveDiscountPromotions_Response GetAvailableValveDiscountPromotions(CUserAccount_GetAvailableValveDiscountPromotions_Request request);
-        CUserAccount_GetWalletDetails_Response GetClientWalletDetails(CUserAccount_GetClientWalletDetails_Request request);
-        CUserAccount_GetAccountLinkStatus_Response GetAccountLinkStatus(CUserAccount_GetAccountLinkStatus_Request request);
-        CUserAccount_CancelLicenseForApp_Response CancelLicenseForApp(CUserAccount_CancelLicenseForApp_Request request);
-        CUserAccount_GetUserCountry_Response GetUserCountry(CUserAccount_GetUserCountry_Request request);
-        CUserAccount_CreateFriendInviteToken_Response CreateFriendInviteToken(CUserAccount_CreateFriendInviteToken_Request request);
-        CUserAccount_GetFriendInviteTokens_Response GetFriendInviteTokens(CUserAccount_GetFriendInviteTokens_Request request);
-        CUserAccount_ViewFriendInviteToken_Response ViewFriendInviteToken(CUserAccount_ViewFriendInviteToken_Request request);
-        CUserAccount_RedeemFriendInviteToken_Response RedeemFriendInviteToken(CUserAccount_RedeemFriendInviteToken_Request request);
-        CUserAccount_RevokeFriendInviteToken_Response RevokeFriendInviteToken(CUserAccount_RevokeFriendInviteToken_Request request);
-        CUserAccount_RegisterCompatTool_Response RegisterCompatTool(CUserAccount_RegisterCompatTool_Request request);
-    }
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CEmbeddedClient_AuthorizeDevice_Response>> AuthorizeCurrentDevice( CEmbeddedClient_AuthorizeCurrentDevice_Request request )
+        {
+            return UnifiedMessages.SendMessage<CEmbeddedClient_AuthorizeCurrentDevice_Request, CEmbeddedClient_AuthorizeDevice_Response>( "EmbeddedClient.AuthorizeCurrentDevice#1", request );
+        }
 
-    public interface IAccountLinking
-    {
-        CAccountLinking_GetLinkedAccountInfo_Response GetLinkedAccountInfo(CAccountLinking_GetLinkedAccountInfo_Request request);
-    }
+        public override void HandleResponseMsg( string methodName, PacketClientMsgProtobuf packetMsg )
+        {
+            switch ( methodName )
+            {
+                case "AuthorizeCurrentDevice":
+                    PostResponseMsg<CEmbeddedClient_AuthorizeDevice_Response>( packetMsg );
+                    break;
+            }
+        }
 
-    public interface IEmbeddedClient
-    {
-        CEmbeddedClient_AuthorizeDevice_Response AuthorizeCurrentDevice(CEmbeddedClient_AuthorizeCurrentDevice_Request request);
+        public override void HandleNotificationMsg( string methodName, PacketClientMsgProtobuf packetMsg )
+        {
+        }
     }
 
 }
 
-#pragma warning restore CS0612, CS0618, CS1591, CS3021, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
+#pragma warning restore CS0612, CS0618, CS1591, CS3021, CS8981, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
 #endregion

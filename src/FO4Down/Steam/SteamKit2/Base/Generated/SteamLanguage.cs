@@ -301,7 +301,6 @@ namespace SteamKit2
 		ClientGameConnectTokens = 779,
 		ClientLicenseList = 780,
 		ClientVACBanStatus = 782,
-		ClientCMList = 783,
 		ClientEncryptPct = 784,
 		ClientGetLegacyGameKeyResponse = 785,
 		ClientAddFriend = 791,
@@ -1610,6 +1609,8 @@ namespace SteamKit2
 		ClientPICSProductInfoResponse = 8904,
 		ClientPICSAccessTokenRequest = 8905,
 		ClientPICSAccessTokenResponse = 8906,
+		ClientPICSPrivateBetaRequest = 8907,
+		ClientPICSPrivateBetaResponse = 8908,
 		WorkerProcess = 9000,
 		WorkerProcessPingRequest = 9000,
 		WorkerProcessPingResponse = 9001,
@@ -1647,6 +1648,8 @@ namespace SteamKit2
 		DRMWorkerProcessUnpackBlobResponse = 9131,
 		DRMWorkerProcessInstallAllRequest = 9132,
 		DRMWorkerProcessInstallAllResponse = 9133,
+		DRMWorkerProcessSignFile = 9134,
+		DRMWorkerProcessSignFileResponse = 9135,
 		TestWorkerProcess = 9200,
 		TestWorkerProcessLoadUnloadModuleRequest = 9200,
 		TestWorkerProcessLoadUnloadModuleResponse = 9201,
@@ -1683,6 +1686,12 @@ namespace SteamKit2
 		ClientUnlockHEVCResponse = 9514,
 		RemoteClientStatusRequest = 9515,
 		RemoteClientStatusResponse = 9516,
+		RemoteClientAuthorizationRequest = 9517,
+		RemoteClientAuthorizationResponse = 9518,
+		RemoteClientAuthorizationCancelRequest = 9519,
+		RemoteClientAuthorizationConfirmed = 9520,
+		RemoteClientProofRequest = 9521,
+		RemoteClientProofResponse = 9522,
 		ClientConcurrentSessionsBase = 9600,
 		ClientPlayingSessionState = 9600,
 		ClientKickPlayingSession = 9601,
@@ -3386,6 +3395,17 @@ namespace SteamKit2
 		SteamChina = 7,
 		SingleApp = 8,
 		GameServer = 9,
+	}
+	public enum EUIMode
+	{
+		Unknown = -1,
+		VGUI = 0,
+		Tenfoot = 1,
+		Mobile = 2,
+		Web = 3,
+		ClientUI = 4,
+		MobileChat = 5,
+		EmbeddedClient = 6,
 	}
 	public enum EUdpPacketType : byte
 	{

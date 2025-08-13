@@ -5,7 +5,7 @@
 // </auto-generated>
 
 #region Designer generated code
-#pragma warning disable CS0612, CS0618, CS1591, CS3021, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
+#pragma warning disable CS0612, CS0618, CS1591, CS3021, CS8981, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
 namespace SteamKit2.Internal
 {
 
@@ -78,6 +78,8 @@ namespace SteamKit2.Internal
         k_EContentCheckProvider_Amazon = 2,
         k_EContentCheckProvider_Local = 3,
         k_EContentCheckProvider_GoogleVertexAI = 4,
+        k_EContentCheckProvider_GoogleGemini = 5,
+        k_EContentCheckProvider_SteamLearn = 6,
     }
 
     [global::ProtoBuf.ProtoContract()]
@@ -162,8 +164,9 @@ namespace SteamKit2.Internal
     public enum EStartupMovieVariant
     {
         k_EStartupMovieVariant_Invalid = 0,
-        k_EStartupMovieVariant_Default = 1,
-        k_EStartupMovieVariant_Orange = 2,
+        k_EStartupMovieVariant_Generic = 1,
+        k_EStartupMovieVariant_DeckBlue = 2,
+        k_EStartupMovieVariant_DeckOrange = 3,
     }
 
     [global::ProtoBuf.ProtoContract()]
@@ -172,6 +175,14 @@ namespace SteamKit2.Internal
         k_ColorGamutLabelSet_Default = 0,
         k_ColorGamutLabelSet_sRGB_Native = 1,
         k_ColorGamutLabelSet_Native_sRGB_Boosted = 2,
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public enum EWindowStackingOrder
+    {
+        k_EWindowStackingOrder_Invalid = 0,
+        k_EWindowStackingOrder_Top = 1,
+        k_EWindowStackingOrder_Bottom = 2,
     }
 
     [global::ProtoBuf.ProtoContract()]
@@ -262,24 +273,13 @@ namespace SteamKit2.Internal
     }
 
     [global::ProtoBuf.ProtoContract()]
-    public enum EScalingFilter
-    {
-        k_EScalingFilter_Invalid = 0,
-        k_EScalingFilter_FSR = 1,
-        k_EScalingFilter_Nearest = 2,
-        k_EScalingFilter_Integer = 3,
-        k_EScalingFilter_Linear = 4,
-        k_EScalingFilter_NIS = 5,
-    }
-
-    [global::ProtoBuf.ProtoContract()]
     public enum ESplitScalingFilter
     {
         k_ESplitScalingFilter_Invalid = 0,
         k_ESplitScalingFilter_Linear = 1,
         k_ESplitScalingFilter_Nearest = 2,
-        k_ESplitScalingFilter_FSR = 3,
-        k_ESplitScalingFilter_NIS = 4,
+        k_ESplitScalingFilter_Sharp = 3,
+        k_ESplitScalingFilter_NIS_Deprecated = 4,
     }
 
     [global::ProtoBuf.ProtoContract()]
@@ -310,6 +310,7 @@ namespace SteamKit2.Internal
         k_ESLSHelper_Journal = 3,
         k_ESLSHelper_Gpu = 4,
         k_ESLSHelper_SystemInfo = 5,
+        k_ESLSHelper_Devcoredump = 6,
     }
 
     [global::ProtoBuf.ProtoContract()]
@@ -362,6 +363,7 @@ namespace SteamKit2.Internal
         k_EUpdaterState_Applying = 5,
         k_EUpdaterState_ClientRestartPending = 6,
         k_EUpdaterState_SystemRestartPending = 7,
+        k_EUpdaterState_RollBack = 8,
     }
 
     [global::ProtoBuf.ProtoContract()]
@@ -399,6 +401,23 @@ namespace SteamKit2.Internal
         k_ESystemDisplayCompatibilityMode_Invalid = 0,
         k_ESystemDisplayCompatibilityMode_None = 1,
         k_ESystemDisplayCompatibilityMode_MinimalBandwith = 2,
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public enum ESteamOSCompatibilityCategory
+    {
+        k_ESteamOSCompatibilityCategory_Unknown = 0,
+        k_ESteamOSCompatibilityCategory_Unsupported = 1,
+        k_ESteamOSCompatibilityCategory_Compatible = 2,
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public enum ESteamOSCompatibilityResultDisplayType
+    {
+        k_ESteamOSCompatibilityResultDisplayType_Invisible = 0,
+        k_ESteamOSCompatibilityResultDisplayType_Informational = 1,
+        k_ESteamOSCompatibilityResultDisplayType_Unsupported = 2,
+        k_ESteamOSCompatibilityResultDisplayType_Compatible = 3,
     }
 
     [global::ProtoBuf.ProtoContract()]
@@ -456,8 +475,69 @@ namespace SteamKit2.Internal
         k_EOSBranch_ReleaseCandidate = 2,
         k_EOSBranch_Beta = 3,
         k_EOSBranch_BetaCandidate = 4,
-        k_EOSBranch_Main = 5,
-        k_EOSBranch_Staging = 6,
+        k_EOSBranch_Preview = 5,
+        k_EOSBranch_PreviewCandidate = 6,
+        k_EOSBranch_Main = 7,
+        k_EOSBranch_Staging = 8,
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public enum EBrowserGPUStatus
+    {
+        k_EBrowserGPUStatus_Invalid = 0,
+        k_EBrowserGPUStatus_Enabled = 1,
+        k_EBrowserGPUStatus_DisabledUnknown = 2,
+        k_EBrowserGPUStatus_DisabledCrashCount = 4,
+        k_EBrowserGPUStatus_DisabledBlocklist = 5,
+        k_EBrowserGPUStatus_DisabledJSRequest = 6,
+        k_EBrowserGPUStatus_DisabledCommandLine = 7,
+        k_EBrowserGPUStatus_DisabledRuntimeDetect = 8,
+        k_EBrowserGPUStatus_DisabledChildCommandLine = 9,
+        k_EBrowserGPUStatus_DisabledCompositingCommandLine = 10,
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public enum EBrowserFeatureStatus
+    {
+        k_EBrowserFeatureStatus_Invalid = 0,
+        k_EBrowserFeatureStatus_NotFound = 1,
+        k_EBrowserFeatureStatus_Unknown = 2,
+        k_EBrowserFeatureStatus_DisabledSoftware = 3,
+        k_EBrowserFeatureStatus_DisabledOff = 4,
+        k_EBrowserFeatureStatus_DisabledOffOk = 5,
+        k_EBrowserFeatureStatus_UnavailableSoftware = 6,
+        k_EBrowserFeatureStatus_UnavailableOff = 7,
+        k_EBrowserFeatureStatus_UnavailableOffOk = 8,
+        k_EBrowserFeatureStatus_EnabledReadback = 9,
+        k_EBrowserFeatureStatus_EnabledForce = 10,
+        k_EBrowserFeatureStatus_Enabled = 11,
+        k_EBrowserFeatureStatus_EnabledOn = 12,
+        k_EBrowserFeatureStatus_EnabledForceOn = 13,
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public enum EGpuDriverId
+    {
+        k_EGpuDriverId_Invalid = 0,
+        k_EGpuDriverId_Unknown = 1,
+        k_EGpuDriverId_AmdProprietary = 2,
+        k_EGpuDriverId_AmdOpenSource = 3,
+        k_EGpuDriverId_MesaRadv = 4,
+        k_EGpuDriverId_NvidiaProprietary = 5,
+        k_EGpuDriverId_IntelPropietary = 6,
+        k_EGpuDriverId_MesaIntel = 7,
+        k_EGpuDriverId_QualcommProprietary = 8,
+        k_EGpuDriverId_ArmProprietary = 9,
+        k_EGpuDriverId_GoogleSwiftshader = 10,
+        k_EGpuDriverId_BroadcomProprietary = 11,
+        k_EGpuDriverId_MesaLLVMPipe = 12,
+        k_EGpuDriverId_MoltenVK = 13,
+        k_EGpuDriverId_MesaTurnip = 14,
+        k_EGpuDriverId_MesaPanVK = 15,
+        k_EGpuDriverId_MesaVenus = 16,
+        k_EGpuDriverId_MesaDozen = 17,
+        k_EGpuDriverId_MesaNVK = 18,
+        k_EGpuDriverId_MesaHoneyKrisp = 19,
     }
 
     [global::ProtoBuf.ProtoContract()]
@@ -537,6 +617,20 @@ namespace SteamKit2.Internal
     }
 
     [global::ProtoBuf.ProtoContract()]
+    public enum EForumType
+    {
+        k_EForumType_Invalid = 0,
+        k_EForumType_General = 1,
+        k_EForumType_ReportedPosts = 2,
+        k_EForumType_Workshop = 3,
+        k_EForumType_PublishedFile = 4,
+        k_EForumType_Trading = 5,
+        k_EForumType_PlayTest = 6,
+        k_EForumType_Event = 7,
+        k_EForumType_Max = 8,
+    }
+
+    [global::ProtoBuf.ProtoContract()]
     public enum ECommentThreadType
     {
         k_ECommentThreadTypeInvalid = 0,
@@ -594,6 +688,11 @@ namespace SteamKit2.Internal
         k_ECompromiseDetectionType_None = 0,
         k_ECompromiseDetectionType_TradeEvent = 1,
         k_ECompromiseDetectionType_ApiCallRate = 2,
+        k_ECompromiseDetectionType_Manual = 3,
+        k_ECompromiseDetectionType_TicketAction = 4,
+        k_ECompromiseDetectionType_MaliciousRefund = 5,
+        k_ECompromiseDetectionType_Move2FA = 6,
+        k_ECompromiseDetectionType_DeviceType = 7,
     }
 
     [global::ProtoBuf.ProtoContract()]
@@ -613,7 +712,160 @@ namespace SteamKit2.Internal
         k_EAsyncGameSessionUserVisibilityDismissed = 2,
     }
 
+    [global::ProtoBuf.ProtoContract()]
+    public enum EGameRecordingType
+    {
+        k_EGameRecordingType_Unknown = 0,
+        k_EGameRecordingType_NotRecording = 1,
+        k_EGameRecordingType_ManualRecording = 2,
+        k_EGameRecordingType_BackgroundRecording = 3,
+        k_EGameRecordingType_Clip = 4,
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public enum EExportCodec
+    {
+        k_EExportCodec_Default = 0,
+        k_EExportCodec_H264 = 1,
+        k_EExportCodec_H265 = 2,
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public enum EProtoAppType
+    {
+        k_EAppTypeInvalid = 0,
+        k_EAppTypeGame = 1,
+        k_EAppTypeApplication = 2,
+        k_EAppTypeTool = 4,
+        k_EAppTypeDemo = 8,
+        k_EAppTypeDeprected = 16,
+        k_EAppTypeDLC = 32,
+        k_EAppTypeGuide = 64,
+        k_EAppTypeDriver = 128,
+        k_EAppTypeConfig = 256,
+        k_EAppTypeHardware = 512,
+        k_EAppTypeFranchise = 1024,
+        k_EAppTypeVideo = 2048,
+        k_EAppTypePlugin = 4096,
+        k_EAppTypeMusicAlbum = 8192,
+        k_EAppTypeSeries = 16384,
+        k_EAppTypeComic = 32768,
+        k_EAppTypeBeta = 65536,
+        k_EAppTypeShortcut = 1073741824,
+        k_EAppTypeDepotOnly = -2147483648,
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public enum EChildProcessQueryCommand
+    {
+        k_EChildProcessQueryCommand_Invalid = 0,
+        k_EChildProcessQueryCommand_GpuTopology = 1,
+        k_EChildProcessQueryCommand_Max = 2,
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public enum EChildProcessQueryExitCode
+    {
+        k_EChildProcessQueryExitCode_Success = 0,
+        k_EChildProcessQueryExitCode_ErrorCommandline = -1,
+        k_EChildProcessQueryExitCode_ErrorOther = -2,
+        k_EChildProcessQueryExitCode_ErrorUnimplemented = -3,
+        k_EChildProcessQueryExitCode_ErrorFileSave = -4,
+        k_EChildProcessQueryExitCode_ErrorNotSupportedByPlatform = -5,
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public enum EWindowsUpdateInstallationImpact
+    {
+        k_EWindowsUpdateInstallationImpact_Unknown = -1,
+        k_EWindowsUpdateInstallationImpact_Normal = 0,
+        k_EWindowsUpdateInstallationImpact_Minor = 1,
+        k_EWindowsUpdateInstallationImpact_ExclusiveHandling = 2,
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public enum EWindowsUpdateRebootBehavior
+    {
+        k_EWindowsUpdateRebootBehavior_Unknown = -1,
+        k_EWindowsUpdateRebootBehavior_NeverNeedsReboot = 0,
+        k_EWindowsUpdateRebootBehavior_AlwaysNeedsReboot = 1,
+        k_EWindowsUpdateRebootBehavior_MightNeedReboot = 2,
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public enum EExternalSaleEventType
+    {
+        k_EExternalSaleEventType_Unknown = 0,
+        k_EExternalSaleEventType_Publisher = 1,
+        k_EExternalSaleEventType_Showcase = 2,
+        k_EExternalSaleEventType_Region = 3,
+        k_EExternalSaleEventType_Theme = 4,
+        k_EExternalSaleEventType_Franchise = 5,
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public enum EContentReportSubjectType
+    {
+        k_EContentReportSubjectType_Invalid = 0,
+        k_EContentReportSubjectType_ForumPost = 1,
+        k_EContentReportSubjectType_UGCComment = 2,
+        k_EContentReportSubjectType_UGCFile = 3,
+        k_EContentReportSubjectType_MAX = 4,
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public enum EContentReportReason
+    {
+        k_EContentReportReason_Invalid = 0,
+        k_EContentReportReason_Abusive = 1,
+        k_EContentReportReason_Commercial = 2,
+        k_EContentReportReason_OffTopic = 3,
+        k_EContentReportReason_Prohibited = 4,
+        k_EContentReportReason_Other = 5,
+        k_EContentReportReason_CSAM = 6,
+        k_EContentReportReason_Terrorism = 7,
+        k_EContentReportReason_MAX = 8,
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public enum EControlledLegalCategoryStatus
+    {
+        k_EControlledLegalCategoryStatus_None = 0,
+        k_EControlledLegalCategoryStatus_Accused = 1,
+        k_EControlledLegalCategoryStatus_Convicted = 2,
+        k_EControlledLegalCategoryStatus_Acquitted = 3,
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public enum EContentModeratorLevel
+    {
+        k_EContentModeratorLevel_Any = 0,
+        k_EContentModeratorLevel_Supervisor = 1,
+        k_EContentModeratorLevel_Valve = 10,
+        k_EContentModeratorLevel_MAX = 11,
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public enum EContentReportResolution
+    {
+        k_EContentReportResolution_Unresolved = 0,
+        k_EContentReportResolution_Acquitted = 1,
+        k_EContentReportResolution_Removed = 2,
+        k_EContentReportResolution_Relabelled = 3,
+        k_EContentReportResolution_MAX = 4,
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public enum EContentModeratedReason
+    {
+        k_EContentModeratedReason_Invalid = 0,
+        k_EContentModeratedReason_None = 1,
+        k_EContentModeratedReason_Unknown = 2,
+        k_EContentModeratedReason_AnimalHarm = 3,
+        k_EContentModeratedReason_MAX = 4,
+    }
+
 }
 
-#pragma warning restore CS0612, CS0618, CS1591, CS3021, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
+#pragma warning restore CS0612, CS0618, CS1591, CS3021, CS8981, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
 #endregion

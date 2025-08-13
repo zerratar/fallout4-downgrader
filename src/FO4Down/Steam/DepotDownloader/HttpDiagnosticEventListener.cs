@@ -1,8 +1,11 @@
+// This file is subject to the terms and conditions defined
+// in file 'LICENSE', which is part of this source code package.
+
 using System;
 using System.Diagnostics.Tracing;
 using System.Text;
 
-namespace FO4Down.Steam.DepotDownloader
+namespace DepotDownloader
 {
     internal sealed class HttpDiagnosticEventListener : EventListener
     {

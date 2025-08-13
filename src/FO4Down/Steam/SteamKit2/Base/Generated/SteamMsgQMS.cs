@@ -5,7 +5,7 @@
 // </auto-generated>
 
 #region Designer generated code
-#pragma warning disable CS0612, CS0618, CS1591, CS3021, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
+#pragma warning disable CS0612, CS0618, CS1591, CS3021, CS8981, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
 namespace SteamKit2.Internal
 {
 
@@ -565,19 +565,71 @@ namespace SteamKit2.Internal
         k_EGameSearchResult_SearchCanceled = 6,
     }
 
-    public interface IQueuedMatchmaking
+    public class QueuedMatchmaking : SteamUnifiedMessages.UnifiedService
     {
-        CQueuedMatchmaking_SearchForGame_Response SearchForGame(CQueuedMatchmaking_SearchForGame_Request request);
+        public override string ServiceName { get; } = "QueuedMatchmaking";
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CQueuedMatchmaking_SearchForGame_Response>> SearchForGame( CQueuedMatchmaking_SearchForGame_Request request )
+        {
+            return UnifiedMessages.SendMessage<CQueuedMatchmaking_SearchForGame_Request, CQueuedMatchmaking_SearchForGame_Response>( "QueuedMatchmaking.SearchForGame#1", request );
+        }
+
+        public override void HandleResponseMsg( string methodName, PacketClientMsgProtobuf packetMsg )
+        {
+            switch ( methodName )
+            {
+                case "SearchForGame":
+                    PostResponseMsg<CQueuedMatchmaking_SearchForGame_Response>( packetMsg );
+                    break;
+            }
+        }
+
+        public override void HandleNotificationMsg( string methodName, PacketClientMsgProtobuf packetMsg )
+        {
+        }
     }
 
-    public interface IQueuedMatchmakingGameHost
+    public class QueuedMatchmakingGameHost : SteamUnifiedMessages.UnifiedService
     {
-        CQueuedMatchmakingGameHost_SearchForPlayers_Response SearchForPlayers(CQueuedMatchmakingGameHost_SearchForPlayers_Request request);
-        CQueuedMatchmakingGameHost_SubmitPlayerResult_Response SubmitPlayerResult(CQueuedMatchmakingGameHost_SubmitPlayerResult_Request request);
-        CQueuedMatchmakingGameHost_EndGame_Response EndGame(CQueuedMatchmakingGameHost_EndGame_Request request);
+        public override string ServiceName { get; } = "QueuedMatchmakingGameHost";
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CQueuedMatchmakingGameHost_SearchForPlayers_Response>> SearchForPlayers( CQueuedMatchmakingGameHost_SearchForPlayers_Request request )
+        {
+            return UnifiedMessages.SendMessage<CQueuedMatchmakingGameHost_SearchForPlayers_Request, CQueuedMatchmakingGameHost_SearchForPlayers_Response>( "QueuedMatchmakingGameHost.SearchForPlayers#1", request );
+        }
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CQueuedMatchmakingGameHost_SubmitPlayerResult_Response>> SubmitPlayerResult( CQueuedMatchmakingGameHost_SubmitPlayerResult_Request request )
+        {
+            return UnifiedMessages.SendMessage<CQueuedMatchmakingGameHost_SubmitPlayerResult_Request, CQueuedMatchmakingGameHost_SubmitPlayerResult_Response>( "QueuedMatchmakingGameHost.SubmitPlayerResult#1", request );
+        }
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CQueuedMatchmakingGameHost_EndGame_Response>> EndGame( CQueuedMatchmakingGameHost_EndGame_Request request )
+        {
+            return UnifiedMessages.SendMessage<CQueuedMatchmakingGameHost_EndGame_Request, CQueuedMatchmakingGameHost_EndGame_Response>( "QueuedMatchmakingGameHost.EndGame#1", request );
+        }
+
+        public override void HandleResponseMsg( string methodName, PacketClientMsgProtobuf packetMsg )
+        {
+            switch ( methodName )
+            {
+                case "SearchForPlayers":
+                    PostResponseMsg<CQueuedMatchmakingGameHost_SearchForPlayers_Response>( packetMsg );
+                    break;
+                case "SubmitPlayerResult":
+                    PostResponseMsg<CQueuedMatchmakingGameHost_SubmitPlayerResult_Response>( packetMsg );
+                    break;
+                case "EndGame":
+                    PostResponseMsg<CQueuedMatchmakingGameHost_EndGame_Response>( packetMsg );
+                    break;
+            }
+        }
+
+        public override void HandleNotificationMsg( string methodName, PacketClientMsgProtobuf packetMsg )
+        {
+        }
     }
 
 }
 
-#pragma warning restore CS0612, CS0618, CS1591, CS3021, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
+#pragma warning restore CS0612, CS0618, CS1591, CS3021, CS8981, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
 #endregion

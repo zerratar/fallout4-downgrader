@@ -5,7 +5,7 @@
 // </auto-generated>
 
 #region Designer generated code
-#pragma warning disable CS0612, CS0618, CS1591, CS3021, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
+#pragma warning disable CS0612, CS0618, CS1591, CS3021, CS8981, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
 namespace SteamKit2.WebUI.Internal
 {
 
@@ -664,16 +664,132 @@ namespace SteamKit2.WebUI.Internal
         public void Resetsteam_china_location() => __pbn__steam_china_location = null;
         private string __pbn__steam_china_location;
 
+        [global::ProtoBuf.ProtoMember(44)]
+        public uint category_ascii_pct
+        {
+            get => __pbn__category_ascii_pct.GetValueOrDefault();
+            set => __pbn__category_ascii_pct = value;
+        }
+        public bool ShouldSerializecategory_ascii_pct() => __pbn__category_ascii_pct != null;
+        public void Resetcategory_ascii_pct() => __pbn__category_ascii_pct = null;
+        private uint? __pbn__category_ascii_pct;
+
+        [global::ProtoBuf.ProtoMember(45)]
+        public uint category_meme_pct
+        {
+            get => __pbn__category_meme_pct.GetValueOrDefault();
+            set => __pbn__category_meme_pct = value;
+        }
+        public bool ShouldSerializecategory_meme_pct() => __pbn__category_meme_pct != null;
+        public void Resetcategory_meme_pct() => __pbn__category_meme_pct = null;
+        private uint? __pbn__category_meme_pct;
+
+        [global::ProtoBuf.ProtoMember(46)]
+        public uint category_offtopic_pct
+        {
+            get => __pbn__category_offtopic_pct.GetValueOrDefault();
+            set => __pbn__category_offtopic_pct = value;
+        }
+        public bool ShouldSerializecategory_offtopic_pct() => __pbn__category_offtopic_pct != null;
+        public void Resetcategory_offtopic_pct() => __pbn__category_offtopic_pct = null;
+        private uint? __pbn__category_offtopic_pct;
+
+        [global::ProtoBuf.ProtoMember(47)]
+        public uint category_uninformative_pct
+        {
+            get => __pbn__category_uninformative_pct.GetValueOrDefault();
+            set => __pbn__category_uninformative_pct = value;
+        }
+        public bool ShouldSerializecategory_uninformative_pct() => __pbn__category_uninformative_pct != null;
+        public void Resetcategory_uninformative_pct() => __pbn__category_uninformative_pct = null;
+        private uint? __pbn__category_uninformative_pct;
+
+        [global::ProtoBuf.ProtoMember(48)]
+        public uint category_votefarming_pct
+        {
+            get => __pbn__category_votefarming_pct.GetValueOrDefault();
+            set => __pbn__category_votefarming_pct = value;
+        }
+        public bool ShouldSerializecategory_votefarming_pct() => __pbn__category_votefarming_pct != null;
+        public void Resetcategory_votefarming_pct() => __pbn__category_votefarming_pct = null;
+        private uint? __pbn__category_votefarming_pct;
+
+        [global::ProtoBuf.ProtoMember(49)]
+        public int deck_playtime_at_review
+        {
+            get => __pbn__deck_playtime_at_review.GetValueOrDefault();
+            set => __pbn__deck_playtime_at_review = value;
+        }
+        public bool ShouldSerializedeck_playtime_at_review() => __pbn__deck_playtime_at_review != null;
+        public void Resetdeck_playtime_at_review() => __pbn__deck_playtime_at_review = null;
+        private int? __pbn__deck_playtime_at_review;
+
+        [global::ProtoBuf.ProtoMember(50)]
+        public uint is_bot_review_pct
+        {
+            get => __pbn__is_bot_review_pct.GetValueOrDefault();
+            set => __pbn__is_bot_review_pct = value;
+        }
+        public bool ShouldSerializeis_bot_review_pct() => __pbn__is_bot_review_pct != null;
+        public void Resetis_bot_review_pct() => __pbn__is_bot_review_pct = null;
+        private uint? __pbn__is_bot_review_pct;
+
+        [global::ProtoBuf.ProtoMember(51)]
+        public uint positivity_pct
+        {
+            get => __pbn__positivity_pct.GetValueOrDefault();
+            set => __pbn__positivity_pct = value;
+        }
+        public bool ShouldSerializepositivity_pct() => __pbn__positivity_pct != null;
+        public void Resetpositivity_pct() => __pbn__positivity_pct = null;
+        private uint? __pbn__positivity_pct;
+
+        [global::ProtoBuf.ProtoMember(53)]
+        public global::System.Collections.Generic.List<ulong> tags { get; } = new global::System.Collections.Generic.List<ulong>();
+
     }
 
-    public interface IUserReviews
+    public class UserReviews : SteamUnifiedMessages.UnifiedService
     {
-        CUserReviews_GetFriendsRecommendedApp_Response GetFriendsRecommendedApp(CUserReviews_GetFriendsRecommendedApp_Request request);
-        CUserReviews_GetIndividualRecommendations_Response GetIndividualRecommendations(CUserReviews_GetIndividualRecommendations_Request request);
-        CUserReviews_Update_Response Update(CUserReviews_Update_Request request);
+        public override string ServiceName { get; } = "UserReviews";
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CUserReviews_GetFriendsRecommendedApp_Response>> GetFriendsRecommendedApp( CUserReviews_GetFriendsRecommendedApp_Request request )
+        {
+            return UnifiedMessages.SendMessage<CUserReviews_GetFriendsRecommendedApp_Request, CUserReviews_GetFriendsRecommendedApp_Response>( "UserReviews.GetFriendsRecommendedApp#1", request );
+        }
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CUserReviews_GetIndividualRecommendations_Response>> GetIndividualRecommendations( CUserReviews_GetIndividualRecommendations_Request request )
+        {
+            return UnifiedMessages.SendMessage<CUserReviews_GetIndividualRecommendations_Request, CUserReviews_GetIndividualRecommendations_Response>( "UserReviews.GetIndividualRecommendations#1", request );
+        }
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CUserReviews_Update_Response>> Update( CUserReviews_Update_Request request )
+        {
+            return UnifiedMessages.SendMessage<CUserReviews_Update_Request, CUserReviews_Update_Response>( "UserReviews.Update#1", request );
+        }
+
+        public override void HandleResponseMsg( string methodName, PacketClientMsgProtobuf packetMsg )
+        {
+            switch ( methodName )
+            {
+                case "GetFriendsRecommendedApp":
+                    PostResponseMsg<CUserReviews_GetFriendsRecommendedApp_Response>( packetMsg );
+                    break;
+                case "GetIndividualRecommendations":
+                    PostResponseMsg<CUserReviews_GetIndividualRecommendations_Response>( packetMsg );
+                    break;
+                case "Update":
+                    PostResponseMsg<CUserReviews_Update_Response>( packetMsg );
+                    break;
+            }
+        }
+
+        public override void HandleNotificationMsg( string methodName, PacketClientMsgProtobuf packetMsg )
+        {
+        }
     }
 
 }
 
-#pragma warning restore CS0612, CS0618, CS1591, CS3021, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
+#pragma warning restore CS0612, CS0618, CS1591, CS3021, CS8981, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
 #endregion

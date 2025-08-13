@@ -35,7 +35,7 @@ namespace SteamKit2
 
                 MachineInfoProvider = MachineInfoProvider.GetDefaultProvider(),
 
-                ProtocolTypes = ProtocolTypes.Tcp,
+                ProtocolTypes = ProtocolTypes.Tcp | ProtocolTypes.WebSocket,
 
                 ServerListProvider = new MemoryServerListProvider(),
 
@@ -116,7 +116,7 @@ namespace SteamKit2
             return this;
         }
 
-        static HttpClient DefaultHttpClientFactory()
+        static HttpClient DefaultHttpClientFactory( HttpClientPurpose purpose )
         {
             var client = new HttpClient();
 

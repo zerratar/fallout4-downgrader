@@ -5,7 +5,7 @@
 // </auto-generated>
 
 #region Designer generated code
-#pragma warning disable CS0612, CS0618, CS1591, CS3021, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
+#pragma warning disable CS0612, CS0618, CS1591, CS3021, CS8981, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
 namespace SteamKit2.WebUI.Internal
 {
 
@@ -192,6 +192,16 @@ namespace SteamKit2.WebUI.Internal
         public bool ShouldSerializehero_carousel_image() => __pbn__hero_carousel_image != null;
         public void Resethero_carousel_image() => __pbn__hero_carousel_image = null;
         private string __pbn__hero_carousel_image;
+
+        [global::ProtoBuf.ProtoMember(5)]
+        public bool owned
+        {
+            get => __pbn__owned.GetValueOrDefault();
+            set => __pbn__owned = value;
+        }
+        public bool ShouldSerializeowned() => __pbn__owned != null;
+        public void Resetowned() => __pbn__owned = null;
+        private bool? __pbn__owned;
 
     }
 
@@ -507,6 +517,26 @@ namespace SteamKit2.WebUI.Internal
         public global::System.Collections.Generic.List<CLoyaltyRewards_GetReactionsSummaryForUser_Response_Breakdown> comments { get; } = new global::System.Collections.Generic.List<CLoyaltyRewards_GetReactionsSummaryForUser_Response_Breakdown>();
 
         [global::ProtoBuf.ProtoMember(7)]
+        public uint total_given
+        {
+            get => __pbn__total_given.GetValueOrDefault();
+            set => __pbn__total_given = value;
+        }
+        public bool ShouldSerializetotal_given() => __pbn__total_given != null;
+        public void Resettotal_given() => __pbn__total_given = null;
+        private uint? __pbn__total_given;
+
+        [global::ProtoBuf.ProtoMember(8)]
+        public uint total_received
+        {
+            get => __pbn__total_received.GetValueOrDefault();
+            set => __pbn__total_received = value;
+        }
+        public bool ShouldSerializetotal_received() => __pbn__total_received != null;
+        public void Resettotal_received() => __pbn__total_received = null;
+        private uint? __pbn__total_received;
+
+        [global::ProtoBuf.ProtoMember(9)]
         public long total_points_given
         {
             get => __pbn__total_points_given.GetValueOrDefault();
@@ -516,7 +546,7 @@ namespace SteamKit2.WebUI.Internal
         public void Resettotal_points_given() => __pbn__total_points_given = null;
         private long? __pbn__total_points_given;
 
-        [global::ProtoBuf.ProtoMember(8)]
+        [global::ProtoBuf.ProtoMember(10)]
         public long total_points_received
         {
             get => __pbn__total_points_received.GetValueOrDefault();
@@ -525,26 +555,6 @@ namespace SteamKit2.WebUI.Internal
         public bool ShouldSerializetotal_points_received() => __pbn__total_points_received != null;
         public void Resettotal_points_received() => __pbn__total_points_received = null;
         private long? __pbn__total_points_received;
-
-        [global::ProtoBuf.ProtoMember(9)]
-        public long total_points_given__field_9
-        {
-            get => __pbn__total_points_given__field_9.GetValueOrDefault();
-            set => __pbn__total_points_given__field_9 = value;
-        }
-        public bool ShouldSerializetotal_points_given__field_9() => __pbn__total_points_given__field_9 != null;
-        public void Resettotal_points_given__field_9() => __pbn__total_points_given__field_9 = null;
-        private long? __pbn__total_points_given__field_9;
-
-        [global::ProtoBuf.ProtoMember(10)]
-        public long total_points_received__field_10
-        {
-            get => __pbn__total_points_received__field_10.GetValueOrDefault();
-            set => __pbn__total_points_received__field_10 = value;
-        }
-        public bool ShouldSerializetotal_points_received__field_10() => __pbn__total_points_received__field_10 != null;
-        public void Resettotal_points_received__field_10() => __pbn__total_points_received__field_10 = null;
-        private long? __pbn__total_points_received__field_10;
 
     }
 
@@ -812,6 +822,12 @@ namespace SteamKit2.WebUI.Internal
         public global::System.Collections.Generic.List<uint> excluded_appids { get; } = new global::System.Collections.Generic.List<uint>();
 
         [global::ProtoBuf.ProtoMember(19)]
+        public global::System.Collections.Generic.List<uint> excluded_store_tagids { get; } = new global::System.Collections.Generic.List<uint>();
+
+        [global::ProtoBuf.ProtoMember(20)]
+        public global::System.Collections.Generic.List<uint> store_tagids { get; } = new global::System.Collections.Generic.List<uint>();
+
+        [global::ProtoBuf.ProtoMember(21)]
         [global::System.ComponentModel.DefaultValue("")]
         public string search_term
         {
@@ -1183,29 +1199,167 @@ namespace SteamKit2.WebUI.Internal
 
     }
 
-    public interface ILoyaltyRewards
+    public class LoyaltyRewards : SteamUnifiedMessages.UnifiedService
     {
-        CLoyaltyRewards_AddReaction_Response AddReaction(CLoyaltyRewards_AddReaction_Request request);
-        CLoyaltyRewards_BatchedQueryRewardItems_Response BatchedQueryRewardItems(CLoyaltyRewards_BatchedQueryRewardItems_Request request);
-        CLoyaltyRewards_GetActivePurchaseBonuses_Response GetActivePurchaseBonuses(CLoyaltyRewards_GetActivePurchaseBonuses_Request request);
-        CLoyaltyRewards_GetEligibleApps_Response GetEligibleApps(CLoyaltyRewards_GetEligibleApps_Request request);
-        CLoyaltyRewards_GetEquippedProfileItems_Response GetEquippedProfileItems(CLoyaltyRewards_GetEquippedProfileItems_Request request);
-        CLoyaltyRewards_GetPointsForSpend_Response GetPointsForSpend(CLoyaltyRewards_GetPointsForSpend_Request request);
-        CLoyaltyRewards_GetProfileCustomizationsConfig_Response GetProfileCustomizationsConfig(CLoyaltyRewards_GetProfileCustomizationsConfig_Request request);
-        CLoyaltyRewards_GetReactionConfig_Response GetReactionConfig(CLoyaltyRewards_GetReactionConfig_Request request);
-        CLoyaltyRewards_GetReactions_Response GetReactions(CLoyaltyRewards_GetReactions_Request request);
-        CLoyaltyRewards_GetReactionsSummaryForUser_Response GetReactionsSummaryForUser(CLoyaltyRewards_GetReactionsSummaryForUser_Request request);
-        CLoyaltyRewards_GetSummary_Response GetSummary(CLoyaltyRewards_GetSummary_Request request);
-        CLoyaltyRewards_QueryRewardItems_Response QueryRewardItems(CLoyaltyRewards_QueryRewardItems_Request request);
-        CLoyaltyRewards_RedeemPoints_Response RedeemPoints(CLoyaltyRewards_RedeemPoints_Request request);
-        CLoyaltyRewards_RedeemPoints_Response RedeemPointsForBadgeLevel(CLoyaltyRewards_RedeemPointsForBadgeLevel_Request request);
-        CLoyaltyRewards_RedeemPointsForProfileCustomization_Response RedeemPointsForProfileCustomization(CLoyaltyRewards_RedeemPointsForProfileCustomization_Request request);
-        CLoyaltyRewards_RedeemPointsForProfileCustomizationUpgrade_Response RedeemPointsForProfileCustomizationUpgrade(CLoyaltyRewards_RedeemPointsForProfileCustomizationUpgrade_Request request);
-        CLoyaltyRewards_RedeemPoints_Response RedeemPointsToUpgradeItem(CLoyaltyRewards_RedeemPointsToUpgradeItem_Request request);
-        CLoyaltyRewards_RegisterForSteamDeckRewards_Response RegisterForSteamDeckRewards(CLoyaltyRewards_RegisterForSteamDeckRewards_Request request);
+        public override string ServiceName { get; } = "LoyaltyRewards";
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CLoyaltyRewards_AddReaction_Response>> AddReaction( CLoyaltyRewards_AddReaction_Request request )
+        {
+            return UnifiedMessages.SendMessage<CLoyaltyRewards_AddReaction_Request, CLoyaltyRewards_AddReaction_Response>( "LoyaltyRewards.AddReaction#1", request );
+        }
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CLoyaltyRewards_BatchedQueryRewardItems_Response>> BatchedQueryRewardItems( CLoyaltyRewards_BatchedQueryRewardItems_Request request )
+        {
+            return UnifiedMessages.SendMessage<CLoyaltyRewards_BatchedQueryRewardItems_Request, CLoyaltyRewards_BatchedQueryRewardItems_Response>( "LoyaltyRewards.BatchedQueryRewardItems#1", request );
+        }
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CLoyaltyRewards_GetActivePurchaseBonuses_Response>> GetActivePurchaseBonuses( CLoyaltyRewards_GetActivePurchaseBonuses_Request request )
+        {
+            return UnifiedMessages.SendMessage<CLoyaltyRewards_GetActivePurchaseBonuses_Request, CLoyaltyRewards_GetActivePurchaseBonuses_Response>( "LoyaltyRewards.GetActivePurchaseBonuses#1", request );
+        }
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CLoyaltyRewards_GetEligibleApps_Response>> GetEligibleApps( CLoyaltyRewards_GetEligibleApps_Request request )
+        {
+            return UnifiedMessages.SendMessage<CLoyaltyRewards_GetEligibleApps_Request, CLoyaltyRewards_GetEligibleApps_Response>( "LoyaltyRewards.GetEligibleApps#1", request );
+        }
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CLoyaltyRewards_GetEquippedProfileItems_Response>> GetEquippedProfileItems( CLoyaltyRewards_GetEquippedProfileItems_Request request )
+        {
+            return UnifiedMessages.SendMessage<CLoyaltyRewards_GetEquippedProfileItems_Request, CLoyaltyRewards_GetEquippedProfileItems_Response>( "LoyaltyRewards.GetEquippedProfileItems#1", request );
+        }
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CLoyaltyRewards_GetPointsForSpend_Response>> GetPointsForSpend( CLoyaltyRewards_GetPointsForSpend_Request request )
+        {
+            return UnifiedMessages.SendMessage<CLoyaltyRewards_GetPointsForSpend_Request, CLoyaltyRewards_GetPointsForSpend_Response>( "LoyaltyRewards.GetPointsForSpend#1", request );
+        }
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CLoyaltyRewards_GetProfileCustomizationsConfig_Response>> GetProfileCustomizationsConfig( CLoyaltyRewards_GetProfileCustomizationsConfig_Request request )
+        {
+            return UnifiedMessages.SendMessage<CLoyaltyRewards_GetProfileCustomizationsConfig_Request, CLoyaltyRewards_GetProfileCustomizationsConfig_Response>( "LoyaltyRewards.GetProfileCustomizationsConfig#1", request );
+        }
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CLoyaltyRewards_GetReactionConfig_Response>> GetReactionConfig( CLoyaltyRewards_GetReactionConfig_Request request )
+        {
+            return UnifiedMessages.SendMessage<CLoyaltyRewards_GetReactionConfig_Request, CLoyaltyRewards_GetReactionConfig_Response>( "LoyaltyRewards.GetReactionConfig#1", request );
+        }
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CLoyaltyRewards_GetReactions_Response>> GetReactions( CLoyaltyRewards_GetReactions_Request request )
+        {
+            return UnifiedMessages.SendMessage<CLoyaltyRewards_GetReactions_Request, CLoyaltyRewards_GetReactions_Response>( "LoyaltyRewards.GetReactions#1", request );
+        }
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CLoyaltyRewards_GetReactionsSummaryForUser_Response>> GetReactionsSummaryForUser( CLoyaltyRewards_GetReactionsSummaryForUser_Request request )
+        {
+            return UnifiedMessages.SendMessage<CLoyaltyRewards_GetReactionsSummaryForUser_Request, CLoyaltyRewards_GetReactionsSummaryForUser_Response>( "LoyaltyRewards.GetReactionsSummaryForUser#1", request );
+        }
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CLoyaltyRewards_GetSummary_Response>> GetSummary( CLoyaltyRewards_GetSummary_Request request )
+        {
+            return UnifiedMessages.SendMessage<CLoyaltyRewards_GetSummary_Request, CLoyaltyRewards_GetSummary_Response>( "LoyaltyRewards.GetSummary#1", request );
+        }
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CLoyaltyRewards_QueryRewardItems_Response>> QueryRewardItems( CLoyaltyRewards_QueryRewardItems_Request request )
+        {
+            return UnifiedMessages.SendMessage<CLoyaltyRewards_QueryRewardItems_Request, CLoyaltyRewards_QueryRewardItems_Response>( "LoyaltyRewards.QueryRewardItems#1", request );
+        }
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CLoyaltyRewards_RedeemPoints_Response>> RedeemPoints( CLoyaltyRewards_RedeemPoints_Request request )
+        {
+            return UnifiedMessages.SendMessage<CLoyaltyRewards_RedeemPoints_Request, CLoyaltyRewards_RedeemPoints_Response>( "LoyaltyRewards.RedeemPoints#1", request );
+        }
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CLoyaltyRewards_RedeemPoints_Response>> RedeemPointsForBadgeLevel( CLoyaltyRewards_RedeemPointsForBadgeLevel_Request request )
+        {
+            return UnifiedMessages.SendMessage<CLoyaltyRewards_RedeemPointsForBadgeLevel_Request, CLoyaltyRewards_RedeemPoints_Response>( "LoyaltyRewards.RedeemPointsForBadgeLevel#1", request );
+        }
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CLoyaltyRewards_RedeemPointsForProfileCustomization_Response>> RedeemPointsForProfileCustomization( CLoyaltyRewards_RedeemPointsForProfileCustomization_Request request )
+        {
+            return UnifiedMessages.SendMessage<CLoyaltyRewards_RedeemPointsForProfileCustomization_Request, CLoyaltyRewards_RedeemPointsForProfileCustomization_Response>( "LoyaltyRewards.RedeemPointsForProfileCustomization#1", request );
+        }
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CLoyaltyRewards_RedeemPointsForProfileCustomizationUpgrade_Response>> RedeemPointsForProfileCustomizationUpgrade( CLoyaltyRewards_RedeemPointsForProfileCustomizationUpgrade_Request request )
+        {
+            return UnifiedMessages.SendMessage<CLoyaltyRewards_RedeemPointsForProfileCustomizationUpgrade_Request, CLoyaltyRewards_RedeemPointsForProfileCustomizationUpgrade_Response>( "LoyaltyRewards.RedeemPointsForProfileCustomizationUpgrade#1", request );
+        }
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CLoyaltyRewards_RedeemPoints_Response>> RedeemPointsToUpgradeItem( CLoyaltyRewards_RedeemPointsToUpgradeItem_Request request )
+        {
+            return UnifiedMessages.SendMessage<CLoyaltyRewards_RedeemPointsToUpgradeItem_Request, CLoyaltyRewards_RedeemPoints_Response>( "LoyaltyRewards.RedeemPointsToUpgradeItem#1", request );
+        }
+
+        public AsyncJob<SteamUnifiedMessages.ServiceMethodResponse<CLoyaltyRewards_RegisterForSteamDeckRewards_Response>> RegisterForSteamDeckRewards( CLoyaltyRewards_RegisterForSteamDeckRewards_Request request )
+        {
+            return UnifiedMessages.SendMessage<CLoyaltyRewards_RegisterForSteamDeckRewards_Request, CLoyaltyRewards_RegisterForSteamDeckRewards_Response>( "LoyaltyRewards.RegisterForSteamDeckRewards#1", request );
+        }
+
+        public override void HandleResponseMsg( string methodName, PacketClientMsgProtobuf packetMsg )
+        {
+            switch ( methodName )
+            {
+                case "AddReaction":
+                    PostResponseMsg<CLoyaltyRewards_AddReaction_Response>( packetMsg );
+                    break;
+                case "BatchedQueryRewardItems":
+                    PostResponseMsg<CLoyaltyRewards_BatchedQueryRewardItems_Response>( packetMsg );
+                    break;
+                case "GetActivePurchaseBonuses":
+                    PostResponseMsg<CLoyaltyRewards_GetActivePurchaseBonuses_Response>( packetMsg );
+                    break;
+                case "GetEligibleApps":
+                    PostResponseMsg<CLoyaltyRewards_GetEligibleApps_Response>( packetMsg );
+                    break;
+                case "GetEquippedProfileItems":
+                    PostResponseMsg<CLoyaltyRewards_GetEquippedProfileItems_Response>( packetMsg );
+                    break;
+                case "GetPointsForSpend":
+                    PostResponseMsg<CLoyaltyRewards_GetPointsForSpend_Response>( packetMsg );
+                    break;
+                case "GetProfileCustomizationsConfig":
+                    PostResponseMsg<CLoyaltyRewards_GetProfileCustomizationsConfig_Response>( packetMsg );
+                    break;
+                case "GetReactionConfig":
+                    PostResponseMsg<CLoyaltyRewards_GetReactionConfig_Response>( packetMsg );
+                    break;
+                case "GetReactions":
+                    PostResponseMsg<CLoyaltyRewards_GetReactions_Response>( packetMsg );
+                    break;
+                case "GetReactionsSummaryForUser":
+                    PostResponseMsg<CLoyaltyRewards_GetReactionsSummaryForUser_Response>( packetMsg );
+                    break;
+                case "GetSummary":
+                    PostResponseMsg<CLoyaltyRewards_GetSummary_Response>( packetMsg );
+                    break;
+                case "QueryRewardItems":
+                    PostResponseMsg<CLoyaltyRewards_QueryRewardItems_Response>( packetMsg );
+                    break;
+                case "RedeemPoints":
+                    PostResponseMsg<CLoyaltyRewards_RedeemPoints_Response>( packetMsg );
+                    break;
+                case "RedeemPointsForBadgeLevel":
+                    PostResponseMsg<CLoyaltyRewards_RedeemPoints_Response>( packetMsg );
+                    break;
+                case "RedeemPointsForProfileCustomization":
+                    PostResponseMsg<CLoyaltyRewards_RedeemPointsForProfileCustomization_Response>( packetMsg );
+                    break;
+                case "RedeemPointsForProfileCustomizationUpgrade":
+                    PostResponseMsg<CLoyaltyRewards_RedeemPointsForProfileCustomizationUpgrade_Response>( packetMsg );
+                    break;
+                case "RedeemPointsToUpgradeItem":
+                    PostResponseMsg<CLoyaltyRewards_RedeemPoints_Response>( packetMsg );
+                    break;
+                case "RegisterForSteamDeckRewards":
+                    PostResponseMsg<CLoyaltyRewards_RegisterForSteamDeckRewards_Response>( packetMsg );
+                    break;
+            }
+        }
+
+        public override void HandleNotificationMsg( string methodName, PacketClientMsgProtobuf packetMsg )
+        {
+        }
     }
 
 }
 
-#pragma warning restore CS0612, CS0618, CS1591, CS3021, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
+#pragma warning restore CS0612, CS0618, CS1591, CS3021, CS8981, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
 #endregion

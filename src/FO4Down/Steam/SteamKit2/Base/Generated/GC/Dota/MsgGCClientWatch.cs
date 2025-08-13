@@ -5,7 +5,7 @@
 // </auto-generated>
 
 #region Designer generated code
-#pragma warning disable CS0612, CS0618, CS1591, CS3021, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
+#pragma warning disable CS0612, CS0618, CS1591, CS3021, CS8981, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
 namespace SteamKit2.GC.Dota.Internal
 {
 
@@ -321,6 +321,26 @@ namespace SteamKit2.GC.Dota.Internal
         public void Resetcustom_game_difficulty() => __pbn__custom_game_difficulty = null;
         private uint? __pbn__custom_game_difficulty;
 
+        [global::ProtoBuf.ProtoMember(33)]
+        public bool is_player_draft
+        {
+            get => __pbn__is_player_draft.GetValueOrDefault();
+            set => __pbn__is_player_draft = value;
+        }
+        public bool ShouldSerializeis_player_draft() => __pbn__is_player_draft != null;
+        public void Resetis_player_draft() => __pbn__is_player_draft = null;
+        private bool? __pbn__is_player_draft;
+
+        [global::ProtoBuf.ProtoMember(34)]
+        public bool is_watch_eligible
+        {
+            get => __pbn__is_watch_eligible.GetValueOrDefault();
+            set => __pbn__is_watch_eligible = value;
+        }
+        public bool ShouldSerializeis_watch_eligible() => __pbn__is_watch_eligible != null;
+        public void Resetis_watch_eligible() => __pbn__is_watch_eligible = null;
+        private bool? __pbn__is_watch_eligible;
+
         [global::ProtoBuf.ProtoContract()]
         public partial class Player : global::ProtoBuf.IExtensible
         {
@@ -339,14 +359,14 @@ namespace SteamKit2.GC.Dota.Internal
             private uint? __pbn__account_id;
 
             [global::ProtoBuf.ProtoMember(2)]
-            public uint hero_id
+            public int hero_id
             {
                 get => __pbn__hero_id.GetValueOrDefault();
                 set => __pbn__hero_id = value;
             }
             public bool ShouldSerializehero_id() => __pbn__hero_id != null;
             public void Resethero_id() => __pbn__hero_id = null;
-            private uint? __pbn__hero_id;
+            private int? __pbn__hero_id;
 
             [global::ProtoBuf.ProtoMember(3)]
             public uint team_slot
@@ -401,14 +421,14 @@ namespace SteamKit2.GC.Dota.Internal
         private uint? __pbn__league_id;
 
         [global::ProtoBuf.ProtoMember(3)]
-        public uint hero_id
+        public int hero_id
         {
             get => __pbn__hero_id.GetValueOrDefault();
             set => __pbn__hero_id = value;
         }
         public bool ShouldSerializehero_id() => __pbn__hero_id != null;
         public void Resethero_id() => __pbn__hero_id = null;
-        private uint? __pbn__hero_id;
+        private int? __pbn__hero_id;
 
         [global::ProtoBuf.ProtoMember(4)]
         public uint start_game
@@ -464,14 +484,14 @@ namespace SteamKit2.GC.Dota.Internal
         private uint? __pbn__league_id;
 
         [global::ProtoBuf.ProtoMember(3)]
-        public uint hero_id
+        public int hero_id
         {
             get => __pbn__hero_id.GetValueOrDefault();
             set => __pbn__hero_id = value;
         }
         public bool ShouldSerializehero_id() => __pbn__hero_id != null;
         public void Resethero_id() => __pbn__hero_id = null;
-        private uint? __pbn__hero_id;
+        private int? __pbn__hero_id;
 
         [global::ProtoBuf.ProtoMember(4)]
         public uint start_game
@@ -914,6 +934,17 @@ namespace SteamKit2.GC.Dota.Internal
         public void Resetwatch_tv_unique_secret_code() => __pbn__watch_tv_unique_secret_code = null;
         private ulong? __pbn__watch_tv_unique_secret_code;
 
+        [global::ProtoBuf.ProtoMember(8)]
+        [global::System.ComponentModel.DefaultValue("")]
+        public string broadcast_url
+        {
+            get => __pbn__broadcast_url ?? "";
+            set => __pbn__broadcast_url = value;
+        }
+        public bool ShouldSerializebroadcast_url() => __pbn__broadcast_url != null;
+        public void Resetbroadcast_url() => __pbn__broadcast_url = null;
+        private string __pbn__broadcast_url;
+
         [global::ProtoBuf.ProtoContract()]
         public enum WatchGameResult
         {
@@ -1199,5 +1230,5 @@ namespace SteamKit2.GC.Dota.Internal
 
 }
 
-#pragma warning restore CS0612, CS0618, CS1591, CS3021, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
+#pragma warning restore CS0612, CS0618, CS1591, CS3021, CS8981, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
 #endregion

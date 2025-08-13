@@ -5,7 +5,7 @@
 // </auto-generated>
 
 #region Designer generated code
-#pragma warning disable CS0612, CS0618, CS1591, CS3021, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
+#pragma warning disable CS0612, CS0618, CS1591, CS3021, CS8981, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
 namespace SteamKit2.GC.Dota.Internal
 {
 
@@ -65,6 +65,16 @@ namespace SteamKit2.GC.Dota.Internal
         public bool ShouldSerializesource_reference_id() => __pbn__source_reference_id != null;
         public void Resetsource_reference_id() => __pbn__source_reference_id = null;
         private ulong? __pbn__source_reference_id;
+
+        [global::ProtoBuf.ProtoMember(6)]
+        public int price_index
+        {
+            get => __pbn__price_index.GetValueOrDefault();
+            set => __pbn__price_index = value;
+        }
+        public bool ShouldSerializeprice_index() => __pbn__price_index != null;
+        public void Resetprice_index() => __pbn__price_index = null;
+        private int? __pbn__price_index;
 
     }
 
@@ -1928,6 +1938,37 @@ namespace SteamKit2.GC.Dota.Internal
     }
 
     [global::ProtoBuf.ProtoContract()]
+    public partial class CMsgGCToServerSteamLearnAccessTokensChanged : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1)]
+        public CMsgSteamLearnAccessTokens access_tokens { get; set; }
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class CMsgGCToServerSteamLearnUseHTTP : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1)]
+        public bool use_http
+        {
+            get => __pbn__use_http.GetValueOrDefault();
+            set => __pbn__use_http = value;
+        }
+        public bool ShouldSerializeuse_http() => __pbn__use_http != null;
+        public void Resetuse_http() => __pbn__use_http = null;
+        private bool? __pbn__use_http;
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
     public enum EGCBaseMsg
     {
         k_EMsgGCInviteToParty = 4501,
@@ -1952,6 +1993,8 @@ namespace SteamKit2.GC.Dota.Internal
         k_EMsgClientToGCIntegrityStatus = 4522,
         k_EMsgClientToGCAggregateMetrics = 4523,
         k_EMsgGCToClientAggregateMetricsBackoff = 4524,
+        k_EMsgGCToServerSteamLearnAccessTokensChanged = 4525,
+        k_EMsgGCToServerSteamLearnUseHTTP = 4526,
     }
 
     [global::ProtoBuf.ProtoContract()]
@@ -1971,5 +2014,5 @@ namespace SteamKit2.GC.Dota.Internal
 
 }
 
-#pragma warning restore CS0612, CS0618, CS1591, CS3021, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
+#pragma warning restore CS0612, CS0618, CS1591, CS3021, CS8981, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
 #endregion

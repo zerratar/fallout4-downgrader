@@ -5,7 +5,7 @@
 // </auto-generated>
 
 #region Designer generated code
-#pragma warning disable CS0612, CS0618, CS1591, CS3021, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
+#pragma warning disable CS0612, CS0618, CS1591, CS3021, CS8981, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
 namespace SteamKit2.Internal
 {
 
@@ -298,6 +298,16 @@ namespace SteamKit2.Internal
         public bool ShouldSerializevr_link_caps() => __pbn__vr_link_caps != null;
         public void Resetvr_link_caps() => __pbn__vr_link_caps = null;
         private EVRLinkCaps? __pbn__vr_link_caps;
+
+        [global::ProtoBuf.ProtoMember(27, DataFormat = global::ProtoBuf.DataFormat.FixedSize)]
+        public ulong vr_link_invite_client_id
+        {
+            get => __pbn__vr_link_invite_client_id.GetValueOrDefault();
+            set => __pbn__vr_link_invite_client_id = value;
+        }
+        public bool ShouldSerializevr_link_invite_client_id() => __pbn__vr_link_invite_client_id != null;
+        public void Resetvr_link_invite_client_id() => __pbn__vr_link_invite_client_id = null;
+        private ulong? __pbn__vr_link_invite_client_id;
 
         [global::ProtoBuf.ProtoContract()]
         public partial class User : global::ProtoBuf.IExtensible
@@ -1111,5 +1121,5 @@ namespace SteamKit2.Internal
 
 }
 
-#pragma warning restore CS0612, CS0618, CS1591, CS3021, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
+#pragma warning restore CS0612, CS0618, CS1591, CS3021, CS8981, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
 #endregion

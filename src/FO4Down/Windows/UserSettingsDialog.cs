@@ -6,7 +6,6 @@ namespace FO4Down.Windows
 {
     internal class UserSettingsDialog : SimpleDialog
     {
-        private ApplicationContext ctx;
         private ComboBox cbLanguage;
         private CheckBox cbDownloadAllDlcs;
         private CheckBox cbHDTextures;
@@ -23,17 +22,16 @@ namespace FO4Down.Windows
 
         public UserProvidedSettings Settings { get; set; }
 
-        public UserSettingsDialog(ApplicationContext ctx)
+        public UserSettingsDialog()
             : base()
         {
-            this.ctx = ctx;
             this.Settings = new UserProvidedSettings();
 
             Title = "Settings";
             Width = Dim.Percent(65);
 
             Label noteLabel = null;
-            if (ctx.IsAuthenticated)
+            if (AppContext.IsAuthenticated)
             {
                 noteLabel = Lbl("Before you get started,\nplease select the settings you want to use", null, this);
                 Height = 20;
@@ -63,20 +61,20 @@ namespace FO4Down.Windows
             {
                 cbLanguage = Combo("Select Language (Press arrow and use mouse scroll)", cbKeepDepots, basic.View, OnLanguageChanged, languages);
 
-                var defaultLanguage = ctx.GetTargetCultureInfo();
+                var defaultLanguage = AppContext.GetTargetCultureInfo();
                 var defeaultLanguageIndex = GetLanguageIndex(defaultLanguage);
                 if (defeaultLanguageIndex == -1)
                 {
                     defeaultLanguageIndex = Array.IndexOf(languages, "English"); // english
                 }
 
-                if (ctx.Settings.DownloadAllLanguages)
+                if (AppContext.Settings.DownloadAllLanguages)
                 {
                     cbLanguage.SelectedItem = 0;
                 }
                 else
                 {
-                    SetSelectedLanguage(ctx.Settings.Language, defeaultLanguageIndex);
+                    SetSelectedLanguage(AppContext.Settings.Language, defeaultLanguageIndex);
                 }
 
                 //Check
@@ -102,7 +100,7 @@ namespace FO4Down.Windows
                 cbCreationClub.Checked = Settings.DeleteCreationClubFiles;
 
                 cbCreationKit = Check("Downgrade Creation Kit", cbCreationClub, advanced.View, (_, value) => Settings.DownloadCreationKit = value.GetValueOrDefault());
-                cbCreationKit.Checked = ctx.DownloadCreationKit;
+                cbCreationKit.Checked = AppContext.DownloadCreationKit;
 
                 cbEnglishFiles = Check("Delete English Language Files", cbCreationKit, advanced.View,
                     (_, value) => Settings.DeleteEnglishLanguageFiles = value.GetValueOrDefault());
@@ -115,7 +113,7 @@ namespace FO4Down.Windows
             tabView.AddTab(advanced, false);
 
             btnOK = Btn(
-                ctx.IsAuthenticated
+                AppContext.IsAuthenticated
                 ? "Start downgrade"
                 : "OK", null, BtnOKClicked);
         }

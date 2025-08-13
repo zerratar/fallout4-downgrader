@@ -1,7 +1,7 @@
 ﻿using Fallout4Downgrader;
 using FO4Down.Core;
 using FO4Down.Steam;
-using FO4Down.Steam.DepotDownloader;
+using DepotDownloader;
 using SteamKit2.Authentication;
 using System.Diagnostics;
 using System.Globalization;
@@ -11,49 +11,45 @@ using System.Text;
 
 namespace FO4Down
 {
-    public class ApplicationContext
+    public static class AppContext
     {
-        public FO4DowngraderStep Step { get; set; }
-        public string Version { get; set; }
-        public bool IsError { get; set; }
-        public bool IsSuccess { get; set; }
-        public bool IsWarning { get; set; }
-        public bool Continue { get; set; }
-        public bool ReportToDeveloper { get; set; }
-        public string Message { get; set; }
-        public string LastErrorMessage { get; set; }
-        public List<string> LoggedErrors { get; set; } = new List<string>();
+        private static StringBuilder log = new StringBuilder();
 
-        public Exception Exception { get; set; }
+        public static FO4DowngraderStep Step { get; set; }
+        public static string Version { get; set; }
+        public static bool IsError { get; set; }
+        public static bool IsSuccess { get; set; }
+        public static bool IsWarning { get; set; }
+        public static bool Continue { get; set; }
+        public static bool ReportToDeveloper { get; set; }
+        public static string Message { get; set; }
+        public static string LastErrorMessage { get; set; }
+        public static List<string> LoggedErrors { get; set; } = new List<string>();
+        public static Exception Exception { get; set; }
+        public static List<SteamLibFolder> LibraryFolders { get; set; }
+        public static Dictionary<string, SteamGame> InstalledGames { get; set; }
+        public static SteamGame Fallout4 { get; set; }
+        public static AppSettings Settings { get; set; }
+        public static Action OnStepUpdate { get; set; }
+        public static StepRequest Request { get; set; }
+        public static float Fraction { get; set; }
+        public static string QRCode { get; set; }
+        public static IAuthenticator UserAuthenticator { get; set; }
+        public static int TotalDepotsToDownload { get; set; }
+        public static int DepotsDownloaded { get; set; }
+        public static bool DownloadCreationKit { get; set; }
+        public static bool IsAuthenticated { get; set; }
+        public static Fallout4IniSettings Fallout4DefaultIni { get; set; }
+        public static Fallout4IniSettings Fallout4Ini { get; set; }
+        public static Dictionary<string, PatchInfo> Patch { get; set; } = new Dictionary<string, PatchInfo>();
+        public static bool CanPatch { get; set; }
+        public static bool IsF4SEInstalled { get; set; }
+        public static bool IsF4SEAddressLibraryInstalled { get; set; }
+        public static bool IsF4SEBASSInstalled { get; set; }
+        public static HttpClient HttpClient { get; set; }
+        public static List<Depot> Depots { get; set; }
 
-        public List<SteamLibFolder> LibraryFolders { get; set; }
-        public Dictionary<string, SteamGame> InstalledGames { get; set; }
-        public SteamGame Fallout4 { get; set; }
-        public AppSettings Settings { get; internal set; }
-        public Action<ApplicationContext> OnStepUpdate { get; internal set; }
-        public StepRequest Request { get; set; }
-        public float Fraction { get; internal set; }
-        public string QRCode { get; internal set; }
-        public IAuthenticator UserAuthenticator { get; set; }
-        public int TotalDepotsToDownload { get; set; }
-        public int DepotsDownloaded { get; set; }
-        public bool DownloadCreationKit { get; internal set; }
-        public bool IsAuthenticated { get; internal set; }
-
-        private StringBuilder log = new StringBuilder();
-
-
-        public Fallout4IniSettings Fallout4DefaultIni { get; set; }
-        public Fallout4IniSettings Fallout4Ini { get; set; }
-        public Dictionary<string, PatchInfo> Patch { get; set; } = new Dictionary<string, PatchInfo>();
-        public bool CanPatch { get; set; }
-        public bool IsF4SEInstalled { get; internal set; }
-        public bool IsF4SEAddressLibraryInstalled { get; internal set; }
-        public bool IsF4SEBASSInstalled { get; internal set; }
-        public HttpClient HttpClient { get; internal set; }
-        public List<Depot> Depots { get; internal set; }
-
-        public PatchInfo Fallout4Patch
+        public static PatchInfo Fallout4Patch
         {
             get
             {
@@ -66,7 +62,7 @@ namespace FO4Down
             }
         }
 
-        public PatchInfo Fallout4LauncherPatch
+        public static PatchInfo Fallout4LauncherPatch
         {
             get
             {
@@ -79,7 +75,7 @@ namespace FO4Down
             }
         }
 
-        public PatchInfo SteamApi64Patch
+        public static PatchInfo SteamApi64Patch
         {
             get
             {
@@ -92,7 +88,7 @@ namespace FO4Down
             }
         }
 
-        public CultureInfo GetTargetCultureInfo()
+        public static CultureInfo GetTargetCultureInfo()
         {
             var l = Settings.Language;
             if (!string.IsNullOrEmpty(l))
@@ -109,10 +105,36 @@ namespace FO4Down
             return GetLanguageFromCode(ini["General"]["sLanguage"]);
         }
 
-        private CultureInfo GetLanguageFromCode(string language)
+        private static CultureInfo GetLanguageFromCode(string language)
         {
             try
             {
+                switch (language.ToLower())
+                {
+                    case "en":
+                    case "english": return new CultureInfo("en-US");
+                    case "de":
+                    case "german": return new CultureInfo("de-DE");
+                    case "fr":
+                    case "french": return new CultureInfo("fr-FR");
+                    case "es":
+                    case "spanish": return new CultureInfo("es-ES");
+                    case "pt":
+                    case "portuguese": return new CultureInfo("pt-PT");
+                    case "it":
+                    case "italian": return new CultureInfo("it-IT");
+                    case "ru":
+                    case "russian": return new CultureInfo("ru-RU");
+                    case "pl":
+                    case "polish": return new CultureInfo("pl-PL");
+                    case "jp":
+                    case "japanese": return new CultureInfo("ja-JP");
+                    case "ko":
+                    case "korean": return new CultureInfo("ko-KR");
+                    case "zh":
+                    case "chinese": return new CultureInfo("zh-CN");
+                    case "chinese traditional": return new CultureInfo("zh-TW");
+                }
                 return new CultureInfo(language);
             }
             catch (CultureNotFoundException)
@@ -127,24 +149,29 @@ namespace FO4Down
             }
         }
 
-        public ApplicationContext()
+        static AppContext()
         {
-            UserAuthenticator = new UserAuthenticator(this);
+            UserAuthenticator = new UserAuthenticator();
         }
 
 
-        public string GetWorkingDirectory()
+        public static string GetWorkingDirectory()
         {
             return System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
         }
 
-        public void Notify()
+        public static void Notify()
         {
             if (OnStepUpdate != null)
-                this.OnStepUpdate(this);
+                OnStepUpdate();
         }
 
-        public void Notify(string message, params object[] args)
+        public static void WriteLine(string message, params object[] args)
+        {
+            Notify(message, args);
+        }
+
+        public static void Notify(string message, params object[] args)
         {
             try
             {
@@ -162,10 +189,10 @@ namespace FO4Down
                 return;
             }
             if (OnStepUpdate != null)
-                this.OnStepUpdate(this);
+                OnStepUpdate();
         }
 
-        public void Progress(string message, float fraction)
+        public static void Progress(string message, float fraction)
         {
             Fraction = fraction;
             IsSuccess = false;
@@ -176,10 +203,10 @@ namespace FO4Down
             }
 
             if (OnStepUpdate != null)
-                this.OnStepUpdate(this);
+                OnStepUpdate();
         }
 
-        public void Success(string message, params object[] args)
+        public static void Success(string message, params object[] args)
         {
             var msg = FormatMessage(message, args);
             IsSuccess = true;
@@ -195,9 +222,9 @@ namespace FO4Down
             Message = msg;
 
             if (OnStepUpdate != null)
-                this.OnStepUpdate(this);
+                OnStepUpdate();
         }
-        public void Error(string message, params object[] args)
+        public static void Error(string message, params object[] args)
         {
             var msg = FormatMessage(message, args);
             IsSuccess = false;
@@ -214,10 +241,10 @@ namespace FO4Down
             LastErrorMessage = msg;
             LoggedErrors.Add(msg);
             if (OnStepUpdate != null)
-                this.OnStepUpdate(this);
+                OnStepUpdate();
         }
 
-        public void Error(Exception exc)
+        public static void Error(Exception exc)
         {
             IsSuccess = false;
             IsError = true;
@@ -228,10 +255,10 @@ namespace FO4Down
             LoggedErrors.Add(exc.ToString());
             log.AppendLine(exc.ToString());
             if (OnStepUpdate != null)
-                this.OnStepUpdate(this);
+                OnStepUpdate();
         }
 
-        public void WarnAndReport(string message)
+        public static void WarnAndReport(string message)
         {
             IsSuccess = false;
             IsError = false;
@@ -243,10 +270,10 @@ namespace FO4Down
             LastErrorMessage = message;
             log.AppendLine(message);
             if (OnStepUpdate != null)
-                this.OnStepUpdate(this);
+                OnStepUpdate();
         }
 
-        public void Warn(string message)
+        public static void Warn(string message)
         {
             IsSuccess = false;
             IsError = false;
@@ -257,10 +284,10 @@ namespace FO4Down
             Exception = null;
             log.AppendLine(message);
             if (OnStepUpdate != null)
-                this.OnStepUpdate(this);
+                OnStepUpdate();
         }
 
-        public void Report(Exception exc)
+        public static void Report(Exception exc)
         {
             IsSuccess = false;
             IsError = true;
@@ -271,7 +298,7 @@ namespace FO4Down
             LastErrorMessage = Message;
             log.AppendLine(exc.ToString());
             if (OnStepUpdate != null)
-                this.OnStepUpdate(this);
+                OnStepUpdate();
         }
 
         //public void Next<T>(T value)
@@ -282,7 +309,7 @@ namespace FO4Down
         //}
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private string FormatMessage(string message, object[] args)
+        private static string FormatMessage(string message, object[] args)
         {
             try
             {
@@ -295,7 +322,7 @@ namespace FO4Down
             return message;
         }
 
-        public void Next(object value)
+        public static void Next(object value)
         {
             if (Request == null)
             {
@@ -307,7 +334,7 @@ namespace FO4Down
             r.SetResult(value);
         }
 
-        public Task<T> RequestAsync<T>(string name, params string[] args)
+        public static Task<T> RequestAsync<T>(string name, params string[] args)
         {
             var req = new StepRequest<T>();
             req.Name = name;
@@ -317,26 +344,26 @@ namespace FO4Down
             return req.AwaitResponseAsync();
         }
 
-        public void SaveLog()
+        public static void SaveLog()
         {
             File.WriteAllText("log.txt", log.ToString());
         }
 
-        internal string? RequestTwoFactorCode()
+        internal static string? RequestTwoFactorCode()
         {
             throw new NotImplementedException();
         }
 
-        internal string? RequestEmailAuthCode()
+        internal static string? RequestEmailAuthCode()
         {
             throw new NotImplementedException();
         }
 
-        private readonly object chunksMutex = new object();
-        private Dictionary<string, List<ChunkDownloadProgress>> chunkDownloadProgress =
+        private static readonly object chunksMutex = new object();
+        private static Dictionary<string, List<ChunkDownloadProgress>> chunkDownloadProgress =
             new Dictionary<string, List<ChunkDownloadProgress>>();
 
-        internal ChunkDownloadProgress ChunkDownloadProgress(string fileName, ulong offset, uint chunkSize)
+        internal static ChunkDownloadProgress ChunkDownloadProgress(string fileName, ulong offset, uint chunkSize)
         {
             lock (chunksMutex)
             {
@@ -344,7 +371,7 @@ namespace FO4Down
                 {
                     chunkDownloadProgress[fileName] = (list = new List<ChunkDownloadProgress>());
                 }
-                var progress = new ChunkDownloadProgress(this)
+                var progress = new ChunkDownloadProgress()
                 {
                     FileName = fileName,
                     Offset = offset,
@@ -356,13 +383,13 @@ namespace FO4Down
             }
         }
 
-        internal void ChunkDownloadProgressFinished(ChunkDownloadProgress cp)
+        internal static void ChunkDownloadProgressFinished(ChunkDownloadProgress cp)
         {
             // do we need to do something?
             cp.SetCompleted();
         }
 
-        internal string GetAverageDownloadSpeed()
+        internal static string GetAverageDownloadSpeed()
         {
             var totalDownloadSpeed = 0d;
             var items = 0;
@@ -399,7 +426,7 @@ namespace FO4Down
             }
         }
 
-        internal void Merge(UserProvidedSettings userSettings)
+        internal static void Merge(UserProvidedSettings userSettings)
         {
             if (userSettings == null) return;
             Settings.KeepDepotFiles = userSettings.KeepDepotFilesWhenDone;

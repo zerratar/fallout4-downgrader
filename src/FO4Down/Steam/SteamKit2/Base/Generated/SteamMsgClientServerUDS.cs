@@ -5,7 +5,7 @@
 // </auto-generated>
 
 #region Designer generated code
-#pragma warning disable CS0612, CS0618, CS1591, CS3021, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
+#pragma warning disable CS0612, CS0618, CS1591, CS3021, CS8981, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
 namespace SteamKit2.Internal
 {
 
@@ -372,6 +372,9 @@ namespace SteamKit2.Internal
         public void Resetinclude_client_info() => __pbn__include_client_info = null;
         private bool? __pbn__include_client_info;
 
+        [global::ProtoBuf.ProtoMember(8)]
+        public global::System.Collections.Generic.List<uint> filter_appids { get; } = new global::System.Collections.Generic.List<uint>();
+
     }
 
     [global::ProtoBuf.ProtoContract()]
@@ -519,16 +522,6 @@ namespace SteamKit2.Internal
             public void Resetnum_downloading() => __pbn__num_downloading = null;
             private uint? __pbn__num_downloading;
 
-            [global::ProtoBuf.ProtoMember(13)]
-            public uint num_paused
-            {
-                get => __pbn__num_paused.GetValueOrDefault();
-                set => __pbn__num_paused = value;
-            }
-            public bool ShouldSerializenum_paused() => __pbn__num_paused != null;
-            public void Resetnum_paused() => __pbn__num_paused = null;
-            private uint? __pbn__num_paused;
-
             [global::ProtoBuf.ProtoMember(14)]
             public bool changing
             {
@@ -638,6 +631,26 @@ namespace SteamKit2.Internal
             public bool ShouldSerializert_time_scheduled() => __pbn__rt_time_scheduled != null;
             public void Resetrt_time_scheduled() => __pbn__rt_time_scheduled = null;
             private uint? __pbn__rt_time_scheduled;
+
+            [global::ProtoBuf.ProtoMember(25)]
+            public bool running
+            {
+                get => __pbn__running.GetValueOrDefault();
+                set => __pbn__running = value;
+            }
+            public bool ShouldSerializerunning() => __pbn__running != null;
+            public void Resetrunning() => __pbn__running = null;
+            private bool? __pbn__running;
+
+            [global::ProtoBuf.ProtoMember(26)]
+            public uint update_percentage
+            {
+                get => __pbn__update_percentage.GetValueOrDefault();
+                set => __pbn__update_percentage = value;
+            }
+            public bool ShouldSerializeupdate_percentage() => __pbn__update_percentage != null;
+            public void Resetupdate_percentage() => __pbn__update_percentage = null;
+            private uint? __pbn__update_percentage;
 
             [global::ProtoBuf.ProtoContract()]
             public partial class DLC : global::ProtoBuf.IExtensible
@@ -797,6 +810,106 @@ namespace SteamKit2.Internal
     }
 
     [global::ProtoBuf.ProtoContract()]
+    public partial class CMsgClientLaunchClientApp : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1)]
+        public uint appid
+        {
+            get => __pbn__appid.GetValueOrDefault();
+            set => __pbn__appid = value;
+        }
+        public bool ShouldSerializeappid() => __pbn__appid != null;
+        public void Resetappid() => __pbn__appid = null;
+        private uint? __pbn__appid;
+
+        [global::ProtoBuf.ProtoMember(2)]
+        public uint language
+        {
+            get => __pbn__language.GetValueOrDefault();
+            set => __pbn__language = value;
+        }
+        public bool ShouldSerializelanguage() => __pbn__language != null;
+        public void Resetlanguage() => __pbn__language = null;
+        private uint? __pbn__language;
+
+        [global::ProtoBuf.ProtoMember(3)]
+        public uint launch_option_type
+        {
+            get => __pbn__launch_option_type.GetValueOrDefault();
+            set => __pbn__launch_option_type = value;
+        }
+        public bool ShouldSerializelaunch_option_type() => __pbn__launch_option_type != null;
+        public void Resetlaunch_option_type() => __pbn__launch_option_type = null;
+        private uint? __pbn__launch_option_type;
+
+        [global::ProtoBuf.ProtoMember(4)]
+        public uint launch_option
+        {
+            get => __pbn__launch_option.GetValueOrDefault();
+            set => __pbn__launch_option = value;
+        }
+        public bool ShouldSerializelaunch_option() => __pbn__launch_option != null;
+        public void Resetlaunch_option() => __pbn__launch_option = null;
+        private uint? __pbn__launch_option;
+
+        [global::ProtoBuf.ProtoMember(5)]
+        public uint launch_source
+        {
+            get => __pbn__launch_source.GetValueOrDefault();
+            set => __pbn__launch_source = value;
+        }
+        public bool ShouldSerializelaunch_source() => __pbn__launch_source != null;
+        public void Resetlaunch_source() => __pbn__launch_source = null;
+        private uint? __pbn__launch_source;
+
+        [global::ProtoBuf.ProtoMember(6)]
+        [global::System.ComponentModel.DefaultValue("")]
+        public string args
+        {
+            get => __pbn__args ?? "";
+            set => __pbn__args = value;
+        }
+        public bool ShouldSerializeargs() => __pbn__args != null;
+        public void Resetargs() => __pbn__args = null;
+        private string __pbn__args;
+
+        [global::ProtoBuf.ProtoMember(7)]
+        [global::System.ComponentModel.DefaultValue("")]
+        public string query_params
+        {
+            get => __pbn__query_params ?? "";
+            set => __pbn__query_params = value;
+        }
+        public bool ShouldSerializequery_params() => __pbn__query_params != null;
+        public void Resetquery_params() => __pbn__query_params = null;
+        private string __pbn__query_params;
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class CMsgClientLaunchClientAppResponse : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1)]
+        public uint result
+        {
+            get => __pbn__result.GetValueOrDefault();
+            set => __pbn__result = value;
+        }
+        public bool ShouldSerializeresult() => __pbn__result != null;
+        public void Resetresult() => __pbn__result = null;
+        private uint? __pbn__result;
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
     public partial class CMsgClientEnableOrDisableDownloads : global::ProtoBuf.IExtensible
     {
         private global::ProtoBuf.IExtension __pbn__extensionData;
@@ -836,5 +949,5 @@ namespace SteamKit2.Internal
 
 }
 
-#pragma warning restore CS0612, CS0618, CS1591, CS3021, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
+#pragma warning restore CS0612, CS0618, CS1591, CS3021, CS8981, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
 #endregion

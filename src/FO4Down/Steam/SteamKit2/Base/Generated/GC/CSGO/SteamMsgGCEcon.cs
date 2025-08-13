@@ -5,7 +5,7 @@
 // </auto-generated>
 
 #region Designer generated code
-#pragma warning disable CS0612, CS0618, CS1591, CS3021, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
+#pragma warning disable CS0612, CS0618, CS1591, CS3021, CS8981, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
 namespace SteamKit2.GC.CSGO.Internal
 {
 
@@ -58,6 +58,57 @@ namespace SteamKit2.GC.CSGO.Internal
 
         [global::ProtoBuf.ProtoMember(5)]
         public global::System.Collections.Generic.List<uint> recipients_accountids { get; } = new global::System.Collections.Generic.List<uint>();
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class CMsgGCDev_SchemaReservationRequest : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1)]
+        [global::System.ComponentModel.DefaultValue("")]
+        public string schema_typename
+        {
+            get => __pbn__schema_typename ?? "";
+            set => __pbn__schema_typename = value;
+        }
+        public bool ShouldSerializeschema_typename() => __pbn__schema_typename != null;
+        public void Resetschema_typename() => __pbn__schema_typename = null;
+        private string __pbn__schema_typename;
+
+        [global::ProtoBuf.ProtoMember(2)]
+        [global::System.ComponentModel.DefaultValue("")]
+        public string instance_name
+        {
+            get => __pbn__instance_name ?? "";
+            set => __pbn__instance_name = value;
+        }
+        public bool ShouldSerializeinstance_name() => __pbn__instance_name != null;
+        public void Resetinstance_name() => __pbn__instance_name = null;
+        private string __pbn__instance_name;
+
+        [global::ProtoBuf.ProtoMember(3)]
+        public ulong context
+        {
+            get => __pbn__context.GetValueOrDefault();
+            set => __pbn__context = value;
+        }
+        public bool ShouldSerializecontext() => __pbn__context != null;
+        public void Resetcontext() => __pbn__context = null;
+        private ulong? __pbn__context;
+
+        [global::ProtoBuf.ProtoMember(4)]
+        public ulong id
+        {
+            get => __pbn__id.GetValueOrDefault();
+            set => __pbn__id = value;
+        }
+        public bool ShouldSerializeid() => __pbn__id != null;
+        public void Resetid() => __pbn__id = null;
+        private ulong? __pbn__id;
 
     }
 
@@ -129,6 +180,9 @@ namespace SteamKit2.GC.CSGO.Internal
         public void Resetrequest() => __pbn__request = null;
         private uint? __pbn__request;
 
+        [global::ProtoBuf.ProtoMember(3)]
+        public global::System.Collections.Generic.List<ulong> extra_data { get; } = new global::System.Collections.Generic.List<ulong>();
+
     }
 
     [global::ProtoBuf.ProtoContract()]
@@ -188,7 +242,6 @@ namespace SteamKit2.GC.CSGO.Internal
         k_EMsgGCRemoveUniqueCraftIndexResponse = 1056,
         k_EMsgGCSaxxyBroadcast = 1057,
         k_EMsgGCBackpackSortFinished = 1058,
-        k_EMsgGCAdjustItemEquippedState = 1059,
         k_EMsgGCCollectItem = 1061,
         k_EMsgGCItemAcknowledged__DEPRECATED = 1062,
         k_EMsgGC_ReportAbuse = 1065,
@@ -247,6 +300,7 @@ namespace SteamKit2.GC.CSGO.Internal
         k_EMsgGCDev_NewItemRequest = 2001,
         k_EMsgGCDev_NewItemRequestResponse = 2002,
         k_EMsgGCDev_PaintKitDropItem = 2003,
+        k_EMsgGCDev_SchemaReservationRequest = 2004,
         k_EMsgGCStoreGetUserData = 2500,
         k_EMsgGCStoreGetUserDataResponse = 2501,
         k_EMsgGCStorePurchaseInit_DEPRECATED = 2502,
@@ -275,10 +329,11 @@ namespace SteamKit2.GC.CSGO.Internal
         k_EMsgGCRequestAnnouncementsResponse = 2526,
         k_EMsgGCRequestPassportItemGrant = 2527,
         k_EMsgGCClientVersionUpdated = 2528,
-        k_EMsgGCAdjustItemEquippedStateMulti = 2529,
         k_EMsgGCRecurringSubscriptionStatus = 2530,
         k_EMsgGCAdjustEquipSlotsManual = 2531,
         k_EMsgGCAdjustEquipSlotsShuffle = 2532,
+        k_EMsgGCOpenCrate = 2534,
+        k_EMsgGCAcknowledgeRentalExpiration = 2535,
     }
 
     [global::ProtoBuf.ProtoContract()]
@@ -327,15 +382,19 @@ namespace SteamKit2.GC.CSGO.Internal
         k_EGCItemCustomizationNotification_StatTrakSwap = 1088,
         k_EGCItemCustomizationNotification_RemovePatch = 1089,
         k_EGCItemCustomizationNotification_ApplyPatch = 1090,
+        k_EGCItemCustomizationNotification_ApplyKeychain = 1091,
+        k_EGCItemCustomizationNotification_RemoveKeychain = 1092,
         k_EGCItemCustomizationNotification_ActivateFanToken = 9178,
         k_EGCItemCustomizationNotification_ActivateOperationCoin = 9179,
         k_EGCItemCustomizationNotification_GraffitiUnseal = 9185,
         k_EGCItemCustomizationNotification_GenerateSouvenir = 9204,
         k_EGCItemCustomizationNotification_ClientRedeemMissionReward = 9209,
         k_EGCItemCustomizationNotification_ClientRedeemFreeReward = 9219,
+        k_EGCItemCustomizationNotification_XpShopUseTicket = 9221,
+        k_EGCItemCustomizationNotification_XpShopAckTracks = 9222,
     }
 
 }
 
-#pragma warning restore CS0612, CS0618, CS1591, CS3021, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
+#pragma warning restore CS0612, CS0618, CS1591, CS3021, CS8981, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
 #endregion

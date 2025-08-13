@@ -5,7 +5,7 @@
 // </auto-generated>
 
 #region Designer generated code
-#pragma warning disable CS0612, CS0618, CS1591, CS3021, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
+#pragma warning disable CS0612, CS0618, CS1591, CS3021, CS8981, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
 namespace SteamKit2.Internal
 {
 
@@ -263,16 +263,6 @@ namespace SteamKit2.Internal
         public void Resetsysid() => __pbn__sysid = null;
         private uint? __pbn__sysid;
 
-        [global::ProtoBuf.ProtoMember(21)]
-        public ulong trace_tag
-        {
-            get => __pbn__trace_tag.GetValueOrDefault();
-            set => __pbn__trace_tag = value;
-        }
-        public bool ShouldSerializetrace_tag() => __pbn__trace_tag != null;
-        public void Resettrace_tag() => __pbn__trace_tag = null;
-        private ulong? __pbn__trace_tag;
-
         [global::ProtoBuf.ProtoMember(25)]
         public uint webapi_key_id
         {
@@ -409,6 +399,36 @@ namespace SteamKit2.Internal
         [global::ProtoBuf.ProtoMember(41)]
         public global::System.Collections.Generic.List<int> exclude_client_sessionids { get; } = new global::System.Collections.Generic.List<int>();
 
+        [global::ProtoBuf.ProtoMember(43, DataFormat = global::ProtoBuf.DataFormat.FixedSize)]
+        public ulong admin_request_spoofing_steamid
+        {
+            get => __pbn__admin_request_spoofing_steamid.GetValueOrDefault();
+            set => __pbn__admin_request_spoofing_steamid = value;
+        }
+        public bool ShouldSerializeadmin_request_spoofing_steamid() => __pbn__admin_request_spoofing_steamid != null;
+        public void Resetadmin_request_spoofing_steamid() => __pbn__admin_request_spoofing_steamid = null;
+        private ulong? __pbn__admin_request_spoofing_steamid;
+
+        [global::ProtoBuf.ProtoMember(44)]
+        public bool is_valveds
+        {
+            get => __pbn__is_valveds.GetValueOrDefault();
+            set => __pbn__is_valveds = value;
+        }
+        public bool ShouldSerializeis_valveds() => __pbn__is_valveds != null;
+        public void Resetis_valveds() => __pbn__is_valveds = null;
+        private bool? __pbn__is_valveds;
+
+        [global::ProtoBuf.ProtoMember(45, DataFormat = global::ProtoBuf.DataFormat.FixedSize)]
+        public ulong trace_tag
+        {
+            get => __pbn__trace_tag.GetValueOrDefault();
+            set => __pbn__trace_tag = value;
+        }
+        public bool ShouldSerializetrace_tag() => __pbn__trace_tag != null;
+        public void Resettrace_tag() => __pbn__trace_tag = null;
+        private ulong? __pbn__trace_tag;
+
         [global::ProtoBuf.ProtoMember(15)]
         public uint ip
         {
@@ -434,6 +454,103 @@ namespace SteamKit2.Internal
         {
             k_ESessionDispositionNormal = 0,
             k_ESessionDispositionDisconnect = 1,
+        }
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class CMsgKubeRPCPacket : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1)]
+        public Hdr hdr { get; set; }
+
+        [global::ProtoBuf.ProtoMember(2)]
+        public byte[] payload
+        {
+            get => __pbn__payload;
+            set => __pbn__payload = value;
+        }
+        public bool ShouldSerializepayload() => __pbn__payload != null;
+        public void Resetpayload() => __pbn__payload = null;
+        private byte[] __pbn__payload;
+
+        [global::ProtoBuf.ProtoContract()]
+        public partial class Hdr : global::ProtoBuf.IExtensible
+        {
+            private global::ProtoBuf.IExtension __pbn__extensionData;
+            global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+                => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+            [global::ProtoBuf.ProtoMember(10, DataFormat = global::ProtoBuf.DataFormat.FixedSize)]
+            [global::System.ComponentModel.DefaultValue(typeof(ulong), "18446744073709551615")]
+            public ulong jobid_source
+            {
+                get => __pbn__jobid_source ?? 18446744073709551615ul;
+                set => __pbn__jobid_source = value;
+            }
+            public bool ShouldSerializejobid_source() => __pbn__jobid_source != null;
+            public void Resetjobid_source() => __pbn__jobid_source = null;
+            private ulong? __pbn__jobid_source;
+
+            [global::ProtoBuf.ProtoMember(11, DataFormat = global::ProtoBuf.DataFormat.FixedSize)]
+            [global::System.ComponentModel.DefaultValue(typeof(ulong), "18446744073709551615")]
+            public ulong jobid_target
+            {
+                get => __pbn__jobid_target ?? 18446744073709551615ul;
+                set => __pbn__jobid_target = value;
+            }
+            public bool ShouldSerializejobid_target() => __pbn__jobid_target != null;
+            public void Resetjobid_target() => __pbn__jobid_target = null;
+            private ulong? __pbn__jobid_target;
+
+            [global::ProtoBuf.ProtoMember(13)]
+            [global::System.ComponentModel.DefaultValue(2)]
+            public int eresult
+            {
+                get => __pbn__eresult ?? 2;
+                set => __pbn__eresult = value;
+            }
+            public bool ShouldSerializeeresult() => __pbn__eresult != null;
+            public void Reseteresult() => __pbn__eresult = null;
+            private int? __pbn__eresult;
+
+            [global::ProtoBuf.ProtoMember(12)]
+            [global::System.ComponentModel.DefaultValue("")]
+            public string target_job_name
+            {
+                get => __pbn__target_job_name ?? "";
+                set => __pbn__target_job_name = value;
+            }
+            public bool ShouldSerializetarget_job_name() => __pbn__target_job_name != null;
+            public void Resettarget_job_name() => __pbn__target_job_name = null;
+            private string __pbn__target_job_name;
+
+            [global::ProtoBuf.ProtoMember(14)]
+            [global::System.ComponentModel.DefaultValue("")]
+            public string error_message
+            {
+                get => __pbn__error_message ?? "";
+                set => __pbn__error_message = value;
+            }
+            public bool ShouldSerializeerror_message() => __pbn__error_message != null;
+            public void Reseterror_message() => __pbn__error_message = null;
+            private string __pbn__error_message;
+
+            [global::ProtoBuf.ProtoMember(42)]
+            [global::System.ComponentModel.DefaultValue("")]
+            public string reply_address
+            {
+                get => __pbn__reply_address ?? "";
+                set => __pbn__reply_address = value;
+            }
+            public bool ShouldSerializereply_address() => __pbn__reply_address != null;
+            public void Resetreply_address() => __pbn__reply_address = null;
+            private string __pbn__reply_address;
+
         }
 
     }
@@ -739,6 +856,9 @@ namespace SteamKit2.Internal
 
         [global::ProtoBuf.ProtoMember(17)]
         public global::System.Collections.Generic.List<uint> content_descriptorids { get; } = new global::System.Collections.Generic.List<uint>();
+
+        [global::ProtoBuf.ProtoMember(18)]
+        public global::System.Collections.Generic.List<uint> content_descriptorids_including_dlc { get; } = new global::System.Collections.Generic.List<uint>();
 
     }
 
@@ -1715,6 +1835,16 @@ namespace SteamKit2.Internal
         public void Resetbuild_branch() => __pbn__build_branch = null;
         private string __pbn__build_branch;
 
+        [global::ProtoBuf.ProtoMember(31)]
+        public bool unlisted
+        {
+            get => __pbn__unlisted.GetValueOrDefault();
+            set => __pbn__unlisted = value;
+        }
+        public bool ShouldSerializeunlisted() => __pbn__unlisted != null;
+        public void Resetunlisted() => __pbn__unlisted = null;
+        private bool? __pbn__unlisted;
+
     }
 
     [global::ProtoBuf.ProtoContract()]
@@ -2094,5 +2224,5 @@ namespace SteamKit2.Internal
 
 }
 
-#pragma warning restore CS0612, CS0618, CS1591, CS3021, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
+#pragma warning restore CS0612, CS0618, CS1591, CS3021, CS8981, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
 #endregion

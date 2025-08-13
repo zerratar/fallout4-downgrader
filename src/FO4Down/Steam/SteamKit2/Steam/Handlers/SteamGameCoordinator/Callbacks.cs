@@ -6,7 +6,7 @@ namespace SteamKit2
     public partial class SteamGameCoordinator
     {
         /// <summary>
-        /// This callback is fired when a game coordinator message is recieved from the network.
+        /// This callback is fired when a game coordinator message is received from the network.
         /// </summary>
         public class MessageCallback : CallbackMsg
         {
@@ -35,8 +35,11 @@ namespace SteamKit2
             public IPacketGCMsg Message { get; private set; }
 
 
-            internal MessageCallback( CMsgGCClient gcMsg )
+            internal MessageCallback( IPacketMsg packetMsg )
             {
+                var msg = new ClientMsgProtobuf<CMsgGCClient>( packetMsg );
+                var gcMsg = msg.Body;
+
                 this.eMsg = gcMsg.msgtype;
                 this.AppID = gcMsg.appid;
                 this.Message = GetPacketGCMsg( gcMsg.msgtype, gcMsg.payload );

@@ -5,7 +5,7 @@
 // </auto-generated>
 
 #region Designer generated code
-#pragma warning disable CS0612, CS0618, CS1591, CS3021, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
+#pragma warning disable CS0612, CS0618, CS1591, CS3021, CS8981, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
 namespace SteamKit2.Internal
 {
 
@@ -134,34 +134,6 @@ namespace SteamKit2.Internal
         public bool ShouldSerializeowner_steam_id() => __pbn__owner_steam_id != null;
         public void Resetowner_steam_id() => __pbn__owner_steam_id = null;
         private ulong? __pbn__owner_steam_id;
-
-    }
-
-    [global::ProtoBuf.ProtoContract()]
-    public partial class CMsgClientCMList : global::ProtoBuf.IExtensible
-    {
-        private global::ProtoBuf.IExtension __pbn__extensionData;
-        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
-
-        [global::ProtoBuf.ProtoMember(1)]
-        public global::System.Collections.Generic.List<uint> cm_addresses { get; } = new global::System.Collections.Generic.List<uint>();
-
-        [global::ProtoBuf.ProtoMember(2)]
-        public global::System.Collections.Generic.List<uint> cm_ports { get; } = new global::System.Collections.Generic.List<uint>();
-
-        [global::ProtoBuf.ProtoMember(3)]
-        public global::System.Collections.Generic.List<string> cm_websocket_addresses { get; } = new global::System.Collections.Generic.List<string>();
-
-        [global::ProtoBuf.ProtoMember(4)]
-        public uint percent_default_to_websocket
-        {
-            get => __pbn__percent_default_to_websocket.GetValueOrDefault();
-            set => __pbn__percent_default_to_websocket = value;
-        }
-        public bool ShouldSerializepercent_default_to_websocket() => __pbn__percent_default_to_websocket != null;
-        public void Resetpercent_default_to_websocket() => __pbn__percent_default_to_websocket = null;
-        private uint? __pbn__percent_default_to_websocket;
 
     }
 
@@ -2630,5 +2602,5 @@ namespace SteamKit2.Internal
 
 }
 
-#pragma warning restore CS0612, CS0618, CS1591, CS3021, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
+#pragma warning restore CS0612, CS0618, CS1591, CS3021, CS8981, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
 #endregion
